@@ -1,17 +1,67 @@
-cache/scratch/instantpy
-hermes-agent
+# 缓存文件和目录
+cache/
+scratch/
+instantpy/
+hermes-agent/
 *.log
 
-tools/
-node/
+# 临时文件和目录
+tmp/
+*.tmp
+
+# 配置文件和目录
+config/
+*.config
+
+# 数据库文件和目录
+db/
+*.db
+*.db-shm
+*.db-wal
+
+# 密钥和证书文件
+secrets/
+*.key
+*.pem
+*.crt
+
+# 编译和构建文件
+build/
+dist/
+*.o
+*.a
+*.so
+
+# IDE和编辑器文件
+*.idea/
+*.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# 测试文件和目录
+tests/
+*.test
+*.spec
+
+# 其他不需要上传的文件和目录
+*.swp
+*.swo
+*.lock
+*.pid
+*.pid.lock
+
+# 备份文件
 backups/
 *.zip
 *.app
 
-*.db-shm
-*.db-wal
-cache/
-cron/
+# 状态文件
 state/
 *state*.json
+
+# Bot Relay 文件
 bot_relay/roster.json
+
+# 工具目录
+tools/
+node/
