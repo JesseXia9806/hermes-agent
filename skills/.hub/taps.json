@@ -1,0 +1,8 @@
+{
+  "taps": [
+    {
+      "repo": "Agents365-ai/drawio-skill",
+      "path": "skills/"
+    }
+  ]
+}

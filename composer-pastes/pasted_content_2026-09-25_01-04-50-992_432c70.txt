@@ -1,0 +1,39 @@
+SPR-2.254#show platform hardware fed switch active qos queue stats internal cpu policer
+
+                         CPU Queue Statistics
+============================================================================================
+                                              (default) (set)     Queue        Queue
+QId PlcIdx  Queue Name                Enabled   Rate     Rate      Drop(Bytes)  Drop(Frames)
+--------------------------------------------------------------------------------------------
+0    11     DOT1X Auth                  Yes     1000      1000     0            0
+1    1      L2 Control                  Yes     2000      2000     0            0
+2    14     Forus traffic               Yes     4000      4000     6572690      4323
+3    0      ICMP GEN                    Yes     600       600      0            0
+4    2      Routing Control             Yes     5400      5400     0            0
+5    14     Forus Address resolution    Yes     4000      4000     24364808     358375
+6    0      ICMP Redirect               Yes     600       600      325133788315  1202884067
+7    16     Inter FED Traffic           Yes     2000      2000     0            0
+8    4      L2 LVX Cont Pack            Yes     1000      1000     0            0
+9    19     EWLC Control                Yes     13000     13000    0            0
+10   16     EWLC Data                   Yes     2000      2000     0            0
+11   13     L2 LVX Data Pack            Yes     1000      1000     0            0
+12   0      BROADCAST                   Yes     600       600      4943206779   24317260
+13   10     Openflow                    Yes     200       200      0            0
+14   13     Sw forwarding               Yes     1000      1000     0            0
+15   8      Topology Control            Yes     13000     13000    0            0
+16   12     Proto Snooping              Yes     2000      2000     0            0
+17   6      DHCP Snooping               Yes     400       400      0            0
+18   13     Transit Traffic             Yes     1000      1000     0            0
+19   10     RPF Failed                  Yes     200       200      0            0
+20   15     MCAST END STATION           Yes     2000      2000     13996042     137214
+21   13     LOGGING                     Yes     1000      1000     0            0
+22   7      Punt Webauth                Yes     1000      1000     0            0
+23   18     High Rate App               Yes     13000     13000    0            0
+24   10     Exception                   Yes     200       200      0            0
+25   3      System Critical             Yes     1000      1000     0            0
+26   10     NFL SAMPLED DATA            Yes     200       200      0            0
+27   2      Low Latency                 Yes     5400      5400     0            0
+28   10     EGR Exception               Yes     200       200      0            0
+29   5      Stackwise Virtual OOB       Yes     8000      8000     0            0
+30   9      MCAST Data                  Yes     400       400      0            0
+31   3      Gold Pkt                    Yes     1000      1000     0            0

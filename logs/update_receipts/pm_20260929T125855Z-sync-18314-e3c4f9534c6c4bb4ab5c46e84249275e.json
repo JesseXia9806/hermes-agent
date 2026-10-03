@@ -1,0 +1,32 @@
+{
+  "exit_code": 0,
+  "feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "finished_at": "2026-09-29T12:58:55.653402+00:00",
+  "kind": "sync",
+  "outcome": "ok",
+  "platform": null,
+  "refusal": null,
+  "schema": 1,
+  "started_at": "2026-09-29T12:58:55.277443+00:00",
+  "steps": [],
+  "update_id": "3c87f21b64754ec0ac0d2b0652ccef5a",
+  "venv_rebuild": {
+    "ok": false,
+    "reason": "already in sync"
+  },
+  "warnings": []
+}

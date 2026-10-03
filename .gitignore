@@ -1,0 +1,17 @@
+cache/scratch/instantpy
+hermes-agent
+*.log
+
+tools/
+node/
+backups/
+*.zip
+*.app
+
+*.db-shm
+*.db-wal
+cache/
+cron/
+state/
+*state*.json
+bot_relay/roster.json

@@ -1,0 +1,198 @@
+---
+name: network-device-audit
+description: "对网络设备（FortiGate、Cisco、Huawei 等）执行性能审计和健康检查，输出结构化报告"
+metadata:
+  hermes:
+    tags: [network, audit, fortigate, cisco, performance, firewall, health-check]
+---
+
+# 网络设备审计工作流
+
+## 适用场景
+- 对防火墙、交换机、路由器等网络设备进行性能与健康检查
+- 检查：CPU、内存、会话/连接数、吞吐量、接口状态、特征库/固件版本、高可用状态
+- **仅检查，不执行任何配置变更**
+
+## 通用前置条件
+- 已配置 SSH 免密登录（密钥或密码认证）
+- 只读账户优先（如 FortiGate 可使用 `readonly` 或专有只读用户）
+- 本地 `~/.ssh/config` 已配好 Host 别名
+
+---
+
+# FortiGate 审计章节
+
+## 1. 基础信息
+
+| 命令 | 用途 |
+|:-----|:------|
+| `get system status` | 固件版本、特征库版本、运行时间、安全级别 |
+| `get system performance status` | CPU 逐核、内存、会话数、吞吐量、NPU 卸载率 |
+
+> ⚠️ FortiGate v7.x CLI 使用分页 `--More--`。  
+> 只读账户无法 `config system console set pager`，可通过 `| grep -c ''` 绕过或用 `head`/`tail` 截取关键段。
+
+## 2. CPU 负载分析
+
+从 `get system performance status` 输出解读：
+
+```
+CPU states: 14% user 2% system 57% idle 0% iowait 27% softirq
+CPU0 states: 4% user 2% system 1% idle 93% softirq
+CPU1 states: 6% user 0% system 87% idle 7% softirq
+```
+
+**解读规则：**
+- 整体 CPU 空闲 >30% → ✅ 健康
+- CPU0/CPU7 软中断高（90%+）→ ⚡ **正常**，这是 NPU/CP 处理器处理中断的分布规律
+- 所有核心软中断都高 → 🔴 **异常**，可能存在环路或攻击
+- 用户态偏高 → 可能存在策略配置复杂或 NAT 过载
+
+## 3. 内存分析
+
+从同一命令输出：
+
+```
+Memory: 7769684k total, 4013044k used (51.7%), 3240896k free (41.7%), 515744k freeable (6.6%)
+```
+
+| 区间 | 评估 |
+|:----|:-----|
+| < 60% | ✅ 正常 |
+| 60–75% | ⚠️ 关注，排查内存泄漏 |
+| 75–85% | 🔴 预警，需扩容或优化配置 |
+| > 85% | 🚨 临界，可能影响转发性能 |
+
+## 4. 会话统计
+
+```
+Average sessions: 44044 sessions in 1 minute
+Maximal sessions: 44956 sessions in 1 minute
+Average session setup rate: 454 sessions per second
+Maximal session setup rate: 538 sessions per second
+Average NPU sessions: 27787 (64% of total)
+```
+
+**关键指标：**
+- 当前会话数：`get system session status`  
+- 最大并发容量：FortiGate-100F = 2M / 200F = 2M / 60F = 1M / 40F = 500K  
+- **NPU 卸载率 >60%** → ✅ 流量走硬件加速，CPU 负担轻  
+- **新建速率峰值** 应与设备规格对比（100F ≈ 30K pps）
+
+## 5. 吞吐分析
+
+```
+Average network usage: 497622 / 450251 kbps in 1 minute
+Maximal network usage: 572551 / 517288 kbps in 1 minute
+```
+
+- 当前吞吐与设备理论最大吞吐对比（100F ≈ 20 Gbps）
+- **利用率 = 当前 / 理论** — 核对带宽是否接近饱和
+
+## 6. 接口状态
+
+| 命令 | 用途 |
+|:-----|:------|
+| `get system interface` | 列出所有接口 IP、状态、模式 |
+| `get system interface physical` | 物理接口详细信息 |
+
+**关键检查：**
+- `status: up/down` — 确认业务接口正常
+- `ip` — 核对分配的 IP 地址
+- `netflow-sampler`/`sflow-sampler` — 监控是否启用
+- `trunk` — VLAN 聚合配置
+
+## 7. 路由与拓扑
+
+| 命令 | 用途 |
+|:-----|:------|
+| `get router info routing-table all` | 完整路由表，含默认路由下一跳 |
+
+**解读要点：**
+- 默认路由数量判定 SD-WAN / 负载均衡
+- 静态路由指向的下一跳是否可达
+- IPSec VPN 隧道接口是否出现在路由表中
+
+## 8. 高可用检查
+
+```bash
+get system ha status
+```
+
+| 输出 | 模式 |
+|:-----|:-----|
+| `Mode: Standalone` | 单机运行 |
+| `Mode: Active-Passive` | HA 主备 |
+| `Mode: Active-Active` | HA 双活 |
+| `HA Health Status: OK` | ✅ HA 正常 |
+
+## 9. 安全特征库状态
+
+从 `get system status` 获取各特征库版本，与当日日期对比：
+
+| 特征库 | 最新状态要求 |
+|:-------|:------------|
+| Virus-DB / Extended DB | 当天 |
+| IPS-DB | 当天 |
+| APP-DB | 当天 |
+| AV AI/ML Model | 当天 |
+| IPS-ETDB | 0.00000 = **未订阅** |
+
+---
+
+# 报告输出模板
+
+审计完成后按以下结构输出：
+
+```
+## 🔍 {设备型号} 效能检查报告
+
+**主机**: {hostname} | **IP**: {mgmt_ip}  
+**Firmware**: {version} | **模式**: {ha_mode}  
+
+### 1. CPU 负载
+| CPU | User | System | Idle | IRQ |
+|:---|:----:|:------:|:----:|:---:|
+
+### 2. 内存
+| 指标 | 数值 |
+|:-----|:----:|
+
+### 3. 会话统计
+| 指标 | 当前 | 平均 | 峰值 |
+
+### 4. 吞吐
+| 指标 | 1min | 10min | 30min |
+
+### 5. 接口
+| 接口 | IP | 状态 | 角色 |
+
+### 6. 特征库
+| 库 | 版本 | 日期 | 状态 |
+
+### 🟢 整体评估
+| 维度 | 评估 | 说明 |
+```
+
+---
+
+# 未来扩充
+
+此技能支持逐步添加其他厂商章节：
+
+| 设备 | 待补充章节 |
+|:-----|:-----------|
+| Cisco IOS/IOS-XE | `show process cpu`, `show memory`, `show interface` |
+| Huawei VRP | `display cpu-usage`, `display memory-usage`, `display interface brief` |
+| Juniper JunOS | `show system uptime`, `show interfaces terse` |
+| H3C Comware | `display cpu`, `display memory`, `display interface` |
+
+---
+
+# 常见陷阱
+
+1. **FortiGate 分页输出** — SSH 命令包含管道时 `--More--` 会阻断输出，使用 `head`/`tail` 截取可避免
+2. **只读账户限制** — 不能执行 `config`、`execute shell`、`diagnose sys top` 等管理命令
+3. **`get system performance status` 先出多行头部再出数据** — 分批提取 CPU / 内存 / 会话 / 吞吐
+4. **NPU 卸载率低可能正常** — 小包流量不走 NPU；但长时间 <30% 应排查硬件加速配置
+5. **Standalone 模式不等于有问题** — 很多生产环境不需要 HA

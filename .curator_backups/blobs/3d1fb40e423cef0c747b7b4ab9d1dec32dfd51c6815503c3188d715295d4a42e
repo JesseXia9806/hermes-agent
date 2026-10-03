@@ -1,0 +1,342 @@
+#!/bin/bash
+# Linux 安全强化检查清单脚本
+# 使用方法: bash hardening-checklist.sh [dry-run]
+
+LOG_FILE="/var/log/hardening-checklist-$(date +%Y%m%d_%H%M%S).log"
+
+# 日志函数
+log() {
+    echo "[$1] $2" | tee -a "$LOG_FILE"
+}
+
+# 检查系统更新状态
+check_system_updates() {
+    log "INFO" "=== 检查系统更新状态 ==="
+    
+    local updates=0
+    if command -v apt >/dev/null 2>&1; then
+        updates=$(apt list --upgradable 2>/dev/null | grep -c "upgradable")
+        log "INFO" "待更新包数量: $updates"
+    elif command -v dnf >/dev/null 2>&1; then
+        updates=$(dnf check-update 2>/dev/null | grep -c "^\s*[0-9]")
+        log "INFO" "待更新包数量: $updates"
+    fi
+    
+    if [ "$updates" -gt 0 ]; then
+        log "WARNING" "发现 $updates 个可用更新，建议及时安装"
+        return 1
+    else
+        log "SUCCESS" "系统更新状态良好"
+        return 0
+    fi
+}
+
+# 检查 SSH 配置
+check_ssh_config() {
+    log "INFO" "=== 检查 SSH 配置 ==="
+    
+    local ssh_config="/etc/ssh/sshd_config"
+    local issues=0
+    
+    if [ -f "$ssh_config" ]; then
+        # 检查 PasswordAuthentication
+        if grep -q "PasswordAuthentication yes" "$ssh_config"; then
+            log "ERROR" "SSH PasswordAuthentication 设置为 yes，建议改为 no"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "SSH PasswordAuthentication 配置正确"
+        fi
+        
+        # 检查 PermitRootLogin
+        if grep -q "PermitRootLogin yes" "$ssh_config"; then
+            log "ERROR" "SSH PermitRootLogin 设置为 yes，建议改为 no"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "SSH PermitRootLogin 配置正确"
+        fi
+        
+        # 检查 MaxAuthTries
+        if grep -q "MaxAuthTries 6" "$ssh_config" || ! grep -q "MaxAuthTries" "$ssh_config"; then
+            log "WARNING" "SSH MaxAuthTries 设置不安全，建议改为 3"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "SSH MaxAuthTries 配置安全"
+        fi
+        
+        # 检查 X11Forwarding
+        if grep -q "X11Forwarding yes" "$ssh_config"; then
+            log "WARNING" "SSH X11Forwarding 设置为 yes，建议改为 no"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "SSH X11Forwarding 配置正确"
+        fi
+        
+        # 检查 Protocol
+        if grep -q "Protocol 1" "$ssh_config"; then
+            log "ERROR" "SSH Protocol 1 已过时，建议改为 Protocol 2"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "SSH Protocol 配置正确"
+        fi
+    else
+        log "ERROR" "SSH 配置文件不存在: $ssh_config"
+        issues=$((issues + 1))
+    fi
+    
+    if [ "$issues" -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 检查网络服务
+check_network_services() {
+    log "INFO" "=== 检查网络服务 ==="
+    
+    local issues=0
+    
+    # 检查开放端口
+    log "INFO" "检查开放端口..."
+    local ports=$(ss -tlnp 2>/dev/null | grep -E "(:22|:80|:3001|:443)" | wc -l)
+    log "INFO" "开放关键端口数量: $ports"
+    
+    # 检查防火墙状态
+    if command -v ufw >/dev/null 2>&1; then
+        local ufw_status=$(ufw status 2>/dev/null | head -1)
+        if [[ "$ufw_status" != *"Status: active"* ]]; then
+            log "WARNING" "UFW 防火墙未启用"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "UFW 防火墙已启用"
+        fi
+    elif command -v firewall-cmd >/dev/null 2>&1; then
+        local firewall_status=$(firewall-cmd --state 2>/dev/null || echo "not running")
+        if [[ "$firewall_status" != "running" ]]; then
+            log "WARNING" "firewalld 未运行"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "firewalld 正在运行"
+        fi
+    else
+        log "WARNING" "未检测到防火墙工具 (ufw 或 firewalld)"
+        issues=$((issues + 1))
+    fi
+    
+    if [ "$issues" -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 检查用户与权限
+check_user_permissions() {
+    log "INFO" "=== 检查用户与权限 ==="
+    
+    local issues=0
+    
+    # 检查 NOPASSWD sudo
+    log "INFO" "检查 sudo 配置..."
+    local sudo_issues=0
+    for sudo_file in /etc/sudoers.d/*; do
+        if [ -f "$sudo_file" ] && grep -q "NOPASSWD" "$sudo_file"; then
+            log "WARNING" "发现 NOPASSWD sudo 配置: $sudo_file"
+            sudo_issues=$((sudo_issues + 1))
+        fi
+    done
+    
+    if [ "$sudo_issues" -gt 0 ]; then
+        issues=$((issues + sudo_issues))
+    else
+        log "SUCCESS" "sudo 配置良好"
+    fi
+    
+    # 检查不活跃账户
+    log "INFO" "检查不活跃账户..."
+    local inactive_users=0
+    for user in $(cut -d: -f1 /etc/passwd); do
+        if ! last -n 30 "$user" | grep -q "still logged in"; then
+            log "INFO" "发现不活跃账户: $user"
+            inactive_users=$((inactive_users + 1))
+        fi
+    done
+    
+    if [ "$inactive_users" -gt 0 ]; then
+        issues=$((issues + inactive_users))
+    fi
+    
+    # 检查主目录权限
+    log "INFO" "检查主目录权限..."
+    local home_issues=0
+    for user in $(cut -d: -f1 /etc/passwd); do
+        home_dir=$(eval echo ~$user 2>/dev/null)
+        if [ -d "$home_dir" ]; then
+            local perms=$(stat -c %a "$home_dir" 2>/dev/null)
+            if [ "$perms" -gt 750 ]; then
+                log "WARNING" "用户 $user 主目录权限过宽: $perms"
+                home_issues=$((home_issues + 1))
+            fi
+        fi
+    done
+    
+    issues=$((issues + home_issues))
+    
+    if [ "$issues" -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 检查系统日志
+check_system_logs() {
+    log "INFO" "=== 检查系统日志 ==="
+    
+    local issues=0
+    
+    # 检查 auth 日志
+    if [ -f /var/log/auth.log ]; then
+        local failed_logins=$(grep -c "Failed password" /var/log/auth.log 2>/dev/null || echo 0)
+        if [ "$failed_logins" -gt 10 ]; then
+            log "WARNING" "发现 $failed_logins 次失败登录尝试"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "失败登录尝试正常"
+        fi
+    else
+        log "WARNING" "/var/log/auth.log 不存在"
+        issues=$((issues + 1))
+    fi
+    
+    # 检查系统日志大小
+    if [ -f /var/log/syslog ]; then
+        local log_size=$(stat -c %s /var/log/syslog 2>/dev/null)
+        local log_size_mb=$((log_size / 1024 / 1024))
+        if [ "$log_size_mb" -gt 50 ]; then
+            log "WARNING" "系统日志过大 ($log_size_mb MB)"
+            issues=$((issues + 1))
+        else
+            log "SUCCESS" "系统日志大小正常"
+        fi
+    fi
+    
+    if [ "$issues" -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 检查容器安全
+check_container_security() {
+    log "INFO" "=== 检查容器安全 ==="
+    
+    local issues=0
+    
+    # 检查 Docker
+    if command -v docker >/dev/null 2>&1; then
+        local running_containers=$(docker ps -a --format '{{.Names}}' | wc -l)
+        log "INFO" "运行中容器数量: $running_containers"
+        
+        if [ "$running_containers" -gt 10 ]; then
+            log "WARNING" "运行中容器数量较多 ($running_containers)"
+            issues=$((issues + 1))
+        fi
+    fi
+    
+    # 检查 Podman
+    if command -v podman >/dev/null 2>&1; then
+        local running_pods=$(podman ps -a --format '{{.Names}}' | wc -l)
+        log "INFO" "运行中 Podman 容器数量: $running_pods"
+    fi
+    
+    if [ "$issues" -eq 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 生成报告
+generate_report() {
+    log "INFO" "=== 安全强化检查报告 ==="
+    
+    echo "" | tee -a "$LOG_FILE"
+    echo "检查时间: $(date)" | tee -a "$LOG_FILE"
+    echo "系统: $(hostname)" | tee -a "$LOG_FILE"
+    echo "" | tee -a "$LOG_FILE"
+    
+    # 系统更新
+    echo "1. 系统更新状态:" | tee -a "$LOG_FILE"
+    if check_system_updates; then
+        echo "   ✅ 系统更新状态良好" | tee -a "$LOG_FILE"
+    else
+        echo "   ⚠️  发现可用更新" | tee -a "$LOG_FILE"
+    fi
+    echo "" | tee -a "$LOG_FILE"
+    
+    # SSH 配置
+    echo "2. SSH 配置检查:" | tee -a "$LOG_FILE"
+    if check_ssh_config; then
+        echo "   ✅ SSH 配置安全" | tee -a "$LOG_FILE"
+    else
+        echo "   ❌ SSH 配置存在问题" | tee -a "$LOG_FILE"
+    fi
+    echo "" | tee -a "$LOG_FILE"
+    
+    # 网络服务
+    echo "3. 网络服务检查:" | tee -a "$LOG_FILE"
+    if check_network_services; then
+        echo "   ✅ 网络服务配置良好" | tee -a "$LOG_FILE"
+    else
+        echo "   ❌ 网络服务存在问题" | tee -a "$LOG_FILE"
+    fi
+    echo "" | tee -a "$LOG_FILE"
+    
+    # 用户权限
+    echo "4. 用户与权限检查:" | tee -a "$LOG_FILE"
+    if check_user_permissions; then
+        echo "   ✅ 用户权限配置良好" | tee -a "$LOG_FILE"
+    else
+        echo "   ❌ 用户权限存在问题" | tee -a "$LOG_FILE"
+    fi
+    echo "" | tee -a "$LOG_FILE"
+    
+    # 系统日志
+    echo "5. 系统日志检查:" | tee -a "$LOG_FILE"
+    if check_system_logs; then
+        echo "   ✅ 系统日志配置良好" | tee -a "$LOG_FILE"
+    else
+        echo "   ❌ 系统日志存在问题" | tee -a "$LOG_FILE"
+    fi
+    echo "" | tee -a "$LOG_FILE"
+    
+    # 容器安全
+    echo "6. 容器安全检查:" | tee -a "$LOG_FILE"
+    if check_container_security; then
+        echo "   ✅ 容器安全配置良好" | tee -a "$LOG_FILE"
+    else
+        echo "   ❌ 容器安全存在问题" | tee -a "$LOG_FILE"
+    fi
+    echo "" | tee -a "$LOG_FILE"
+    
+    echo "=== 报告结束 ===" | tee -a "$LOG_FILE"
+    echo "详细日志: $LOG_FILE"
+}
+
+# 主函数
+main() {
+    echo "=== Linux 安全强化检查清单 ==="
+    echo "运行时间: $(date)"
+    echo ""
+    
+    generate_report
+    
+    if [ "$1" == "dry-run" ]; then
+        echo ""
+        echo "[DRY-RUN] 这是模拟运行，实际操作需执行 hardening-runner.sh"
+    fi
+}
+
+main "$@"

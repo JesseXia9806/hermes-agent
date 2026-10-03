@@ -1,0 +1,96 @@
+#!/bin/bash
+# Ubuntu服务器安全加固自动化脚本
+# 使用方法：./harden-ubuntu-server.sh <hostname> <port>
+
+HOST="$1"
+PORT="$2"
+
+# 检查参数
+echo "=== Ubuntu服务器安全加固脚本 ==="
+echo "目标主机：$HOST:$PORT"
+echo "开始时间：$(date)"
+echo ""
+
+# 步骤1：检查SSH连接
+echo "步骤1：检查SSH连接..."
+ssh -p $PORT rootadmin@$HOST "whoami" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "❌ SSH连接失败"
+    exit 1
+fi
+echo "✅ SSH连接正常"
+echo ""
+
+# 步骤2：检查sudo权限
+echo "步骤2：检查sudo权限..."
+ssh -p $PORT rootadmin@$HOST "sudo -l" 2>/dev/null | grep -q "NOPASSWD"
+if [ $? -eq 0 ]; then
+    echo "⚠️ 发现NOPASSWD sudo权限，需要修复"
+    echo "执行：ssh -p $PORT rootadmin@$HOST 'sudo visudo -f /etc/sudoers.d/rootadmin'"
+    echo "删除所有NOPASSWD行，保留密码验证"
+fi
+echo ""
+
+# 步骤3：检查系统更新
+echo "步骤3：检查系统更新..."
+UPDATES=$(ssh -p $PORT rootadmin@$HOST "apt list --upgradable 2>/dev/null | wc -l")
+if [ $UPDATES -gt 0 ]; then
+    echo "⚠️ 发现$UPDATES个可更新包"
+    echo "执行：ssh -p $PORT rootadmin@$HOST 'sudo apt update && sudo apt upgrade -y'"
+fi
+echo ""
+
+# 步骤4：检查fail2ban
+echo "步骤4：检查fail2ban..."
+ssh -p $PORT rootadmin@$HOST "which fail2ban" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "⚠️ fail2ban未安装"
+    echo "执行：ssh -p $PORT rootadmin@$HOST 'sudo apt install fail2ban -y'"
+fi
+echo ""
+
+# 步骤5：检查防火墙
+echo "步骤5：检查防火墙..."
+ssh -p $PORT rootadmin@$HOST "which ufw" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "⚠️ UFW防火墙未安装"
+    echo "执行：ssh -p $PORT rootadmin@$HOST 'sudo apt install ufw -y'"
+fi
+echo ""
+
+# 步骤6：检查开放端口
+echo "步骤6：检查开放端口..."
+PORTS=$(ssh -p $PORT rootadmin@$HOST "ss -tlnp | grep LISTEN | wc -l")
+echo "当前开放端口数：$PORTS"
+ssh -p $PORT rootadmin@$HOST "ss -tlnp | grep LISTEN | head -10"
+echo ""
+
+# 步骤7：检查SSH配置
+echo "步骤7：检查SSH配置..."
+ssh -p $PORT rootadmin@$HOST "sudo grep -E '(PasswordAuthentication|PubkeyAuthentication|PermitRootLogin)' /etc/ssh/sshd_config 2>/dev/null || echo '无法读取SSH配置'"
+echo ""
+
+# 步骤8：生成安全报告
+echo "步骤8：生成安全报告..."
+echo "=== 安全检查报告 ==="
+echo "主机：$HOST:$PORT"
+echo "日期：$(date)"
+echo ""
+echo "✅ 已检查项："
+echo "  - SSH连接"
+echo "  - sudo权限"
+echo "  - 系统更新"
+echo "  - fail2ban"
+echo "  - 防火墙"
+echo "  - 开放端口"
+echo "  - SSH配置"
+echo ""
+echo "⚠️ 需要手动修复的项："
+echo "  1. 移除NOPASSWD sudo权限"
+echo "  2. 应用系统更新"
+echo "  3. 安装fail2ban"
+echo "  4. 配置UFW防火墙"
+echo "  5. 优化SSH配置"
+echo ""
+echo "完成时间：$(date)"
+echo "=== 报告结束 ==="

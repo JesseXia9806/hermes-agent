@@ -1,0 +1,278 @@
+---
+name: system-security-audit
+description: "Comprehensive security audit for IT-managed systems: local macOS host checks and remote Linux (Ubuntu) audit via SSH. Produces structured checklists and remediation priorities."
+metadata:
+  hermes:
+    tags: [security, audit, it-ops, linux, macos, ssh]
+    related_skills: [systematic-debugging, plan]
+---
+
+# System Security Audit (macOS + Linux)
+
+Two standard audit workflows — choose the right one based on the target.
+
+---
+
+## 1. Local macOS Security Scan
+
+Run when the user asks to "check for suspicious programs" or "security check my Mac."
+
+**Command batch (parallel independent calls) — run in one response round:**
+
+```bash
+# 1. Running processes by CPU/memory
+ps -eo pid,pcpu,pmem,comm -r | head -30
+
+# 2. Network connections (established + listening)
+lsof -i -P -n | awk 'NR==1 || !seen[$1,$9]++' | head -50
+
+# 3. Login items
+osascript -e 'tell application "System Events" to get the name of every login item'
+
+# 4. User launch agents (non-Apple)
+ls ~/Library/LaunchAgents/ 2>/dev/null | grep -v 'com\\.apple' | head -30
+
+# 5. System launch daemons (non-Apple)
+ls /Library/LaunchDaemons/ 2>/dev/null | grep -v com.apple | head -20
+
+# 6. System launch agents (non-Apple)
+ls /Library/LaunchAgents/ 2>/dev/null | grep -v com.apple | head -20
+
+# 7. MDM / configuration profiles
+profiles -C 2>/dev/null
+
+# 8. Installed applications (quick scan for unusual names)
+ls /Applications/ | sort
+
+# 9. SSH config and keys
+ls -la ~/.ssh/
+
+# 10. Root processes (non-Apple)
+ps -U root -o pid,pcpu,pmem,comm -r | grep -v -E '(com\\.apple|kernel_task|launchd)' | head -15
+
+# 11. Listening ports only
+lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR==1 || !/com\\.apple/' | head -25
+
+# 12. Crontabs and at jobs
+crontab -l 2>/dev/null; echo "---"; atq 2>/dev/null
+```
+
+**What to look for in results:**
+- ❌ Unknown network connections to foreign IPs (cryptominers, C2)
+- ❌ Non-Apple kernel extensions (`kextstat | grep -v com.apple`)
+- ❌ Suspicious Launch Agents/Daemons with nonsensical names
+- ❌ Login items the user didn't install
+- ❌ Unusual SUID binaries (`find / -perm -4000 -type f 2>/dev/null`)
+- ❌ SSH authorized_keys entries the user didn't authorize
+- ✅ Standard tools: VPN clients (FortiClient, Cato, Pulse), MDM (Intune, Jamf), AV (TrendMicro, Defender, SentinelOne), password managers
+
+**Reporting pattern:**
+- Summary verdict first: "✅ Clean" or "⚠️ Issues found"
+- Table: check item | status | details
+- Priority-ordered action items if issues found
+
+---
+
+## 2. Remote Linux (Ubuntu) Security Audit via SSH
+
+Run when the user asks to "security check a Linux server" or "audit Ubuntu host."
+
+### Approach
+
+1. Look up the SSH config entry first (check `~/.ssh/config` for `Host <name>` aliases)
+2. Write a comprehensive bash audit script locally
+3. `scp` the script to the remote host's `/tmp/`
+4. Run via SSH: `ssh <host-alias> "bash /tmp/security_check.sh"`
+
+### Script Structure (sections in order)
+
+| Section | Commands | Risks Identified |
+|---------|----------|------------------|
+| System info | `hostname`, `uname -a`, `cat /etc/os-release`, `uptime` | EOL OS, unsupported kernel |
+| User accounts | `cat /etc/passwd`, `/etc/sudoers`, `/etc/sudoers.d/*` | Extra sudoers, unused accounts |
+| SSH config | `grep` on `sshd_config` for key directives | Root login, password auth, X11 forwarding |
+| Listening ports | `ss -tlnp` | Redis/MySQL/Docker on 0.0.0.0 (🔴 high) |
+| Firewall | `ufw status` or `iptables -L -n` | No firewall (🟠 medium) |
+| Running services | `systemctl list-units --type=service --state=running` | Unknown exposed services |
+| Updates | `apt list --upgradable` | Pending security patches (🟡 low) |
+| Auth logs | `last -10`, `lastb -10`, `fail2ban-client status` | SSH brute force attempts |
+| Cron | `crontab -l`, `ls /etc/cron.d/` | Unknown automation |
+| SUID | `find /usr /bin /sbin /lib -type f -perm -4000` | Privilege escalation vectors |
+| World-writable | `find /etc /bin /sbin /usr/bin /usr/sbin -type f -perm -o+w` | Tamperable files |
+| AppArmor/SELinux | `aa-status` / `getenforce` | Missing MAC enforcement |
+| Docker | `docker ps` | Exposed containers, restarting containers |
+
+### Critical Red Flags to Flag
+
+| Finding | Severity | Remediation |
+|---------|----------|-------------|
+| Redis/MySQL on 0.0.0.0 | 🔴 High | `bind 127.0.0.1` + restart |
+| No firewall | 🟠 Medium | See "Firewall Remediation" below — may need reinstall |
+| UFW is `rc` state (binary missing, rules in kernel) | 🟠 Medium | `apt-get install -y ufw && ufw --force reset` then reconfigure |
+| X11Forwarding yes | 🟠 Medium | `X11Forwarding no` in sshd_config |
+| Root can SSH | 🔴 High | `PermitRootLogin no` |
+| Password auth on | 🟠 Medium | `PasswordAuthentication no` (key-only) |
+| Pending security updates | 🟡 Low | `apt upgrade` on schedule |
+| Container restarting | 🟡 Low | `docker logs <name>` to diagnose |
+| Unknown IPs in last log | 🔵 Note | Verify against allowed IP list |
+| NOPASSWD sudo | 🟡 Low | Consider password-required sudo |
+
+### Bash Script Pitfalls (learned from experience)
+
+- ❌ **Do not use `set -e`** — it causes the script to abort on the first non-zero exit (e.g. `ls /nonexistent`), masking later results
+- ❌ **Do not redirect stderr inside `for f in .../* 2>/dev/null`** — some bash versions reject it as a syntax error. Use `for f in .../*; do [ -f "$f" ] || continue; ... done` instead
+- ❌ **Do not pipe through `grep -P` on macOS** — macOS `grep(bsdgrep)` does not support Perl regex (`-P`); use `-E` (ERE) or `awk`
+- ❌ **Do not use `&&` chaining for error-prone commands** inside the script; each check should stand alone so one failure doesn't block the rest
+- ✅ Always fall back to `|| echo "(not available)"` for optional commands (lastb, fail2ban, docker, etc.)
+- ✅ SCP the script to `/tmp/`, not to a user-writable directory that might have restricted permissions
+- ⚠️ **UFW may be `rc` (removed, configs remain)**: `dpkg -l ufw` shows `rc` — binary gone but old rules persist in nftables/iptables. The audit script shows either blank output or old chains. Trust `dpkg -l ufw | grep ^ii` for install status, not the presence of rules in memory.
+- ⚠️ **If `/usr/sbin/ufw` doesn't exist but old rules linger**: UFW was purged but never properly reset. Fix: `apt-get install -y ufw && ufw --force reset` before re-enabling.
+
+### Reporting Format
+
+```
+## 🔍 Audit Report: <hostname> (<IP>)
+**OS**: <distro> <version> | **Kernel**: <version> | **Uptime**: <days>
+
+### ✅ Passed
+| Check | Status | Detail |
+...
+
+### ⚠️ Issues
+| # | Severity | Finding | Suggestion |
+...
+
+### 📊 Resources
+Disk / Memory / Load
+```
+
+---
+
+## 3. Generating Document Outputs (Word .docx)
+
+When the user needs a formal document (purchase requisition, audit report, etc.):
+
+```bash
+# Install python-docx (one-time)
+uv pip install --system python-docx
+
+# Write script, run from terminal (NOT from execute_code — sandbox doesn't
+# see system packages)
+python3 /tmp/gen_report.py
+```
+
+The `execute_code` sandbox does **not** have access to system/site-packages installed via `--system`. Always write the script as a file and run via `terminal(command="python3 /tmp/script.py")`.
+
+---
+
+## 4. Post-Audit Remediation (Cleanup)
+
+After the audit identifies unwanted services or packages (nginx, Docker, MySQL, Redis, etc.), execute the cleanup using this **discover → stop → purge → verify** pattern. Run each step separately through SSH — chaining all into one SSH call risks timeout on slow package operations.
+
+### Step 1: Stop & Remove Running Containers
+
+```bash
+ssh <host> "sudo docker stop <container1> <container2>"   # timeout=30
+ssh <host> "sudo docker rm <container1> <container2>"     # timeout=15
+# Verify
+ssh <host> "docker ps -a --format '{{.Names}} {{.Status}}'"
+# Force prune if normal removal hung
+ssh <host> "sudo docker container prune -f"
+```
+
+### Step 2: Purge Unwanted APT Packages
+
+Run each purge separately (long timeouts, 60-120s):
+
+```bash
+ssh <host> "sudo apt-get purge -y <package>"   # timeout=60
+```
+
+List all installed packages first: `dpkg -l | grep -i <name>` before purging.
+
+### Step 3: Remove Residual Config Directories
+
+```bash
+ssh <host> "sudo rm -rf /var/lib/docker /etc/docker /etc/nginx /etc/mysql"
+```
+
+⚠️ **Destructive** — confirm with user before `rm -rf`.
+
+### Step 4: Autoremove Orphaned Dependencies
+
+```bash
+ssh <host> "sudo apt-get autoremove --purge -y"  # timeout=120
+ssh <host> "sudo apt-get autoclean -y"            # timeout=30
+```
+
+### Step 5: Re-Run Audit to Verify Clean State
+
+```bash
+scp /tmp/linux-security-audit.sh <host>:/tmp/
+ssh <host> "bash /tmp/linux-security-audit.sh"
+```
+
+**What the re-audit should show after cleanup:**
+- ✅ Previously open ports (80, 6379, 3306) gone — only SSH(22) + systemd-resolved(53)
+- ✅ `which nginx` / `which docker` → "(NOT FOUND)"
+- ✅ `dpkg -l | grep docker` → empty
+- ✅ `/var/lib/docker` / `/etc/nginx` → no such directory
+- ✅ Service list shrinks (nginx/docker/containerd removed)
+- ✅ Disk usage decreased (reclaimed container + image space)
+- ✅ Memory usage lower (no container memory overhead)
+
+---
+
+### Firewall Remediation
+
+The most common firewall situation after a cleanup is "no firewall" — but there are several distinct states the server can be in. **Check before fixing:**
+
+| State | Detection | Course of Action |
+|-------|-----------|------------------|
+| ❌ **Not installed** | `dpkg -l ufw | grep ^ii` → empty, `ufw` command not found | `apt-get install -y ufw` |
+| ⚠️ **RC state** (removed, configs remain) | `dpkg -l ufw` shows `rc`, `/usr/sbin/ufw` missing, but old chains visible in `iptables -L` | `apt-get install -y ufw && ufw --force reset` (clears stale rules) |
+| ⚠️ **Installed but inactive** | `dpkg -l ufw | grep ^ii` → exists, `ufw status` → inactive | `ufw default deny incoming; ufw default allow outgoing; ufw allow 22/tcp; ufw --force enable` |
+| ✅ **Active with stale rules** | `ufw status` shows old allow rules (80, 443, 3306) for services already removed | `ufw delete allow 80/tcp` (repeat per stale port) |
+| ✅ **Properly configured** | `ufw status verbose` → active, only 22/tcp allowed | No action needed |
+
+#### Complete UFW Setup Sequence (from any of the bad states)
+
+```bash
+# If needed: install
+sudo apt-get install -y ufw
+
+# If previously used and was purged: reset first
+sudo ufw --force reset
+
+# Configure
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp comment 'SSH access'
+
+# Enable
+sudo ufw --force enable
+sudo ufw status verbose
+```
+
+**ipset interaction note:** If the server had pre-existing ipset whitelist rules for SSH (e.g. `match-set allow_cn_ph_ssh src`), these sit **before** UFW in the iptables INPUT chain and do not conflict. UFW only adds its own rules — it doesn't remove these. This provides a useful defense-in-depth: ipset filters by source, UFW filters by port.
+
+**nftables residual cleanup:** After Docker removal, nftables still contains `DOCKER`, `DOCKER-FORWARD`, `DOCKER-BRIDGE` chains. These are harmless but untidy. To clean:
+```bash
+# ⚠️ Destructive — wipes ALL nftables rules, including non-Docker ones
+# Only safe if you've confirmed no other nftables rules are needed
+# Alternative: just leave them — they are inactive with no Docker processes
+sudo nft flush ruleset
+```
+
+### Cleanup Pitfalls
+
+- ❌ **Don't chain all steps into one SSH call** — `apt-get purge` can take 60s+ and the transport layer may time out. Per-step timeouts prevent silent failure.
+- ❌ **Don't forget `containerd`** — Docker's container runtime (`containerd.io`) survives `docker-ce` removal. Check with `dpkg -l | grep containerd` separately and purge if user wants complete removal.
+- ❌ **Don't assume UFW is fully removed when `ufw` binary is missing** — old rules persist in nftables/iptables. Always `ufw --force reset` after reinstalling to clear stale chains, then reconfigure.
+- ❌ **Don't forget to clean stale UFW allow rules** — after removing nginx/Docker/MySQL, old `ufw allow 80/tcp` etc. may still be in the active ruleset. Run `ufw status numbered` and delete stale ones.
+- ❌ **Don't use `execute_code` to run python-docx scripts** — sandbox lacks system packages. Write script to `/tmp/` and run via `terminal(command="python3 /tmp/script.py")`.
+- ✅ **Always verify before reporting** — one more SSH check confirms the component is truly gone.
+- ✅ **Note possible server reboot** — if kernel packages were autoremoved, uptime may drop to ~30 min. Mention in report so user doesn't worry.
+- ✅ **nftables residual chains are harmless** — Docker leaves behind DOCKER, DOCKER-FORWARD etc. chains in nftables. They're inactive once Docker is gone. Can be left or flushed with `sudo nft flush ruleset` (⚠️ destructive).
+
+---

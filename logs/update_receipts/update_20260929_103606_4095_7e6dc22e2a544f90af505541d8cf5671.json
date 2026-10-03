@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-29T02:31:23.629893+00:00",
+  "finished_at": "2026-09-29T02:36:05.964266+00:00",
+  "argv": [
+    "-c",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 4095,
+  "outcome": "failed",
+  "pre_update": {
+    "sha": "8c9fe964009096e46f44292d036c1e0ac33c3026",
+    "short_sha": "8c9fe964",
+    "version": "0.21.5",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "a1725000fc15454057ec1980e183e4e2b709eb04",
+    "short_sha": "a1725000",
+    "version": "0.21.5",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260929-023124-pre-update, it=20260929-023124-pre-update",
+      "at": "2026-09-29T02:31:24.552123+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260929-023123-pre-update",
+      "at": "2026-09-29T02:31:24.552196+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {},
+  "fleet": [],
+  "update_id": "7e6dc22e2a544f90af505541d8cf5671",
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "8c9fe964009096e46f44292d036c1e0ac33c3026",
+    "expected_version": "0.21.5",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 1061,
+        "supervisor": "launchd",
+        "code_sha": "8c9fe964009096e46f44292d036c1e0ac33c3026",
+        "code_version": "0.21.5",
+        "restart_via": "launchd",
+        "detail": {}
+      }
+    ]
+  },
+  "exit_code": 1,
+  "stop_reason": "sys.exit(1)",
+  "pm_feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "pm_steps": [
+    {
+      "name": "dependency-sync",
+      "ok": false,
+      "detail": "InstallError: venv: uv sync exited 1:   `https://files.pythonhosted.org/packages/56/12/386d8c6bf0448c43674e24d6194c3b57d62e5361e90bca3d58108819ad32/cdp_use-1.4.5-py3-none-any.whl`\n  \u251c\u2500\u25b6 error sending request for url\n  \u2502   (https://files.pythonhosted.org/packages/56/12/386d8c6bf0448c43674e24d6194c3b57d62e5361e90bca3d58108819ad32/cdp_use-1.4.5-py3-none-any.whl)\n  \u251c\u2500\u25b6 client error (Connect)\n  \u251c\u2500\u25b6 dns error\n  \u2570\u2500\u25b6 failed to lookup address information: nodename nor servname provided, or\n      not known\n\nhint: `cdp-use` (v1.4.5) was included because `hermes-agent` (v0.0.0) depends on `browser-harness` (v0.1.13) which depends on `cdp-use` \u2014 retry, or run `hermes pm doctor`",
+      "at": "2026-09-29T02:36:05.893739+00:00"
+    }
+  ],
+  "pm_exit_code": 1,
+  "pm_sync_outcome": "failed"
+}

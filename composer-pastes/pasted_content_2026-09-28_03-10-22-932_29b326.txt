@@ -1,0 +1,100 @@
+SPR-2.254#show ip sla configuration
+IP SLAs Infrastructure Engine-III
+Entry number: 10
+Owner:
+Tag:
+Operation timeout (milliseconds): 3000
+Type of operation to perform: icmp-echo
+Target address/Source interface: 10.140.2.254/Vlan702
+Type Of Service parameter: 0x0
+Request size (ARR data portion): 28
+Data pattern: 0xABCDABCD
+Verify data: No
+Vrf Name:
+Do not fragment: No
+Schedule:
+   Operation frequency (seconds): 5  (not considered if randomly scheduled)
+   Next Scheduled Start Time: Pending trigger
+   Group Scheduled : FALSE
+   Randomly Scheduled : FALSE
+   Life (seconds): 3600
+   Entry Ageout (seconds): never
+   Recurring (Starting Everyday): FALSE
+   Status of entry (SNMP RowStatus): notInService
+Threshold (milliseconds): 2000
+Distribution Statistics:
+   Number of statistic hours kept: 2
+   Number of statistic distribution buckets kept: 1
+   Statistic distribution interval (milliseconds): 20
+Enhanced History:
+History Statistics:
+   Number of history Lives kept: 0
+   Number of history Buckets kept: 15
+   History Filter Type: None
+
+Entry number: 11
+Owner:
+Tag:
+Operation timeout (milliseconds): 3000
+Type of operation to perform: icmp-echo
+Target address/Source interface: 10.100.0.145/Vlan702
+Type Of Service parameter: 0x0
+Request size (ARR data portion): 28
+Data pattern: 0xABCDABCD
+Verify data: No
+Vrf Name:
+Do not fragment: No
+Schedule:
+   Operation frequency (seconds): 5  (not considered if randomly scheduled)
+   Next Scheduled Start Time: Start Time already passed
+   Group Scheduled : FALSE
+   Randomly Scheduled : FALSE
+   Life (seconds): Forever
+   Entry Ageout (seconds): never
+   Recurring (Starting Everyday): FALSE
+   Status of entry (SNMP RowStatus): Active
+Threshold (milliseconds): 2000
+Distribution Statistics:
+   Number of statistic hours kept: 2
+   Number of statistic distribution buckets kept: 1
+   Statistic distribution interval (milliseconds): 20
+Enhanced History:
+History Statistics:
+   Number of history Lives kept: 0
+   Number of history Buckets kept: 15
+   History Filter Type: None
+
+Entry number: 12
+Owner:
+Tag:
+Operation timeout (milliseconds): 3000
+Type of operation to perform: icmp-echo
+Target address/Source address: 10.100.0.145/10.100.0.146
+Type Of Service parameter: 0x0
+Request size (ARR data portion): 28
+Data pattern: 0xABCDABCD
+Verify data: No
+Vrf Name:
+Do not fragment: No
+Schedule:
+   Operation frequency (seconds): 5  (not considered if randomly scheduled)
+   Next Scheduled Start Time: Start Time already passed
+   Group Scheduled : FALSE
+   Randomly Scheduled : FALSE
+   Life (seconds): Forever
+   Entry Ageout (seconds): never
+   Recurring (Starting Everyday): FALSE
+   Status of entry (SNMP RowStatus): Active
+Threshold (milliseconds): 2000
+Distribution Statistics:
+   Number of statistic hours kept: 2
+   Number of statistic distribution buckets kept: 1
+   Statistic distribution interval (milliseconds): 20
+Enhanced History:
+History Statistics:
+   Number of history Lives kept: 0
+   Number of history Buckets kept: 15
+   History Filter Type: None
+
+
+SPR-2.254#

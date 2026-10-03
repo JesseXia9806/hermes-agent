@@ -1,0 +1,378 @@
+- generic
+  - generic
+    - link "NPC Seal" [ref=e38]
+      - image "NPC Seal"
+    - StaticText "We use cookies to ensure you get the best browsing experience. By continued use, you agree to our privacy policy and accept our use of such cookies. For further information, click FIND OUT MORE."
+    - generic
+      - link "I AGREE" [ref=e39]
+      - link "FIND OUT MORE" [ref=e40]
+  - banner
+    - navigation
+      - generic
+        - generic
+          - link "GMA Logo" [ref=e130]
+            - image "GMA Logo"
+          - link "News" [ref=e131]
+        - generic
+          - list
+            - listitem [level=1]
+              - link "" [ref=e135]
+            - listitem [level=1]
+              - link "" [ref=e136]
+            - listitem [level=1]
+              - link "" [ref=e137]
+            - listitem [level=1]
+              - link "" [ref=e138]
+            - listitem [level=1]
+              - link "" [ref=e139]
+            - listitem [level=1]
+              - link "" [ref=e140]
+          - generic [ref=e118] clickable [cursor:pointer]
+            - StaticText ""
+          - generic [ref=e119] clickable [cursor:pointer]
+            - StaticText ""
+  - link "Sara Duterte Impeached: The Vice President on Trial" [ref=e2]
+  - generic
+    - generic
+      - StaticText "ADVERTISEMENT"
+      - Iframe "Advertisement" [ref=e120] focusable [tabindex]
+        - generic
+          - generic
+            - link [ref=e143]
+            - button [ref=e144]
+    - link "GMA News Online LATEST NEWS FROM THE PHILIPPINES AND AROUND THE WORLD" [ref=e3]
+      - image "GMA News Online"
+      - heading "LATEST NEWS FROM THE PHILIPPINES AND AROUND THE WORLD" [level=1, ref=e16]
+        - StaticText "LATEST NEWS FROM THE PHILIPPINES AND AROUND THE WORLD"
+    - link "Balitambayan" [ref=e4]
+      - image "Balitambayan"
+    - generic
+      - generic [ref=e17] clickable [cursor:pointer]
+        - heading "JUST IN" [level=2, ref=e41]
+        - button "Expand Just In" [expanded=false, ref=e42]
+          - StaticText "7 more"
+      - link "Virology Institute to boost PH immunization self-reliance —DOH chief 4m ago" [ref=e43]
+        - StaticText "Virology Institute to boost PH immunization self-reliance —DOH chief"
+        - StaticText "4m ago"
+      - link "Shuvee Etrata saddened by her character Tonet's death in 'The Master Cutter' 15m ago" [ref=e44]
+        - StaticText "Shuvee Etrata saddened by her character Tonet's death in 'The Master Cutter'"
+        - StaticText "15m ago"
+      - link "Peptides na nakakabawas ng timbang, ligtas bang gamitin at ano ang ginagawa sa katawan? 16m ago" [ref=e45]
+        - StaticText "Peptides na nakakabawas ng timbang, ligtas bang gamitin at ano ang ginagawa sa katawan?"
+        - StaticText "16m ago"
+      - link "Employers must pay wage hike before TRO, DOLE says 16m ago" [ref=e46]
+        - StaticText "Employers must pay wage hike before TRO, DOLE says"
+        - StaticText "16m ago"
+      - link "EXPLAINER: Why is the Philippines turning to nuclear energy? 18m ago" [ref=e47]
+        - StaticText "EXPLAINER: Why is the Philippines turning to nuclear energy?"
+        - StaticText "18m ago"
+      - link "PBA: RJ Abarrientos, Riley Grigsby power Barangay Ginebra past undermanned Meralco 21m ago" [ref=e48]
+        - StaticText "PBA: RJ Abarrientos, Riley Grigsby power Barangay Ginebra past undermanned Meralco"
+        - StaticText "21m ago"
+      - link "PH eagle Lakpue drinking from river in Leyte sign of successful adaptation to wild 38m ago" [ref=e49]
+        - StaticText "PH eagle Lakpue drinking from river in Leyte sign of successful adaptation to wild"
+        - StaticText "38m ago"
+      - link "DPWH's Dizon says Davao flood response takes priority amid calls for accountability 45m ago" [ref=e50]
+        - StaticText "DPWH's Dizon says Davao flood response takes priority amid calls for accountability"
+        - StaticText "45m ago"
+    - list
+      - listitem [level=1]
+        - link "News" [ref=e51]
+      - listitem [level=1]
+        - link "Showbiz" [ref=e52]
+      - listitem [level=1]
+        - link "24 Oras" [ref=e53]
+      - listitem [level=1]
+        - link "Lifestyle" [ref=e54]
+      - listitem [level=1]
+        - link "Sports" [ref=e55]
+      - listitem [level=1]
+        - link "Money" [ref=e56]
+      - listitem [level=1]
+        - link "Pinoy Abroad" [ref=e57]
+      - listitem [level=1]
+        - link "Weather" [ref=e58]
+      - listitem [level=1]
+        - link "Serbisyo Publiko" [ref=e59]
+      - listitem [level=1]
+        - link "Video" [ref=e60]
+      - listitem [level=1]
+        - link "Explainers" [ref=e61]
+      - listitem [level=1]
+        - link "DigiPlay" [ref=e62]
+      - listitem [level=1]
+        - link "More" [ref=e63]
+          - StaticText "More"
+          - StaticText ""
+    - generic
+      - link "Bong Revilla posts P1-M bail, walks free Bong Revilla posts P1-M bail, walks free By LLANESCA T. PANTI, GMA News" [ref=e5]
+        - generic
+          - image "Bong Revilla posts P1-M bail, walks free"
+          - generic
+            - heading "Bong Revilla posts P1-M bail, walks free" [level=2, ref=e121]
+            - StaticText "By LLANESCA T. PANTI, GMA News"
+      - link "Ombudsman files charges" [ref=e18]
+        - StaticText "Ombudsman files charges"
+        - separator
+      - link "Bail petition" [ref=e19]
+        - StaticText "Bail petition"
+        - separator
+      - link "Granted" [ref=e20]
+        - StaticText "Granted"
+        - separator
+      - link "Palace respects decision" [ref=e21]
+        - StaticText "Palace respects decision"
+        - separator
+      - link "Loren Legarda, Leandro Leviste under Ombudsman probe over alleged plunder, graft Loren Legarda, Leandro Leviste under Ombudsman probe over alleged plunder, graft" [ref=e6]
+        - image "Loren Legarda, Leandro Leviste under Ombudsman probe over alleged plunder, graft "
+        - heading "Loren Legarda, Leandro Leviste under Ombudsman probe over alleged plunder, graft" [level=3, ref=e22]
+      - link "Alden Richards, Barbie Forteza among top taxpayers of BIR Alden Richards, Barbie Forteza among top taxpayers of BIR" [ref=e7]
+        - image "Alden Richards, Barbie Forteza among top taxpayers of BIR "
+        - heading "Alden Richards, Barbie Forteza among top taxpayers of BIR" [level=3, ref=e23]
+    - generic
+      - heading "TOP NEWS" [level=2, ref=e8]
+      - generic
+        - link "NBI to summon Leandro Leviste, Jing Paras over alleged plot to frame Ralph Recto NBI to summon Leandro Leviste, Jing Paras over alleged plot to frame Ralph Recto" [ref=e24]
+          - image "NBI to summon Leandro Leviste, Jing Paras over alleged plot to frame Ralph Recto"
+          - heading "NBI to summon Leandro Leviste, Jing Paras over alleged plot to frame Ralph Recto" [level=3, ref=e64]
+        - link "Chel Diokno on Pasig TRO vs. P85 wage hike: Courts can't stop wage orders Chel Diokno on Pasig TRO vs. P85 wage hike: Courts can't stop wage orders" [ref=e25]
+          - image "Chel Diokno on Pasig TRO vs. P85 wage hike: Courts can't stop wage orders"
+          - heading "Chel Diokno on Pasig TRO vs. P85 wage hike: Courts can't stop wage orders" [level=3, ref=e65]
+        - link "Ombudsman to file malversation complaints vs. CWS Rep. Edwin Gardiola Ombudsman to file malversation complaints vs. CWS Rep. Edwin Gardiola" [ref=e26]
+          - image "Ombudsman to file malversation complaints vs. CWS Rep. Edwin Gardiola"
+          - heading "Ombudsman to file malversation complaints vs. CWS Rep. Edwin Gardiola" [level=3, ref=e66]
+        - link "DepEd rolls out life skills micro-certification for ALS learners DepEd rolls out life skills micro-certification for ALS learners" [ref=e27]
+          - image "DepEd rolls out life skills micro-certification for ALS learners"
+          - heading "DepEd rolls out life skills micro-certification for ALS learners" [level=3, ref=e67]
+        - link "DOTr: 105 expropriation cases filed to resolve NSCR right-of-way issues DOTr: 105 expropriation cases filed to resolve NSCR right-of-way issues" [ref=e28]
+          - image "DOTr: 105 expropriation cases filed to resolve NSCR right-of-way issues"
+          - heading "DOTr: 105 expropriation cases filed to resolve NSCR right-of-way issues" [level=3, ref=e68]
+        - link "Fuel prices seen to soar anew if Red Sea blocked &mdash; DOE exec Fuel prices seen to soar anew if Red Sea blocked — DOE exec" [ref=e29]
+          - image "Fuel prices seen to soar anew if Red Sea blocked &mdash; DOE exec"
+          - heading "Fuel prices seen to soar anew if Red Sea blocked — DOE exec" [level=3, ref=e69]
+    - generic
+      - heading "PODCAST" [level=2, ref=e9]
+      - StaticText "LISTEN TO:"
+      - link "24 Oras Podcast: Senate convenes as impeachment court, DOJ recommends charges vs. Sen. Estrada" [ref=e10]
+        - paragraph
+          - StaticText "24 Oras Podcast: Senate convenes as impeachment court, DOJ recommends charges vs. Sen. Estrada"
+      - link "Play Button" [ref=e30]
+        - image "Play Button"
+      - StaticText "02:45 PM"
+      - StaticText "UP NEXT:"
+      - link "24 Oras Weekend Podcast: Magnitude 5.0 quake in Mindanao, OSG asks SC to deny Sen. Dela Rosa's petit" [ref=e11]
+        - paragraph
+          - StaticText "24 Oras Weekend Podcast: Magnitude 5.0 quake in Mindanao, OSG asks SC to deny Sen. Dela Rosa's petit"
+      - StaticText "02:45 PM"
+    - generic
+      - generic
+        - heading "WATCH LIVE" [level=2, ref=e70]
+          - StaticText "WATCH"
+          - StaticText "LIVE"
+        - generic
+          - generic [ref=e133] clickable [cursor:pointer]
+            - image "Saksi"
+            - Iframe "YouTube video player" [ref=e141]
+          - StaticText "Saksi"
+          - generic [ref=e134] clickable [cursor:pointer]
+            - image "State of the Nation"
+            - button "Play State of the Nation" [ref=e142]
+          - StaticText "State of the Nation"
+        - generic
+          - button [ref=e71]
+          - button [ref=e72]
+      - generic
+        - StaticText "ADVERTISEMENT"
+        - Iframe "Advertisement" [ref=e132] focusable [tabindex]
+          - generic
+            - generic
+              - link [ref=e145]
+              - button [ref=e146]
+        - image "GMA News Online"
+  - generic
+    - paragraph
+      - StaticText "LATEST VIDEOS"
+    - generic
+    - generic
+    - link "SEE MORE VIDEOS" [ref=e31]
+  - generic
+    - paragraph
+      - StaticText "LATEST PHOTOS"
+    - generic
+    - generic
+    - generic
+    - link "SEE MORE PHOTOS" [ref=e32]
+  - generic
+    - generic
+      - heading "TRENDING" [level=2, ref=e33]
+      - generic
+      - generic
+    - generic
+      - heading "STORIES WE'RE TRACKING" [level=2, ref=e34]
+      - generic
+        - generic
+        - generic
+    - generic
+      - heading "BRANDTALK" [level=2, ref=e35]
+      - generic
+      - link "SEE MORE ARTICLES" [ref=e73]
+    - generic
+      - generic
+        - heading "EXAM RESULTS" [level=2, ref=e74]
+        - generic
+        - link "SEE MORE RESULTS" [ref=e122]
+      - generic
+        - StaticText "ADVERTISEMENT"
+      - generic
+        - heading "LOTTO RESULTS" [level=2, ref=e75]
+        - generic
+          - link "Super Lotto 6/49 ( July 30 ) 36 25 44 02 47 01" [ref=e123]
+          - link "Lotto 6/42 ( July 30 ) 26 17 23 39 15 38" [ref=e124]
+          - link "6D Lotto ( July 30 ) 0 9 5 7 6 1" [ref=e125]
+          - link "Swertres 9PM ( July 30 ) 2 6 0" [ref=e126]
+          - link "Swertres 5PM ( July 30 ) 2 0 9" [ref=e127]
+          - link "Swertres 2PM ( July 30 ) 9 6 5" [ref=e128]
+        - link "SEE MORE RESULTS" [ref=e129]
+  - generic
+    - image "GNO Newsletter Logo"
+    - link "×" [ref=e36]
+    - paragraph
+      - StaticText "Need a wellness break? Sign up for The Boost!"
+    - paragraph
+      - StaticText "Stay up-to-date with the latest health and wellness reads."
+    - textbox "Your Email" [ref=e37]
+    - button "Sign Up" [disabled, ref=e12]
+    - paragraph
+      - StaticText "Your email is safe with us"
+  - generic [ref=e1] clickable [onclick]
+    - generic [ref=e13] clickable [cursor:pointer]
+      - StaticText "Listen to"
+      - image "DZBB Radio Thumbnail"
+  - StaticText "ADVERTISEMENT"
+  - generic
+    - heading "AT A GLANCE" [level=2, ref=e14]
+    - generic
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+      - heading [level=4]
+      - heading [level=3]
+  - StaticText "ADVERTISEMENT"
+  - sectionfooter
+    - image "GMA News Online"
+    - generic
+      - StaticText "All Rights Reserved 2026"
+      - LineBreak "\n"
+      - StaticText "© GMA Network Inc."
+    - StaticText "About GMA News Online"
+    - list
+      - listitem [level=1]
+        - link "About Us" [ref=e76]
+      - listitem [level=1]
+        - link "Contact Us" [ref=e77]
+      - listitem [level=1]
+        - link "Advertise with Us" [ref=e78]
+      - listitem [level=1]
+        - link "Careers" [ref=e79]
+      - listitem [level=1]
+        - link "Privacy Notice" [ref=e80]
+      - listitem [level=1]
+        - link "URL Policy" [ref=e81]
+      - listitem [level=1]
+        - link "AI Policy" [ref=e82]
+      - listitem [level=1]
+        - link "User Policy" [ref=e83]
+    - StaticText "On TV"
+    - list
+      - listitem [level=1]
+        - link "GMA-7 Shows" [ref=e84]
+      - listitem [level=1]
+        - link "GMA News TV Shows" [ref=e85]
+      - listitem [level=1]
+        - link "TV Schedule" [ref=e86]
+    - StaticText "News"
+    - list
+      - listitem [level=1]
+        - link "News" [ref=e87]
+      - listitem [level=1]
+        - link "Money" [ref=e88]
+      - listitem [level=1]
+        - link "Sports" [ref=e89]
+      - listitem [level=1]
+        - link "Pinoy Abroad" [ref=e90]
+      - listitem [level=1]
+        - link "Weather" [ref=e91]
+      - listitem [level=1]
+        - link "SciTech" [ref=e92]
+      - listitem [level=1]
+        - link "Showbiz" [ref=e93]
+      - listitem [level=1]
+        - link "Lifestyle" [ref=e94]
+      - listitem [level=1]
+        - link "Serbisyo Publiko" [ref=e95]
+      - listitem [level=1]
+        - link "Community Bulletin Board" [ref=e96]
+      - listitem [level=1]
+        - link "Tracking" [ref=e97]
+      - listitem [level=1]
+        - link "Cover Stories" [ref=e98]
+      - listitem [level=1]
+        - link "Eleksyon 2025" [ref=e99]
+    - StaticText "Multimedia"
+    - list
+      - listitem [level=1]
+        - link "Videos" [ref=e100]
+      - listitem [level=1]
+        - link "Photos" [ref=e101]
+      - listitem [level=1]
+        - link "Radio -- DZBB" [ref=e102]
+    - StaticText "Stay Connected"
+    - list
+      - listitem [level=1]
+        - link "RSS Feed" [ref=e103]
+      - listitem [level=1]
+        - link "Mobile" [ref=e104]
+      - listitem [level=1]
+        - link "Social Media Center" [ref=e105]
+    - StaticText "Tools"
+    - list
+      - listitem [level=1]
+        - link "Search" [ref=e106]
+      - listitem [level=1]
+        - link "Stories" [ref=e107]
+    - StaticText "GMANetwork.com"
+    - list
+      - listitem [level=1]
+        - link "Entertainment" [ref=e108]
+      - listitem [level=1]
+        - link "Artist Center" [ref=e109]
+      - listitem [level=1]
+        - link "Community" [ref=e110]
+      - listitem [level=1]
+        - link "International" [ref=e111]
+      - listitem [level=1]
+        - link "Radio" [ref=e112]
+      - listitem [level=1]
+        - link "Pictures" [ref=e113]
+      - listitem [level=1]
+        - link "Music" [ref=e114]
+      - listitem [level=1]
+        - link "Kapuso Foundation" [ref=e115]
+      - listitem [level=1]
+        - link "Corporate" [ref=e116]
+      - listitem [level=1]
+        - link "Regional TV" [ref=e117]
+  - link [ref=e15]

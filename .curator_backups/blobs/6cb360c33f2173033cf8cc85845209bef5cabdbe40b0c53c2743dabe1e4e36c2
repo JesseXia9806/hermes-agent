@@ -1,0 +1,59 @@
+---
+name: equipment-procurement
+description: "IT equipment procurement workflow: structured requirements gathering → purchase requisition document generation. Covers replacement, expansion, and new-build scenarios."
+metadata:
+  hermes:
+    tags: [productivity, procurement, purchasing, IT-management, documents]
+    related_skills: [grill-me, grilling, powerpoint]
+---
+
+# Equipment Procurement (Purchase Requisition)
+
+## When to Use
+User asks to create or draft a purchase requisition / 请购单 / PO for IT equipment such as switches, servers, workstations, UPS, storage, or network gear.
+
+## Workflow
+
+### Phase 1: Requirements Gathering (use `grill-me` / `grilling` style)
+
+Ask ONE question at a time, provide a recommended answer. Cover in order:
+
+| # | Question | Purpose |
+|---|----------|---------|
+| 1 | **Scenario** — New office build? Fire/accident replacement? Routine replenishment? Headcount expansion? | Determines whether to merge into one PR or split across budget lines |
+| 2 | **Specs / Model** — Already decided? Same model replacement? Need recommendation? | Determines level of research needed |
+| 3 | **Budget / Approval path** — Pre-approved annual budget? Insurance claim? Emergency fund? | Determines payment terms, routing, and whether to note claim # |
+| 4 | **Template / System** — OA/ERP form? Excel template? Word template? Free-form draft? | Determines output format |
+| 5 | **Pricing** — Has vendor quote? Framework agreement price? Need estimation? | Determines whether to fill exact amounts or estimates |
+| 6 | **Location** — Specific room/rack/cabinet number | Important for deployment planning |
+| 7 | **Timeline** — Expected delivery window, is it urgent | Affects procurement method (rush vs standard) |
+| 8 | **Vendor** — Known vendor? Framework supplier? | Affects supplier field in the form |
+| 9 | **OA system name** — 泛微? 钉钉? 金蝶? 用友? Manual form? | Determines layout and field mapping for fill-in checklist |
+
+### Phase 2: Document Generation
+
+- **Word (DOCX)**: Use `python-docx` (install with `uv pip install --system python-docx` if missing). Generate a proper document with:
+  - Title
+  - Info table (applicant, department, cost center, vendor, reason, timeline, location)
+  - Itemised table (model, qty, unit price, subtotal)
+  - Total row
+  - Remarks / notes
+  - Approval chain table (sign-off slots)
+- **OA form guide**: Always output a separate check-list table matching the OA form fields so the user can copy-paste into the system.
+- **Output location**: Save to `~/Desktop/设备请购单_<项目名称>.docx` by default.
+
+### Phase 3: Verification
+
+Open with the user: "Open the desktop file and verify the quantities and prices match your quote."
+
+## Pitfalls
+
+- **Missing quote #**: Remind user to get the vendor quote number and attach it. Flag it clearly in the checklist.
+- **Insurance overlap**: If fire/accident replacement, note that the requisition invoice should be kept for insurance claim reimbursement.
+- **PEP 668 / venv**: When installing python-docx, prefer `uv pip install --system` or create a temp venv — the system python may refuse `pip install` directly.
+- **Single vs split PR**: If total exceeds the company's single-PR approval threshold, proactively suggest splitting by item or location.
+- **Lead time**: Ask if 30 days is realistic — some Cisco gear (non-stock models) may have 45-60 day lead times.
+
+## Templates
+
+A basic python-docx skeleton is available at `templates/pr_docx_generator.py`. Copy and customise quantities, prices, model strings, and notes for each new requisition.

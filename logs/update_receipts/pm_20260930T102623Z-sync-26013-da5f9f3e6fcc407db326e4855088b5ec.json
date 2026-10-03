@@ -1,0 +1,36 @@
+{
+  "exit_code": 1,
+  "feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "finished_at": "2026-09-30T10:26:23.106070+00:00",
+  "kind": "sync",
+  "outcome": "failed",
+  "platform": null,
+  "refusal": null,
+  "schema": 1,
+  "started_at": "2026-09-30T10:26:11.121803+00:00",
+  "steps": [
+    {
+      "at": "2026-09-30T10:26:23.106010+00:00",
+      "detail": "InstallError: venv: uv sync exited 1:    `https://files.pythonhosted.org/packages/2b/72/d789ca7867b3c2e1cd243f6bd7b1ee7fd14165ab0eac95d21cd630602817/nemo_relay-0.9.3-cp311-abi3-macosx_11_0_arm64.whl`\n  \u251c\u2500\u25b6 error sending request for url\n  \u2502   (https://files.pythonhosted.org/packages/2b/72/d789ca7867b3c2e1cd243f6bd7b1ee7fd14165ab0eac95d21cd630602817/nemo_relay-0.9.3-cp311-abi3-macosx_11_0_arm64.whl)\n  \u251c\u2500\u25b6 client error (Connect)\n  \u251c\u2500\u25b6 dns error\n  \u2570\u2500\u25b6 failed to lookup address information: nodename nor servname provided, or\n      not known\n\nhint: `nemo-relay` (v0.9.3) was included because `hermes-agent` (v0.0.0) depends on `nemo-relay` \u2014 retry, or run `hermes pm doctor`",
+      "name": "dependency-sync",
+      "ok": false
+    }
+  ],
+  "update_id": null,
+  "venv_rebuild": null,
+  "warnings": []
+}

@@ -1,0 +1,298 @@
+# 标题: 基于 CentOS 9 部署 Hermes Agent (含 macOS 远程直连与 Nginx 代理) 从零到一标准操作程序
+
+**日期:** 2026-09-29
+
+**版本:** V4.0 (最终验证版)
+
+**系统范围:** CentOS 9 Stream, Docker Compose, Nginx, SELinux, Firewalld
+
+**关键词标签:** IT运维, Hermes Agent, Nginx 反向代理, macOS 远程调试, DeepSeek, 零信任, SOP, 故障修复汇总
+
+  
+
+## 0. 实施前信息确认与环境约束
+
+_(已知事实、合理推测与待确认信息)_
+
+  
+
+- **已知事实:**
+    
+      
+    1. 目标系统为 CentOS 9，启用 SELinux (Enforcing) 与 Firewalld。
+        
+          
+        
+    2. 后端采用 Docker 容器化运行 Hermes Agent (`nousresearch/hermes-agent:latest`)，通过注入 `env_file` 激活 API 网关与 Web 面板双进程。
+        
+          
+        
+    3. 外部流量统一由 Nginx 承接：80 端口代理 Dashboard (9119)，8642 端口代理 API (18642)，实现端口复用与安全管控。
+        
+          
+        
+- **合理推测:** 业务场景要求 Agent 容器内部必须具备出网能力，以便下载技能库 (Skills) 和调用外部大模型 (DeepSeek API)。
+    
+      
+    
+- **建议:** 配置文件中的密码如包含特殊字符 (如 `#`)，必须使用双引号包裹，防止被底层 Shell 解析为注释截断。
+    
+      
+    
+
+## 1. 业务影响、风险与前置条件
+
+|**评估项**|**详细说明**|
+|---|---|
+|**业务影响**|纯新增旁路辅助系统，容器化资源隔离，对企业现有生产/办公网络无直接影响。|
+|**前置条件**|1. 拥有 CentOS 9 root 权限。<br><br>  <br>  <br><br>2. 服务器已通公网。<br><br>  <br>  <br><br>3. 已准备好合法的 DeepSeek API Key。|
+|**风险评估**|**低**。变更集中在 `/opt/hermes` 及 Nginx 配置，系统级修改仅限必要的安全策略放行。|
+|**停止条件**|任意组件 (Docker/Nginx) 安装时遭遇严重的底层依赖冲突，或外网 API 解析失败。|
+
+## 2. 标准操作步骤 (SOP)
+
+### 2.1 系统级网络与安全基线调优
+
+**用途:** 配置系统 IPv4 转发、防火墙 NAT 伪装 (保障容器出网)，并调整 SELinux 策略允许 Nginx 监听非标端口及发起内网反向代理。
+
+**预期结果:** 策略永久生效，防火墙重载成功。
+
+  
+
+Bash
+
+```
+# 1. 开启系统 IPv4 转发
+echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.d/99-docker-ip_forward.conf
+sudo sysctl -p /etc/sysctl.d/99-docker-ip_forward.conf
+
+# 2. Firewalld 放行规则与 IP 伪装 (NAT)
+sudo firewall-cmd --permanent --add-masquerade
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-port=8642/tcp
+sudo firewall-cmd --reload
+
+# 3. SELinux 策略调整 (关键步骤)
+# 安装 SELinux 管理工具
+sudo dnf install -y policycoreutils-python-utils
+# 允许 Nginx 发起反向代理连接
+sudo setsebool -P httpd_can_network_connect 1
+# 允许 Nginx 监听 8642 非标端口
+sudo semanage port -a -t http_port_t -p tcp 8642
+```
+
+### 2.2 Docker 引擎安装与数据目录初始化
+
+**用途:** 准备容器运行环境。
+
+  
+
+Bash
+
+```
+# 1. 安装 Docker CE 与 Compose 插件
+sudo dnf install -y dnf-plugins-core epel-release
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl enable --now docker
+
+# 2. 创建持久化数据挂载点并生成安全密钥
+sudo mkdir -p /opt/hermes/{data,logs}
+# 生成用于 Dashboard 的 64 位认证密钥 (请复制备用)
+openssl rand -hex 32
+```
+
+### 2.3 核心环境变量配置 (.env)
+
+**用途:** 注入 DeepSeek API 与面板鉴权信息。
+
+  
+
+Bash
+
+```
+sudo vi /opt/hermes/.env
+```
+
+**配置文件内容:** (按需替换 Key 与密码)
+
+  
+
+Ini, TOML
+
+```
+HERMES_HOME=/opt/data
+HERMES_LOG_LEVEL=info
+TZ=Asia/Shanghai
+
+# --- DeepSeek 模型配置 ---
+OPENAI_API_KEY=sk-your-deepseek-api-key-here
+OPENAI_BASE_URL=https://api.deepseek.com/v1
+DEFAULT_MODEL=deepseek-chat
+
+# --- Dashboard 鉴权 (带特殊字符的密码必须加双引号) ---
+HERMES_DASHBOARD=1
+HERMES_DASHBOARD_BASIC_AUTH_USERNAME=admin
+HERMES_DASHBOARD_BASIC_AUTH_PASSWORD="YourStrongPassword#123"
+HERMES_DASHBOARD_BASIC_AUTH_SECRET=此处粘贴步骤2.2生成的64位字符串
+```
+
+### 2.4 容器编排配置 (docker-compose.yml)
+
+**用途:** 定义进程启动逻辑、端口防冲突映射及 TTY 存活策略。
+
+  
+
+Bash
+
+```
+sudo vi /opt/hermes/docker-compose.yml
+```
+
+**配置文件内容:**
+
+  
+
+YAML
+
+```
+services:
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-agent
+    restart: unless-stopped
+    # 显式注入环境变量文件，确保 s6-supervisor 能读取到 Dashboard 开启指令
+    env_file:
+      - /opt/hermes/.env
+    # 强制拉起 API Gateway 进程供 macOS 调试使用
+    command: gateway run
+    # 保持伪终端与标准输入开启，防止容器因无交互而自动关机
+    tty: true
+    stdin_open: true
+    ports:
+      # 错开宿主机 8642 端口，让给 Nginx 监听
+      - "127.0.0.1:18642:8642"
+      - "127.0.0.1:9119:9119"
+    volumes:
+      - /opt/hermes/data:/opt/data
+      - /opt/hermes/.env:/opt/data/.env:ro
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+```
+
+### 2.5 Nginx 反向代理配置
+
+**用途:** 接收外部流量并分类路由至容器内部对应的端口。
+
+  
+
+Bash
+
+```
+# 1. 安装 Nginx
+sudo dnf install -y nginx
+
+# 2. 编写独立站点代理配置
+sudo vi /etc/nginx/conf.d/hermes.conf
+```
+
+**配置文件内容:**
+
+  
+
+Nginx
+
+```
+# 1. 代理 Web Dashboard (浏览器访问 80)
+server {
+    listen 80;
+    server_name hermes_agent; 
+
+    location / {
+        proxy_pass http://127.0.0.1:9119;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+
+# 2. 代理 API 端点 (macOS Desktop 直连 8642)
+server {
+    listen 8642;
+    server_name hermes_agent;
+
+    location / {
+        # 转发至修改后的容器映射端口 18642
+        proxy_pass http://127.0.0.1:18642;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        
+        client_max_body_size 50M; 
+    }
+}
+```
+
+### 2.6 服务联合拉起
+
+Bash
+
+```
+# 1. 拉起 Docker 容器
+cd /opt/hermes
+sudo docker compose up -d
+
+# 2. 验证 Nginx 配置并启动
+sudo nginx -t
+sudo systemctl enable --now nginx
+
+# 3. 本地探针验证
+# 预期返回 HTTP/1.1 302 Found (代表面板存活并重定向至登录页)
+curl -I http://127.0.0.1:9119
+```
+
+## 3. 验证方法与联调指南
+
+- **场景 A (Web 运维管理):**
+    
+    在办公网的浏览器中输入 `http://<CentOS_IP>` (无需输入端口)。系统将自动展示 Hermes 登录界面。输入 `.env` 中设定的账号及包含特殊字符的密码即可登入。
+    
+      
+    
+- **场景 B (macOS 客户端直连调试):**
+    
+    在 macOS 开启 Hermes Desktop App，进入设置/Endpoint 配置模块。将服务器地址修改为 `http://<CentOS_IP>:8642`。发起连接，若能在客户端正常下发指令或浏览技能商店，即证明全链路双向打通，出网与 API 路由功能均正常。
+    
+      
+    
+
+## 4. 回滚方法
+
+若需完全撤销该部署环境，清除所有关联资源：
+
+Bash
+
+```
+# 1. 停止 Nginx 及清理配置
+sudo systemctl disable --now nginx
+sudo rm -f /etc/nginx/conf.d/hermes.conf
+
+# 2. 销毁 Docker 容器及持久化数据
+cd /opt/hermes
+sudo docker compose down
+sudo rm -rf /opt/hermes
+
+# 3. 恢复安全策略与防火墙
+sudo semanage port -d -t http_port_t -p tcp 8642
+sudo firewall-cmd --permanent --remove-masquerade
+sudo firewall-cmd --permanent --remove-service=http
+sudo firewall-cmd --permanent --remove-port=8642/tcp
+sudo firewall-cmd --reload
+```

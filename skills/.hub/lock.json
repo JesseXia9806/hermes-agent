@@ -1,0 +1,423 @@
+{
+  "version": 1,
+  "installed": {
+    "yuanbao": {
+      "source": "official",
+      "identifier": "official/yuanbao",
+      "trust_level": "builtin",
+      "scan_verdict": "safe",
+      "content_hash": "sha256:1f59583ac9c41d86",
+      "install_path": "yuanbao",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {},
+      "scan_provenance": {
+        "bundle_hash": "sha256:1f59583ac9c41d86d0d85f4df63b945ce09786dfac294112b2150e8cc25763fb",
+        "scanner_version": "skills-guard-v8",
+        "source": "official",
+        "source_url": "official/yuanbao",
+        "verdict": "safe",
+        "trust_level": "builtin",
+        "findings": [],
+        "rules": [],
+        "scanned_at": "2026-10-03T01:16:21.650313+00:00",
+        "summary": "yuanbao: clean scan, no threats detected",
+        "fresh": true
+      },
+      "installed_at": "2026-10-03T01:16:21.658380+00:00",
+      "updated_at": "2026-10-03T01:16:21.658380+00:00"
+    },
+    "excalidraw": {
+      "source": "official",
+      "identifier": "official/creative/excalidraw",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:359112274e8262e0",
+      "install_path": "creative/excalidraw",
+      "files": [
+        "SKILL.md",
+        "references/colors.md",
+        "references/dark-mode.md",
+        "references/examples.md",
+        "scripts/upload.py"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-09-15T14:50:34.488082+00:00",
+      "updated_at": "2026-09-15T14:50:34.488082+00:00"
+    },
+    "sketch": {
+      "source": "official",
+      "identifier": "official/creative/sketch",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:bea886ff483216bf",
+      "install_path": "creative/sketch",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-09-15T14:50:34.513369+00:00",
+      "updated_at": "2026-09-15T14:50:34.513369+00:00"
+    },
+    "evaluating-llms-harness": {
+      "source": "official",
+      "identifier": "official/mlops/evaluation/evaluating-llms-harness",
+      "trust_level": "builtin",
+      "scan_verdict": "caution",
+      "content_hash": "sha256:536fdd8406f54b64",
+      "install_path": "mlops/evaluation/evaluating-llms-harness",
+      "files": [
+        "SKILL.md",
+        "references/benchmark-guide.md",
+        "references/api-evaluation.md",
+        "references/distributed-eval.md",
+        "references/custom-tasks.md"
+      ],
+      "metadata": {},
+      "scan_provenance": {
+        "bundle_hash": "sha256:536fdd8406f54b641682c34c79939c65411d6c599c7fa34eaa8ea23700c72668",
+        "scanner_version": "skills-guard-v8",
+        "source": "official",
+        "source_url": "official/mlops/evaluation/evaluating-llms-harness",
+        "verdict": "caution",
+        "trust_level": "builtin",
+        "findings": [
+          {
+            "pattern_id": "python_os_system",
+            "severity": "high",
+            "category": "execution",
+            "file": "SKILL.md",
+            "line": 207,
+            "match": "os.system(f\"./eval_checkpoint.sh checkpoints step-{step}\")",
+            "description": "os.system() — unguarded shell execution"
+          },
+          {
+            "pattern_id": "python_os_system",
+            "severity": "high",
+            "category": "execution",
+            "file": "SKILL.md",
+            "line": 224,
+            "match": "os.system(f\"lm_eval --model hf --model_args pretrained={checkpoint_path} ...\")",
+            "description": "os.system() — unguarded shell execution"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "SKILL.md",
+            "line": 27,
+            "match": "pip install lm-eval",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "SKILL.md",
+            "line": 354,
+            "match": "pip install vllm",
+            "description": "pip install without version pinning"
+          }
+        ],
+        "rules": [
+          "python_os_system",
+          "unpinned_pip_install"
+        ],
+        "scanned_at": "2026-10-03T01:16:22.325779+00:00",
+        "summary": "evaluating-llms-harness: caution — 4 finding(s) in execution, supply_chain",
+        "fresh": true
+      },
+      "installed_at": "2026-10-03T01:16:22.332103+00:00",
+      "updated_at": "2026-10-03T01:16:22.332103+00:00"
+    },
+    "weights-and-biases": {
+      "source": "official",
+      "identifier": "official/mlops/evaluation/weights-and-biases",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:4286e3db3985d52f",
+      "install_path": "mlops/evaluation/weights-and-biases",
+      "files": [
+        "SKILL.md",
+        "references/artifacts.md",
+        "references/integrations.md",
+        "references/sweeps.md"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-09-15T14:50:34.521201+00:00",
+      "updated_at": "2026-09-15T14:50:34.521201+00:00"
+    },
+    "llama-cpp": {
+      "source": "official",
+      "identifier": "official/mlops/inference/llama-cpp",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:43a4ec8fb07acce8",
+      "install_path": "mlops/inference/llama-cpp",
+      "files": [
+        "SKILL.md",
+        "references/advanced-usage.md",
+        "references/hub-discovery.md",
+        "references/optimization.md",
+        "references/quantization.md",
+        "references/server.md",
+        "references/troubleshooting.md"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-09-15T14:50:34.524306+00:00",
+      "updated_at": "2026-09-15T14:50:34.524306+00:00"
+    },
+    "serving-llms-vllm": {
+      "source": "official",
+      "identifier": "official/mlops/inference/serving-llms-vllm",
+      "trust_level": "builtin",
+      "scan_verdict": "caution",
+      "content_hash": "sha256:daa88532b883bc7c",
+      "install_path": "mlops/inference/serving-llms-vllm",
+      "files": [
+        "SKILL.md",
+        "references/server-deployment.md",
+        "references/troubleshooting.md",
+        "references/optimization.md",
+        "references/quantization.md"
+      ],
+      "metadata": {},
+      "scan_provenance": {
+        "bundle_hash": "sha256:daa88532b883bc7cea42d50e8f741b0bd5ff4cbddfaf6624a16e3095d84cf3a1",
+        "scanner_version": "skills-guard-v8",
+        "source": "official",
+        "source_url": "official/mlops/inference/serving-llms-vllm",
+        "verdict": "caution",
+        "trust_level": "builtin",
+        "findings": [
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "SKILL.md",
+            "line": 27,
+            "match": "pip install vllm",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "SKILL.md",
+            "line": 104,
+            "match": "pip install locust",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "references/server-deployment.md",
+            "line": 18,
+            "match": "RUN pip install vllm",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "references/troubleshooting.md",
+            "line": 193,
+            "match": "pip install flash-attn --no-build-isolation",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "sudo_usage",
+            "severity": "high",
+            "category": "privilege_escalation",
+            "file": "references/troubleshooting.md",
+            "line": 222,
+            "match": "sudo ufw allow 8000",
+            "description": "uses sudo (privilege escalation)"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "references/optimization.md",
+            "line": 164,
+            "match": "pip install locust",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "references/quantization.md",
+            "line": 204,
+            "match": "pip install autoawq",
+            "description": "pip install without version pinning"
+          },
+          {
+            "pattern_id": "unpinned_pip_install",
+            "severity": "medium",
+            "category": "supply_chain",
+            "file": "references/quantization.md",
+            "line": 213,
+            "match": "pip install auto-gptq",
+            "description": "pip install without version pinning"
+          }
+        ],
+        "rules": [
+          "sudo_usage",
+          "unpinned_pip_install"
+        ],
+        "scanned_at": "2026-10-03T01:16:22.635874+00:00",
+        "summary": "serving-llms-vllm: caution — 8 finding(s) in privilege_escalation, supply_chain",
+        "fresh": true
+      },
+      "installed_at": "2026-10-03T01:16:22.641358+00:00",
+      "updated_at": "2026-10-03T01:16:22.641358+00:00"
+    },
+    "huggingface-hub": {
+      "source": "official",
+      "identifier": "official/mlops/huggingface-hub",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:55fa8eb6c3b4be8c",
+      "install_path": "mlops/huggingface-hub",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-09-15T14:50:34.528585+00:00",
+      "updated_at": "2026-09-15T14:50:34.528585+00:00"
+    },
+    "openhue": {
+      "source": "official",
+      "identifier": "official/smart-home/openhue",
+      "trust_level": "builtin",
+      "scan_verdict": "safe",
+      "content_hash": "sha256:6b716cd4747e064a",
+      "install_path": "smart-home/openhue",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {},
+      "scan_provenance": {
+        "bundle_hash": "sha256:6b716cd4747e064ad5d679fcb54d95555b99f836c16004dac134bf13abcbed5f",
+        "scanner_version": "skills-guard-v8",
+        "source": "official",
+        "source_url": "official/smart-home/openhue",
+        "verdict": "safe",
+        "trust_level": "builtin",
+        "findings": [],
+        "rules": [],
+        "scanned_at": "2026-10-03T01:16:22.911138+00:00",
+        "summary": "openhue: clean scan, no threats detected",
+        "fresh": true
+      },
+      "installed_at": "2026-10-03T01:16:22.915088+00:00",
+      "updated_at": "2026-10-03T01:16:22.915088+00:00"
+    },
+    "fortianalyzer-ops": {
+      "source": "url",
+      "identifier": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+      "trust_level": "community",
+      "scan_verdict": "safe",
+      "content_hash": "sha256:2865097a4f3b1203",
+      "install_path": "netclaw/fortianalyzer-ops",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+        "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+        "awaiting_name": false
+      },
+      "scan_provenance": {
+        "bundle_hash": "sha256:2865097a4f3b1203d5518648b0722703e82598a7d44bb80bae8a7506efc3ce71",
+        "scanner_version": "skills-guard-v6",
+        "source": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+        "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+        "verdict": "safe",
+        "trust_level": "community",
+        "findings": [],
+        "rules": [],
+        "scanned_at": "2026-09-27T14:12:53.747367+00:00",
+        "summary": "fortianalyzer-ops: clean scan, no threats detected",
+        "fresh": true
+      },
+      "installed_at": "2026-09-27T14:12:57.781454+00:00",
+      "updated_at": "2026-09-27T14:12:57.781454+00:00"
+    },
+    "fortigate-ops": {
+      "source": "url",
+      "identifier": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+      "trust_level": "community",
+      "scan_verdict": "safe",
+      "content_hash": "sha256:9a20b20785ec7272",
+      "install_path": "netclaw/fortigate-ops",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+        "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+        "awaiting_name": false
+      },
+      "scan_provenance": {
+        "bundle_hash": "sha256:9a20b20785ec7272c09e93fcd34b856dcde192f69d07806b02971d3cc3a37484",
+        "scanner_version": "skills-guard-v6",
+        "source": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+        "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+        "verdict": "safe",
+        "trust_level": "community",
+        "findings": [],
+        "rules": [],
+        "scanned_at": "2026-09-27T14:13:33.418913+00:00",
+        "summary": "fortigate-ops: clean scan, no threats detected",
+        "fresh": true
+      },
+      "installed_at": "2026-09-27T14:13:36.575173+00:00",
+      "updated_at": "2026-09-27T14:13:36.575173+00:00"
+    },
+    "pyats-network": {
+      "source": "url",
+      "identifier": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+      "trust_level": "community",
+      "scan_verdict": "safe",
+      "content_hash": "sha256:10eb5b9b0a290b7f",
+      "install_path": "netclaw/pyats-network",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+        "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+        "awaiting_name": false
+      },
+      "scan_provenance": {
+        "bundle_hash": "sha256:10eb5b9b0a290b7f8d844f82efd8b429b24ce276e84b63f38721c8cf4fba1ba0",
+        "scanner_version": "skills-guard-v8",
+        "source": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+        "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+        "verdict": "safe",
+        "trust_level": "community",
+        "findings": [],
+        "rules": [],
+        "scanned_at": "2026-10-03T01:16:23.115796+00:00",
+        "summary": "pyats-network: clean scan, no threats detected",
+        "fresh": true
+      },
+      "installed_at": "2026-10-03T01:16:23.119976+00:00",
+      "updated_at": "2026-10-03T01:16:23.119976+00:00"
+    }
+  }
+}

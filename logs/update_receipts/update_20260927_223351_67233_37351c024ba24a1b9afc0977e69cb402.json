@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-27T14:30:05.957796+00:00",
+  "finished_at": "2026-09-27T14:33:51.520294+00:00",
+  "argv": [
+    "-c",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 66954,
+  "outcome": "success",
+  "pre_update": {
+    "sha": "e5050a040a191579eb9fae9e56fba2445aec1cd8",
+    "short_sha": "e5050a04",
+    "version": "0.21.5",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "8c9fe964009096e46f44292d036c1e0ac33c3026",
+    "short_sha": "8c9fe964",
+    "version": "0.21.5",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260927-143006-pre-update, it=20260927-143006-pre-update",
+      "at": "2026-09-27T14:30:06.385688+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260927-143006-pre-update",
+      "at": "2026-09-27T14:30:06.385731+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {
+    "restarted_services": [
+      "ai.hermes.gateway"
+    ],
+    "relaunched_profiles": [],
+    "externally_supervised_profiles": [],
+    "killed_pids": [],
+    "failed_units": [],
+    "incomplete": false,
+    "phase_error": ""
+  },
+  "fleet": [
+    {
+      "profile": "default",
+      "pid": 69808,
+      "code_sha": "8c9fe964009096e46f44292d036c1e0ac33c3026",
+      "code_version": "0.21.5",
+      "state": "current",
+      "code_root": null,
+      "source": "socket"
+    }
+  ],
+  "update_id": "37351c024ba24a1b9afc0977e69cb402",
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "e5050a040a191579eb9fae9e56fba2445aec1cd8",
+    "expected_version": "0.21.5",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 65668,
+        "supervisor": "launchd",
+        "code_sha": "e5050a040a191579eb9fae9e56fba2445aec1cd8",
+        "code_version": "0.21.5",
+        "restart_via": "launchd",
+        "detail": {}
+      }
+    ]
+  },
+  "runtime_outcomes": [
+    {
+      "kind": "gateway",
+      "profile": "default",
+      "pid": 65668,
+      "mechanism": "launchd",
+      "outcome": "restarted"
+    }
+  ],
+  "pm_venv_rebuild": {
+    "ok": false,
+    "reason": "already in sync"
+  },
+  "pm_feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "pm_steps": [],
+  "pm_exit_code": 0,
+  "pm_sync_outcome": "ok"
+}

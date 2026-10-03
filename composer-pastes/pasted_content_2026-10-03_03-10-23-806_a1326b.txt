@@ -1,0 +1,119 @@
+你好，请帮我在本地完整重建一个用于安全接入 Aruba IAP REST API 的专用知识技能。
+请立刻调用你的工具依次完成以下任务：
+
+1. 请在 ~/.hermes/skills/aruba-iap-inspection/ 目录下创建一个 scripts 子目录。
+2. 使用 write_file 帮我把以下 Python 代码写入 `~/.hermes/skills/aruba-iap-inspection/scripts/rest_query.py`，请注意一字不落：
+
+import json
+import urllib.request
+import urllib.error
+import urllib.parse
+import ssl
+import sys
+
+def get_creds(file_path):
+    with open(file_path, "r") as f:
+        return json.load(f)
+
+def run_aruba_cmd(cmd):
+    creds_path = "/Users/jessexia/.hermes/secrets/aruba_iap.json"
+    try:
+        creds = get_creds(creds_path)
+    except Exception as e:
+        print(f"Error loading credentials: {e}")
+        return
+    
+    ip = creds.get("ip")
+    username = creds.get("username")
+    password = creds.get("password")
+    port = creds.get("port", 4343)
+    
+    base_url = f"https://{ip}:{port}/rest"
+    
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    login_url = f"{base_url}/login"
+    login_data = json.dumps({"user": username, "passwd": password}).encode('utf-8')
+    req = urllib.request.Request(login_url, data=login_data, headers={'Content-Type': 'application/json'})
+    
+    try:
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as response:
+            resp_body = response.read().decode('utf-8')
+            parsed = json.loads(resp_body)
+            if parsed.get("Status") != "Success":
+                print(f"Login failed: {parsed}")
+                return
+            sid = parsed.get("sid")
+    except Exception as e:
+        print(f"Connection or login error: {e}")
+        return
+
+    show_url = f"{base_url}/show-cmd?iap_ip_addr={ip}&cmd={urllib.parse.quote(cmd)}&sid={sid}"
+    req_show = urllib.request.Request(show_url)
+    try:
+        with urllib.request.urlopen(req_show, context=ctx, timeout=10) as response:
+            resp_body = response.read().decode('utf-8')
+            if resp_body.strip().startswith("<"):
+                print("Received XML instead of JSON. The user might not have permissions for this API.")
+                return
+            data = json.loads(resp_body)
+            command_output = data.get("Command output", "")
+            print(f"--- Output for '{cmd}' ---")
+            print(command_output)
+    except Exception as e:
+        print(f"Error executing command: {e}")
+    finally:
+        try:
+            logout_url = f"{base_url}/logout?sid={sid}"
+            req_logout = urllib.request.Request(logout_url, data=b"{}", headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req_logout, context=ctx, timeout=5) as r:
+                pass
+        except:
+            pass
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        cmd = " ".join(sys.argv[1:])
+    else:
+        cmd = "show version"
+    run_aruba_cmd(cmd)
+
+3. 使用 skill_manage 操作，新建名为 `aruba-iap-inspection` 的技能，将以下规则说明设为其内容 (SKILL.md)：
+
+---
+name: aruba-iap-inspection
+description: "Use when inspecting Aruba IAPs via REST API."
+version: 1.0.0
+author: Hermes Curators
+---
+
+# Aruba IAP REST API Inspections
+
+This skill provides the workflow and constraints for securely querying and controlling Aruba Instant Access Points (IAP) via their native REST API, avoiding the fragility of third-party wrappers like `instantpy` that break on CLI formatting changes.
+
+## Procedure
+
+1. **Credentials**: Read IAP IP, username, and password exclusively from `~/.hermes/secrets/aruba_iap.json`. Do not hardcode credentials in scripts or logs.
+2. **Session Authentication (SID)**:
+   - Make a `POST` request to `https://<ip>:4343/rest/login` with JSON body: `{"user": "<username>", "passwd": "<password>"}`.
+   - Extract the `sid` token from the JSON response (`parsed["sid"]`).
+3. **Execute Command**:
+   - Send a `GET` request to `https://<ip>:4343/rest/show-cmd?iap_ip_addr=<ip>&cmd=<URL-encoded-cmd>&sid=<sid>`.
+   - The output is nested inside the `"Command output"` JSON key.
+4. **Logout**:
+   - Make a `POST` request to `https://<ip>:4343/rest/logout?sid=<sid>` to invalidate the session cookie.
+
+## Pitfalls & Rules
+
+* **Require Admin Privileges for `/show-cmd`**: Do NOT use `monitor` or read-only accounts for issuing show commands over REST. Aruba Instant OS rigidly enforces API privileges and will return XML `<error>Invalid opcode for current user</error>` regardless of whether the command is harmless (e.g. `show version`). Only an Admin-level account works.
+* **Avoid Regex for CLI Outputs**: Do NOT rely on regex parsing for unstructured `show-cmd` output. Aruba frequently changes CLI structure between minor releases. 
+* **Handle SSL Appropriately**: Aruba IAPs use self-signed certificates by default. Disable SSL verification but suppress insecure request warnings to keep terminal output clean.
+
+## Associated Scripts
+
+* `scripts/rest_query.py`: A native Python script using `urllib` to handle the SID authentication lifecycle without external dependencies.
+
+
+4. 最后一步，建好全部文件后，帐号/密码按照本地规则处理。

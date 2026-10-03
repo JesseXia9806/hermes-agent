@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-15T15:02:39.020982+00:00",
+  "finished_at": "2026-09-15T15:02:44.925442+00:00",
+  "argv": [
+    "/Users/jessexia/.hermes/hermes-agent/venv/bin/hermes",
+    "update"
+  ],
+  "pid": 34395,
+  "outcome": "success",
+  "pre_update": {
+    "sha": "24fd22b94df040d843eb280ff197a4bcd99a6fc3",
+    "short_sha": "24fd22b9",
+    "version": "0.21.3",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "24fd22b94df040d843eb280ff197a4bcd99a6fc3",
+    "short_sha": "24fd22b9",
+    "version": "0.21.3",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260915-150239-pre-update, it=20260915-150239-pre-update",
+      "at": "2026-09-15T15:02:39.829796+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260915-150239-pre-update",
+      "at": "2026-09-15T15:02:39.829852+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {},
+  "fleet": [],
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "24fd22b94df040d843eb280ff197a4bcd99a6fc3",
+    "expected_version": "0.21.3",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 1722,
+        "supervisor": "launchd",
+        "code_sha": null,
+        "code_version": null,
+        "restart_via": "launchd",
+        "detail": {}
+      }
+    ]
+  },
+  "exit_code": 0,
+  "stop_reason": "completed at command boundary"
+}

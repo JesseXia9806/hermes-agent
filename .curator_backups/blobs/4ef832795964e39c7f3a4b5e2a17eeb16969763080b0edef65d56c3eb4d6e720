@@ -1,0 +1,246 @@
+#!/bin/bash
+# Linux 安全监控脚本
+# 使用方法: bash monitoring.sh [install|start|stop|status]
+
+LOG_FILE="/var/log/security-monitoring.log"
+CONFIG_FILE="/etc/security-monitoring.conf"
+
+# 检查根权限
+check_root() {
+    if [ "$EUID" -ne 0 ]; then
+        echo "请以 root 用户运行此脚本"
+        exit 1
+    fi
+}
+
+# 安装监控服务
+install_monitoring() {
+    echo "安装安全监控服务..."
+    
+    # 创建配置文件
+    cat > "$CONFIG_FILE" << 'EOF'
+# 安全监控配置
+MONITOR_INTERVAL=60
+LOG_FILE="/var/log/security-monitoring.log"
+ALERT_EMAIL="admin@example.com"
+ALERT_THRESHOLD=5
+EOF
+    
+    # 创建监控脚本
+    cat > /usr/local/bin/security-monitor.sh << 'MONITOR'
+#!/bin/bash
+# 安全监控脚本
+
+CONFIG_FILE="/etc/security-monitoring.conf"
+
+# 读取配置
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+fi
+
+# 日志函数
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [$1] $2" >> "$LOG_FILE"
+}
+
+# 检查系统更新
+check_updates() {
+    local updates=0
+    if command -v apt >/dev/null 2>&1; then
+        updates=$(apt list --upgradable 2>/dev/null | grep -c "upgradable")
+    elif command -v dnf >/dev/null 2>&1; then
+        updates=$(dnf check-update 2>/dev/null | grep -c "^\s*[0-9]")
+    fi
+    
+    if [ "$updates" -gt 0 ]; then
+        log "WARNING" "发现 $updates 个可用更新"
+        return 1
+    fi
+    return 0
+}
+
+# 检查 SSH 配置
+check_ssh_config() {
+    local ssh_config="/etc/ssh/sshd_config"
+    local issues=0
+    
+    if [ -f "$ssh_config" ]; then
+        if grep -q "PasswordAuthentication yes" "$ssh_config"; then
+            log "ERROR" "SSH PasswordAuthentication 设置不安全"
+            issues=$((issues + 1))
+        fi
+        
+        if grep -q "PermitRootLogin yes" "$ssh_config"; then
+            log "ERROR" "SSH PermitRootLogin 设置不安全"
+            issues=$((issues + 1))
+        fi
+    fi
+    
+    if [ "$issues" -gt 0 ]; then
+        return 1
+    fi
+    return 0
+}
+
+# 检查网络服务
+check_network_services() {
+    local issues=0
+    
+    # 检查防火墙
+    if command -v ufw >/dev/null 2>&1; then
+        local ufw_status=$(ufw status 2>/dev/null | head -1)
+        if [[ "$ufw_status" != *"Status: active"* ]]; then
+            log "WARNING" "UFW 防火墙未启用"
+            issues=$((issues + 1))
+        fi
+    fi
+    
+    if [ "$issues" -gt 0 ]; then
+        return 1
+    fi
+    return 0
+}
+
+# 检查用户与权限
+check_user_permissions() {
+    local issues=0
+    
+    # 检查 NOPASSWD sudo
+    for sudo_file in /etc/sudoers.d/*; do
+        if [ -f "$sudo_file" ] && grep -q "NOPASSWD" "$sudo_file"; then
+            log "WARNING" "发现 NOPASSWD sudo 配置: $sudo_file"
+            issues=$((issues + 1))
+        fi
+    done
+    
+    if [ "$issues" -gt 0 ]; then
+        return 1
+    fi
+    return 0
+}
+
+# 检查系统日志
+check_system_logs() {
+    local issues=0
+    
+    # 检查 auth 日志
+    if [ -f /var/log/auth.log ]; then
+        local failed_logins=$(grep -c "Failed password" /var/log/auth.log 2>/dev/null || echo 0)
+        if [ "$failed_logins" -gt "${ALERT_THRESHOLD:-5}" ]; then
+            log "WARNING" "发现 $failed_logins 次失败登录尝试"
+            issues=$((issues + 1))
+        fi
+    fi
+    
+    if [ "$issues" -gt 0 ]; then
+        return 1
+    fi
+    return 0
+}
+
+# 主监控函数
+monitor() {
+    log "INFO" "开始安全监控"
+    
+    check_updates
+    check_ssh_config
+    check_network_services
+    check_user_permissions
+    check_system_logs
+    
+    log "INFO" "监控完成"
+}
+
+monitor
+MONITOR
+    
+    chmod +x /usr/local/bin/security-monitor.sh
+    
+    # 创建 systemd 服务
+    cat > /etc/systemd/system/security-monitoring.service << 'SERVICE'
+[Unit]
+Description=Security Monitoring Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/security-monitor.sh
+Restart=always
+RestartSec=60
+User=root
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+    
+    # 创建定时器
+    cat > /etc/systemd/system/security-monitoring.timer << 'TIMER'
+[Unit]
+Description=Run security monitoring every hour
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+TIMER
+    
+    # 重载 systemd
+    systemctl daemon-reload
+    
+    echo "安全监控服务已安装"
+}
+
+# 启动监控服务
+start_monitoring() {
+    echo "启动安全监控服务..."
+    systemctl start security-monitoring.timer
+    systemctl enable security-monitoring.timer
+    echo "安全监控服务已启动"
+}
+
+# 停止监控服务
+stop_monitoring() {
+    echo "停止安全监控服务..."
+    systemctl stop security-monitoring.timer
+    systemctl disable security-monitoring.timer
+    echo "安全监控服务已停止"
+}
+
+# 检查监控状态
+status_monitoring() {
+    echo "安全监控服务状态:"
+    systemctl status security-monitoring.timer
+    systemctl status security-monitoring.service
+}
+
+# 主函数
+main() {
+    check_root
+    
+    case "$1" in
+        "install")
+            install_monitoring
+            ;;
+        "start")
+            start_monitoring
+            ;;
+        "stop")
+            stop_monitoring
+            ;;
+        "status")
+            status_monitoring
+            ;;
+        *)
+            echo "用法: $0 [install|start|stop|status]"
+            echo "  install - 安装安全监控服务"
+            echo "  start   - 启动安全监控服务"
+            echo "  stop    - 停止安全监控服务"
+            echo "  status  - 检查安全监控服务状态"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

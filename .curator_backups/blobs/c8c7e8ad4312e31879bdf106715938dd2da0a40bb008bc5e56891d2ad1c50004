@@ -1,0 +1,412 @@
+---
+name: linux-security-hardening
+description: "对 Ubuntu / RHEL / CentOS 服务器执行安全强化配置，实现服务持续性与安全性的平衡"
+metadata:
+  hermes:
+    tags: [security, hardening, linux, ubuntu, centos, rhel]
+---
+
+# Linux 安全强化工作流
+
+## 适用场景
+- 对 Ubuntu / RHEL / CentOS 服务器执行安全强化配置
+- 应用安全最佳实践，降低攻击面
+- 实现服务持续性与安全性的平衡（特别是需要对外网开放 80/3001 端口的服务）
+
+## 前置条件
+- SSH 密钥认证已配置
+- 拥有 sudo 权限
+- 对服务器业务需求有清晰了解（哪些服务需要开放）
+
+---
+
+## ⚠️ 重要声明
+**生产服务器安全操作遵循 "只查不改" 原则**。任何配置变更前，必须先创建快照/备份，并在文档中说明变更目的和必要性。所有强化操作都应经过团队讨论和批准。
+
+**本技能提供强化建议，但实际操作前请先咨询系统管理员。** 自动化的强化脚本请参考 `scripts/hardening-runner.sh`，该脚本支持 dry-run 模式。
+
+---
+
+## 强化流程框架
+
+### 阶段 1：基础安全
+1. **系统更新与补丁管理**
+2. **SSH 强化配置**
+3. **用户与权限管理**
+4. **服务与端口控制**
+
+### 阶段 2：应用层安全
+1. **Web 应用安全**
+2. **应用配置文件安全**
+3. **日志安全与审计**
+
+### 阶段 3：监控与响应
+1. **入侵检测与日志监控**
+2. **漏洞扫描**
+3. **应急响应准备**
+
+---
+
+## 🚀 快速强化脚本
+
+以下是一个实用的安全强化检查清单脚本（参考 `references/hardening-checklist.sh`）。
+
+```bash
+#!/bin/bash
+# Linux 安全强化检查脚本
+# 使用方法: bash hardening-checklist.sh dry-run
+
+LOG_FILE="/var/log/hardening_$(date +%Y%m%d_%H%M%S).log"
+
+echo "=== Linux 安全强化检查 ===" | tee "$LOG_FILE"
+
+echo "1. 检查系统更新状态..." | tee -a "$LOG_FILE"
+if command -v apt >/dev/null 2>&1; then
+    apt list --upgradable 2>/dev/null | wc -l | xargs echo "待更新包: " | tee -a "$LOG_FILE"
+elif command -v dnf >/dev/null 2>&1; then
+    dnf check-update 2>/dev/null | wc -l | xargs echo "待更新包: " | tee -a "$LOG_FILE"
+fi
+
+echo "2. 检查 SSH 配置..." | tee -a "$LOG_FILE"
+if [ -f /etc/ssh/sshd_config ]; then
+    grep -E "(PasswordAuthentication|PermitRootLogin|PubkeyAuthentication)" /etc/ssh/sshd_config
+fi
+
+echo "3. 检查网络服务..." | tee -a "$LOG_FILE"
+ss -tlnp 2>/dev/null | grep -E "(:22|:80|:3001|:443)" || netstat -tlnp 2>/dev/null | grep -E "(:22|:80|:3001|:443)" || echo "无明文端口暴露" | tee -a "$LOG_FILE"
+
+echo "4. 检查 sudo 配置..." | tee -a "$LOG_FILE"
+if [ -d /etc/sudoers.d ]; then
+    find /etc/sudoers.d -type f -name "*" -exec echo "=== {} ===" \; -exec cat {} \; 2>/dev/null
+fi
+
+echo "=== 检查完成 ===" | tee -a "$LOG_FILE"
+if [[ "$1" == "dry-run" ]]; then
+    echo "[DRY-RUN] 实际操作需手动执行" | tee -a "$LOG_FILE"
+fi
+```
+
+完整脚本请参考 `scripts/hardening-checklist.sh`。
+
+---
+
+## 🔧 强化配置指南
+
+### 1. SSH 配置强化
+
+**SSH 强化配置模板 (参考 `templates/sshd-hardening.conf`):**
+
+```conf
+# SSH 配置强化
+ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr
+macs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+Subsystem sftp internal-sftp
+PasswordAuthentication no
+PermitRootLogin no
+PermitEmptyPasswords no
+MaxAuthTries 3
+ClientAliveInterval 300
+ClientAliveCountMax 2
+UsePAM yes
+UseDNS no
+ChallengeResponseAuthentication no
+X11Forwarding no
+PrintMotd no
+Banner /etc/issue.net
+AllowUsers <service-user>
+DenyUsers root
+
+# 端口配置（保持 22 端口，启用 3001 端口）
+Port 22
+# Port 3001  # 根据业务需要启用
+
+# 禁止使用旧协议
+Protocol 2
+
+# 安全限制
+MaxSessions 10
+MaxStartups 10:30:100
+
+# 日志配置
+LogLevel VERBOSE
+```
+
+完整模板请参考 `templates/sshd-hardening.conf`。
+
+### 2. 防火墙配置强化
+
+**基于 ufw 的防火墙模板 (参考 `templates/ufw-hardening.conf`):**
+
+```bash
+# 禁用默认拒绝入站
+ufw default deny incoming
+ufw default allow outgoing
+
+# 允许关键服务
+ufw allow ssh
+ufw allow 3001/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+
+# 拒绝其他入站
+ufw default deny incoming
+ufw --force enable
+```
+
+完整模板请参考 `templates/ufw-hardening.conf`。
+
+### 3. 用户与权限管理
+
+**强化用户安全 (参考 `scripts/user-security.sh`):**
+
+```bash
+#!/bin/bash
+# 用户安全强化脚本
+
+# 1. 锁定不活动的账户
+for user in $(cut -d: -f1 /etc/passwd); do
+    if ! last -n 30 $user | grep -q "still logged in"; then
+        usermod -L $user
+        echo "已锁定不活跃用户: $user"
+    fi
+done
+
+# 2. 限制 sudo NOPASSWD 使用
+for sudo_file in /etc/sudoers.d/*; do
+    if grep -q "NOPASSWD" "$sudo_file"; then
+        echo "警告: $sudo_file 中包含 NOPASSWD，可能存在安全风险"
+    fi
+done
+
+# 3. 检查主目录权限
+for user in $(cut -d: -f1 /etc/passwd); do
+    home_dir=$(eval echo ~$user)
+    if [ -d "$home_dir" ]; then
+        if [ $(stat -c %a "$home_dir") -gt 750 ]; then
+            echo "警告: 用户 $user 主目录权限过宽: $(stat -c %a $home_dir)"
+        fi
+    fi
+done
+```
+
+完整脚本请参考 `scripts/user-security.sh`。
+
+### 4. 服务强化
+
+**为特定服务强化安全 (参考 `templates/service-hardening.conf`):**
+
+```conf
+# 针对对外网开放 3001 端口的服务的安全配置示例
+
+# 1. 确保服务使用 HTTPS
+# 编辑 /etc/nginx/sites-available/default 或您的Web服务器配置
+
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+    
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+    
+    # 启用安全头
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+}
+
+# 2. 如需 HTTP->HTTPS 重定向
+
+server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$host$request_uri;
+}
+
+# 3. 限制访问来源（如有需要）
+# allow/deny directives
+```
+
+完整配置请参考 `templates/service-hardening.conf`。
+
+### 5. 自动化安全强化
+
+**一键强化脚本 (参考 `scripts/hardening-runner.sh`):**
+
+```bash
+# 检查需要强化的项目（不执行任何操作）
+bash scripts/hardening-runner.sh dry-run
+
+# 执行完整的强化流程
+bash scripts/hardening-runner.sh execute
+
+# 验证安全状态
+bash scripts/hardening-runner.sh validate
+```
+
+该脚本支持：
+- Dry-run 模式（检查不执行）
+- 自动备份系统配置
+- SSH 配置强化
+- 用户安全强化
+- 防火墙配置
+- 系统更新
+- 验证检查
+
+**检查清单脚本 (参考 `scripts/hardening-checklist.sh`):**
+
+```bash
+# 运行完整的安全检查清单
+bash scripts/hardening-checklist.sh
+
+# 干运行模式（仅检查不执行）
+bash scripts/hardening-checklist.sh dry-run
+```
+
+该脚本检查：
+- 系统更新状态
+- SSH 配置
+- 网络服务
+- 用户与权限
+- 系统日志
+- 容器安全
+
+### 6. 持续监控
+
+**监控服务 (参考 `scripts/monitoring.sh`):**
+
+```bash
+# 安装监控服务
+bash scripts/monitoring.sh install
+
+# 启动监控服务
+bash scripts/monitoring.sh start
+
+# 检查监控状态
+bash scripts/monitoring.sh status
+```
+
+该服务会：
+- 每小时检查系统更新
+- 监控 SSH 配置
+- 检查网络服务
+- 检查用户权限
+- 监控系统日志
+- 记录安全事件到日志文件
+
+---
+
+## 🛡️ 安全检查清单
+
+### 高危（🔴）
+- [ ] NOPASSWD sudo 权限
+- [ ] 空密码账户
+- [ ] 默认服务启动
+- [ ] SSH root 登录开启
+
+### 中危（🟠）
+- [ ] 防火墙未启用
+- [ ] X11Forwarding 开启
+- [ ] 端口暴露但未授权
+- [ ] 不安全的服务配置
+
+### 低危（🟡）
+- [ ] 系统未更新
+- [ ] 日志未记录
+- [ ] 临时文件权限过宽
+- [ ] 包含测试调试代码
+
+---
+
+## 📋 执行流程
+
+1. **备份** - 每次强化前创建系统备份
+2. **测试环境** - 在非生产环境先验证配置
+3. **分阶段执行** - 按阶段执行，验证后方可进行下一阶段
+4. **验证检查** - 执行强化后，使用 `hardening-checklist.sh dry-run` 验证安全状态
+
+---
+
+## 🔄 持续监控
+
+**监控脚本 (参考 `scripts/monitoring.sh`):**
+
+```bash
+#!/bin/bash
+# 持续安全监控
+
+# 1. 检查系统更新
+check_updates() {
+    if command -v apt >/dev/null 2>&1; then
+        apt list --upgradable 2>/dev/null | grep -c "upgradable"
+    fi
+}
+
+# 2. 检查网络暴露
+check_ports() {
+    ss -tlnp 2>/dev/null | grep -E "(:22|:80|:3001)" | wc -l
+}
+
+# 3. 检查 SSH 配置
+check_ssh_config() {
+    if [ -f /etc/ssh/sshd_config ]; then
+        if grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; then
+            return 1
+        fi
+    fi
+    return 0
+}
+
+# 4. 检查日志
+check_logs() {
+    tail -n 100 /var/log/auth.log 2>/dev/null | grep -E "Failed password|Invalid user"
+}
+
+# 5. 检查 cron 任务
+check_cron() {
+    crontab -l 2>/dev/null
+}
+
+# 执行所有检查
+{
+    echo "=== $(date) ==="
+    echo "待更新包: $(check_updates)"
+    echo "开放端口: $(check_ports)"
+    echo "SSH 安全状态: $(check_ssh_config && echo '安全' || echo '不安全')"
+    echo "可疑登录尝试: $(check_logs | wc -l)"
+} > /var/log/security_monitor.log
+```
+
+完整监控脚本请参考 `scripts/monitoring.sh`。
+
+---
+
+## 🔗 相关技能
+
+- `linux-security-audit` - 安全审计与检查
+- `fortigate-security-audit` - FortiGate 防火墙安全审计
+
+---
+
+## 📚 更多资源
+
+- **ISO 27001 合规指南**: 参考 `references/iso27001-security-controls.md`
+- **最佳实践**: 参考 `references/security-best-practices.md`
+- **法律与政策**: 参考 `references/legal-compliance.md`
+
+---
+
+## ⚡ 快速开始
+
+1. 先运行 `hardening-checklist.sh dry-run` 检查当前状态
+2. 根据检查结果，针对性地应用强化配置
+3. 执行强化后，使用 `monitoring.sh` 持续监控安全状态
+4. 每两周执行一次安全审计，确保安全状态持续符合要求
+
+---
+
+## 🚨 注意事项
+
+- **不要在生产环境中直接执行强化脚本**，除非您完全理解每个命令的影响
+- **强化配置可能影响服务运行**，确保在操作前备份服务配置
+- **执行强化操作后，请记录变更日志**，以便审计和追溯

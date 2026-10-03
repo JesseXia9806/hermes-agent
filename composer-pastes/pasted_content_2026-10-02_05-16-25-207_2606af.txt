@@ -1,0 +1,102 @@
+[root@logserver ~]# tail -n 100 /var/log/messages
+Oct  2 13:08:11 logserver systemd-logind[990]: Removed session 24.
+Oct  2 13:08:21 logserver systemd[1]: Stopping User Manager for UID 0...
+Oct  2 13:08:21 logserver systemd[23080]: Activating special unit Exit the Session...
+Oct  2 13:08:21 logserver systemd[23080]: Stopped target Main User Target.
+Oct  2 13:08:21 logserver systemd[23080]: Stopped target Basic System.
+Oct  2 13:08:21 logserver systemd[23080]: Stopped target Paths.
+Oct  2 13:08:21 logserver systemd[23080]: Stopped target Sockets.
+Oct  2 13:08:21 logserver systemd[23080]: Stopped target Timers.
+Oct  2 13:08:21 logserver systemd[23080]: Stopped Daily Cleanup of User's Temporary Directories.
+Oct  2 13:08:21 logserver systemd[23080]: Closed D-Bus User Message Bus Socket.
+Oct  2 13:08:21 logserver systemd[23080]: Stopped Create User's Volatile Files and Directories.
+Oct  2 13:08:21 logserver systemd[23080]: Removed slice User Application Slice.
+Oct  2 13:08:21 logserver systemd[23080]: Reached target Shutdown.
+Oct  2 13:08:21 logserver systemd[23080]: Finished Exit the Session.
+Oct  2 13:08:21 logserver systemd[23080]: Reached target Exit the Session.
+Oct  2 13:08:21 logserver systemd[1]: user@0.service: Deactivated successfully.
+Oct  2 13:08:21 logserver systemd[1]: Stopped User Manager for UID 0.
+Oct  2 13:08:21 logserver systemd[1]: Stopping User Runtime Directory /run/user/0...
+Oct  2 13:08:21 logserver systemd[1]: run-user-0.mount: Deactivated successfully.
+Oct  2 13:08:21 logserver systemd[1]: user-runtime-dir@0.service: Deactivated successfully.
+Oct  2 13:08:21 logserver systemd[1]: Stopped User Runtime Directory /run/user/0.
+Oct  2 13:08:21 logserver systemd[1]: Removed slice User Slice of UID 0.
+Oct  2 13:08:21 logserver systemd[1]: user-0.slice: Consumed 4.005s CPU time.
+Oct  2 13:08:22 logserver systemd[1]: Created slice User Slice of UID 0.
+Oct  2 13:08:22 logserver systemd[1]: Starting User Runtime Directory /run/user/0...
+Oct  2 13:08:22 logserver systemd-logind[990]: New session 26 of user root.
+Oct  2 13:08:22 logserver systemd[1]: Finished User Runtime Directory /run/user/0.
+Oct  2 13:08:22 logserver systemd[1]: Starting User Manager for UID 0...
+Oct  2 13:08:22 logserver systemd[23150]: Queued start job for default target Main User Target.
+Oct  2 13:08:22 logserver systemd[23150]: Created slice User Application Slice.
+Oct  2 13:08:22 logserver systemd[23150]: Mark boot as successful after the user session has run 2 minutes was skipped because of an unmet condition check (ConditionUser=!@system).
+Oct  2 13:08:22 logserver systemd[23150]: Started Daily Cleanup of User's Temporary Directories.
+Oct  2 13:08:22 logserver systemd[23150]: Reached target Paths.
+Oct  2 13:08:22 logserver systemd[23150]: Reached target Timers.
+Oct  2 13:08:22 logserver systemd[23150]: Starting D-Bus User Message Bus Socket...
+Oct  2 13:08:22 logserver systemd[23150]: Starting Create User's Volatile Files and Directories...
+Oct  2 13:08:22 logserver systemd[23150]: Listening on D-Bus User Message Bus Socket.
+Oct  2 13:08:22 logserver systemd[23150]: Reached target Sockets.
+Oct  2 13:08:22 logserver systemd[23150]: Finished Create User's Volatile Files and Directories.
+Oct  2 13:08:22 logserver systemd[23150]: Reached target Basic System.
+Oct  2 13:08:22 logserver systemd[23150]: Reached target Main User Target.
+Oct  2 13:08:22 logserver systemd[23150]: Startup finished in 85ms.
+Oct  2 13:08:22 logserver systemd[1]: Started User Manager for UID 0.
+Oct  2 13:08:22 logserver systemd[1]: Started Session 26 of User root.
+Oct  2 13:08:22 logserver systemd[1]: session-26.scope: Deactivated successfully.
+Oct  2 13:08:22 logserver systemd-logind[990]: Session 26 logged out. Waiting for processes to exit.
+Oct  2 13:08:22 logserver systemd-logind[990]: Removed session 26.
+Oct  2 13:08:30 logserver systemd-logind[990]: New session 28 of user root.
+Oct  2 13:08:30 logserver systemd[1]: Started Session 28 of User root.
+Oct  2 13:08:30 logserver systemd[1]: Reloading PostgreSQL database server...
+Oct  2 13:08:30 logserver systemd[1]: Reloaded PostgreSQL database server.
+Oct  2 13:08:31 logserver systemd[1]: session-28.scope: Deactivated successfully.
+Oct  2 13:08:31 logserver systemd-logind[990]: Session 28 logged out. Waiting for processes to exit.
+Oct  2 13:08:31 logserver systemd-logind[990]: Removed session 28.
+Oct  2 13:08:41 logserver systemd[1]: Stopping User Manager for UID 0...
+Oct  2 13:08:41 logserver systemd[23150]: Activating special unit Exit the Session...
+Oct  2 13:08:41 logserver systemd[23150]: Stopped target Main User Target.
+Oct  2 13:08:41 logserver systemd[23150]: Stopped target Basic System.
+Oct  2 13:08:41 logserver systemd[23150]: Stopped target Paths.
+Oct  2 13:08:41 logserver systemd[23150]: Stopped target Sockets.
+Oct  2 13:08:41 logserver systemd[23150]: Stopped target Timers.
+Oct  2 13:08:41 logserver systemd[23150]: Stopped Daily Cleanup of User's Temporary Directories.
+Oct  2 13:08:41 logserver systemd[23150]: Closed D-Bus User Message Bus Socket.
+Oct  2 13:08:41 logserver systemd[23150]: Stopped Create User's Volatile Files and Directories.
+Oct  2 13:08:41 logserver systemd[23150]: Removed slice User Application Slice.
+Oct  2 13:08:41 logserver systemd[23150]: Reached target Shutdown.
+Oct  2 13:08:41 logserver systemd[23150]: Finished Exit the Session.
+Oct  2 13:08:41 logserver systemd[23150]: Reached target Exit the Session.
+Oct  2 13:08:41 logserver systemd[1]: user@0.service: Deactivated successfully.
+Oct  2 13:08:41 logserver systemd[1]: Stopped User Manager for UID 0.
+Oct  2 13:08:41 logserver systemd[1]: Stopping User Runtime Directory /run/user/0...
+Oct  2 13:08:41 logserver systemd[1]: run-user-0.mount: Deactivated successfully.
+Oct  2 13:08:41 logserver systemd[1]: user-runtime-dir@0.service: Deactivated successfully.
+Oct  2 13:08:41 logserver systemd[1]: Stopped User Runtime Directory /run/user/0.
+Oct  2 13:08:41 logserver systemd[1]: Removed slice User Slice of UID 0.
+Oct  2 13:09:00 logserver systemd[1]: systemd-hostnamed.service: Deactivated successfully.
+Oct  2 13:12:27 logserver systemd[1]: Created slice User Slice of UID 0.
+Oct  2 13:12:27 logserver systemd[1]: Starting User Runtime Directory /run/user/0...
+Oct  2 13:12:27 logserver systemd-logind[990]: New session 29 of user root.
+Oct  2 13:12:27 logserver systemd[1]: Finished User Runtime Directory /run/user/0.
+Oct  2 13:12:27 logserver systemd[1]: Starting User Manager for UID 0...
+Oct  2 13:12:27 logserver systemd[23269]: Queued start job for default target Main User Target.
+Oct  2 13:12:27 logserver systemd[23269]: Created slice User Application Slice.
+Oct  2 13:12:27 logserver systemd[23269]: Mark boot as successful after the user session has run 2 minutes was skipped because of an unmet condition check (ConditionUser=!@system).
+Oct  2 13:12:27 logserver systemd[23269]: Started Daily Cleanup of User's Temporary Directories.
+Oct  2 13:12:27 logserver systemd[23269]: Reached target Paths.
+Oct  2 13:12:27 logserver systemd[23269]: Reached target Timers.
+Oct  2 13:12:27 logserver systemd[23269]: Starting D-Bus User Message Bus Socket...
+Oct  2 13:12:27 logserver systemd[23269]: Starting Create User's Volatile Files and Directories...
+Oct  2 13:12:27 logserver systemd[23269]: Listening on D-Bus User Message Bus Socket.
+Oct  2 13:12:27 logserver systemd[23269]: Reached target Sockets.
+Oct  2 13:12:27 logserver systemd[23269]: Finished Create User's Volatile Files and Directories.
+Oct  2 13:12:27 logserver systemd[23269]: Reached target Basic System.
+Oct  2 13:12:27 logserver systemd[23269]: Reached target Main User Target.
+Oct  2 13:12:27 logserver systemd[23269]: Startup finished in 89ms.
+Oct  2 13:12:27 logserver systemd[1]: Started User Manager for UID 0.
+Oct  2 13:12:27 logserver systemd[1]: Started Session 29 of User root.
+Oct  2 13:12:27 logserver systemd[1]: Starting Hostname Service...
+Oct  2 13:12:27 logserver systemd[1]: Started Hostname Service.
+Oct  2 13:12:57 logserver systemd[1]: systemd-hostnamed.service: Deactivated successfully.
+[root@logserver ~]#

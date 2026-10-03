@@ -1,0 +1,12 @@
+{
+  "name": "Gemini",
+  "base_url": "https://generativelanguage.googleapis.com/v1beta",
+  "key_env": "HERMES_GEMINI_API_KEY",
+  "model": "gemini-2.5-flash",
+  "models": {
+    "gemini-2.5-flash": {},
+    "gemini-2.5-pro": {},
+    "gemini-1.5-flash": {},
+    "gemini-1.5-pro": {}
+  }
+}

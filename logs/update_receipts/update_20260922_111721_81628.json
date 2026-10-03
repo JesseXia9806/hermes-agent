@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-22T03:16:25.005107+00:00",
+  "finished_at": "2026-09-22T03:17:21.569040+00:00",
+  "argv": [
+    "/Users/jessexia/.hermes/hermes-agent/venv/bin/hermes",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 81628,
+  "outcome": "failed",
+  "pre_update": {
+    "sha": "439eb0395eed5025139ee917526f31e2d161699e",
+    "short_sha": "439eb039",
+    "version": "0.21.4",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "439eb0395eed5025139ee917526f31e2d161699e",
+    "short_sha": "439eb039",
+    "version": "0.21.4",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260922-031625-pre-update, it=20260922-031625-pre-update",
+      "at": "2026-09-22T03:16:25.392262+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260922-031625-pre-update",
+      "at": "2026-09-22T03:16:25.392299+00:00"
+    },
+    {
+      "name": "sqlite_runtime_repair",
+      "ok": true,
+      "detail": "safe (sqlite 3.53.1 \u2192 3.53.1)",
+      "at": "2026-09-22T03:16:26.960925+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {},
+  "fleet": [],
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "439eb0395eed5025139ee917526f31e2d161699e",
+    "expected_version": "0.21.4",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": []
+  },
+  "exit_code": 1,
+  "stop_reason": "sys.exit(1)"
+}

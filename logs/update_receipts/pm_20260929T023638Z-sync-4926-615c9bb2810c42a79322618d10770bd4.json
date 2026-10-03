@@ -1,0 +1,36 @@
+{
+  "exit_code": 1,
+  "feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "finished_at": "2026-09-29T02:36:38.338728+00:00",
+  "kind": "sync",
+  "outcome": "failed",
+  "platform": null,
+  "refusal": null,
+  "schema": 1,
+  "started_at": "2026-09-29T02:36:31.703447+00:00",
+  "steps": [
+    {
+      "at": "2026-09-29T02:36:38.338631+00:00",
+      "detail": "InstallError: venv: uv sync exited 1:   `https://files.pythonhosted.org/packages/56/12/386d8c6bf0448c43674e24d6194c3b57d62e5361e90bca3d58108819ad32/cdp_use-1.4.5-py3-none-any.whl`\n  \u251c\u2500\u25b6 error sending request for url\n  \u2502   (https://files.pythonhosted.org/packages/56/12/386d8c6bf0448c43674e24d6194c3b57d62e5361e90bca3d58108819ad32/cdp_use-1.4.5-py3-none-any.whl)\n  \u251c\u2500\u25b6 client error (Connect)\n  \u251c\u2500\u25b6 dns error\n  \u2570\u2500\u25b6 failed to lookup address information: nodename nor servname provided, or\n      not known\n\nhint: `cdp-use` (v1.4.5) was included because `hermes-agent` (v0.0.0) depends on `browser-harness` (v0.1.13) which depends on `cdp-use` \u2014 retry, or run `hermes pm doctor`",
+      "name": "dependency-sync",
+      "ok": false
+    }
+  ],
+  "update_id": null,
+  "venv_rebuild": null,
+  "warnings": []
+}

@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-23T05:48:50.417017+00:00",
+  "finished_at": "2026-09-23T05:50:14.343101+00:00",
+  "argv": [
+    "/Users/jessexia/.hermes/hermes-agent/venv/bin/hermes",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 34120,
+  "outcome": "success",
+  "pre_update": {
+    "sha": "439eb0395eed5025139ee917526f31e2d161699e",
+    "short_sha": "439eb039",
+    "version": "0.21.4",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "c0d7294769a38c17ceae51d8f7995e66e1dcae27",
+    "short_sha": "c0d72947",
+    "version": "0.21.4",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260923-054850-pre-update, it=20260923-054851-pre-update",
+      "at": "2026-09-23T05:48:51.053865+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260923-054850-pre-update",
+      "at": "2026-09-23T05:48:51.053891+00:00"
+    },
+    {
+      "name": "sqlite_runtime_repair",
+      "ok": true,
+      "detail": "safe (sqlite 3.53.1 \u2192 3.53.1)",
+      "at": "2026-09-23T05:48:58.231052+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {
+    "restarted_services": [
+      "ai.hermes.gateway"
+    ],
+    "relaunched_profiles": [],
+    "externally_supervised_profiles": [],
+    "killed_pids": [
+      34960
+    ],
+    "failed_units": [],
+    "incomplete": false,
+    "phase_error": ""
+  },
+  "fleet": [
+    {
+      "profile": "default",
+      "pid": 35126,
+      "code_sha": "c0d7294769a38c17ceae51d8f7995e66e1dcae27",
+      "code_version": "0.21.4",
+      "state": "current",
+      "code_root": "/Users/jessexia/.hermes/hermes-agent",
+      "source": "socket"
+    }
+  ],
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "439eb0395eed5025139ee917526f31e2d161699e",
+    "expected_version": "0.21.4",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 81868,
+        "supervisor": "external",
+        "code_sha": "439eb0395eed5025139ee917526f31e2d161699e",
+        "code_version": "0.21.4",
+        "restart_via": "manual",
+        "detail": {}
+      }
+    ]
+  },
+  "post_swap_pid": 34219,
+  "runtime_outcomes": [
+    {
+      "kind": "gateway",
+      "profile": "default",
+      "pid": 81868,
+      "mechanism": "manual",
+      "outcome": "restarted"
+    }
+  ]
+}

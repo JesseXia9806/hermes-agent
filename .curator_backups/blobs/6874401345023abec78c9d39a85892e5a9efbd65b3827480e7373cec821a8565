@@ -1,0 +1,349 @@
+---
+name: ubuntu-server-hardening
+description: Ubuntu服务器安全加固：SSH、防火墙、sudo、fail2ban和漏洞管理。
+metadata:
+  hermes:
+    tags: [ubuntu, linux, security, hardening, ssh, firewall, sudo, fail2ban, ufw]
+---
+
+# Ubuntu服务器安全加固工作流
+
+## 适用场景
+- Ubuntu服务器安全基线加固
+- SSH配置优化和密钥认证
+- 端口暴露防护（80、443、3001等）
+- sudo权限最小化
+- fail2ban入侵防护
+- UFW防火墙配置
+- 系统更新和漏洞管理
+
+## 前置条件
+- rootadmin用户拥有sudo权限
+- SSH密钥已配置或准备配置
+- 具备远程服务器访问权限
+
+---
+
+## 步骤1：SSH安全加固
+
+### 1.1 启用SSH密钥认证
+
+**本地生成密钥**：
+```bash
+ssh-keygen -t ed25519 -C "rootadmin-$(hostname)" -N ""
+```
+
+**复制公钥到远程服务器**：
+```bash
+ssh-copy-id rootadmin@124.107.126.226
+```
+
+### 1.2 修改SSH配置（禁用密码认证）
+
+**备份配置文件**：
+```bash
+ssh rootadmin@124.107.126.226 "sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup"
+```
+
+**编辑配置**：
+```bash
+ssh rootadmin@124.107.126.226 << 'EOF'
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+EOF
+```
+
+**重启SSH服务**：
+```bash
+ssh rootadmin@124.107.126.226 "sudo systemctl restart sshd"
+```
+
+**验证**：
+```bash
+ssh -i ~/.ssh/id_ed25519 rootadmin@124.107.126.226 "whoami"
+```
+
+---
+
+## 步骤2：sudo权限最小化
+
+### 2.1 移除NOPASSWD权限
+
+**编辑sudoers文件**：
+```bash
+ssh rootadmin@124.107.126.226 "sudo visudo -f /etc/sudoers.d/rootadmin"
+```
+
+**删除所有NOPASSWD行，保留密码验证**：
+```
+rootadmin ALL=(ALL) ALL
+```
+
+**设置正确权限**：
+```bash
+ssh rootadmin@124.107.126.226 "sudo chmod 440 /etc/sudoers.d/rootadmin"
+```
+
+**验证**：
+```bash
+ssh rootadmin@124.107.126.226 "sudo -l"
+```
+
+---
+
+## 步骤3：安装fail2ban
+
+### 3.1 安装fail2ban
+```bash
+ssh rootadmin@124.107.126.226 "sudo apt install fail2ban -y"
+```
+
+### 3.2 配置fail2ban
+
+**创建jail.local**：
+```bash
+ssh rootadmin@124.107.126.226 << 'EOF'
+sudo bash -c 'cat > /etc/fail2ban/jail.local << CONF
+[sshd]
+enabled = true
+port = ssh
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 600
+findtime = 600
+
+[http-server]
+enabled = true
+port = 3001
+logpath = /var/log/daemon.log
+maxretry = 5
+bantime = 300
+findtime = 300
+CONF'
+EOF
+```
+
+### 3.3 启动fail2ban
+```bash
+ssh rootadmin@124.107.126.226 "sudo systemctl enable fail2ban && sudo systemctl restart fail2ban"
+```
+
+---
+
+## 步骤4：配置UFW防火墙
+
+### 4.1 安装UFW
+```bash
+ssh rootadmin@124.107.126.226 "sudo apt install ufw -y"
+```
+
+### 4.2 配置规则
+```bash
+ssh rootadmin@124.107.126.226 << 'EOF'
+# 默认策略：拒绝所有
+sudo ufw default deny incoming
+sudo ufw default deny outgoing
+
+# 允许必要端口
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 3001/tcp
+sudo ufw allow 5173/tcp
+
+# 启用防火墙
+sudo ufw enable
+EOF
+```
+
+### 4.3 验证状态
+```bash
+ssh rootadmin@124.107.126.226 "sudo ufw status verbose"
+```
+
+---
+
+## 步骤5：系统更新和漏洞管理
+
+### 5.1 应用安全更新
+```bash
+ssh rootadmin@124.107.126.226 << 'EOF'
+# 停止卡住的apt进程
+sudo pkill -9 apt-get 2>/dev/null || true
+sudo pkill -9 dpkg 2>/dev/null || true
+
+# 清理锁定文件
+sudo rm -f /var/lib/apt/lists/lock-frontend /var/lib/apt/lists/lock
+
+# 更新并升级系统
+sudo apt update
+sudo apt upgrade -y
+EOF
+```
+
+### 5.2 检查更新状态
+```bash
+ssh rootadmin@124.107.126.226 "sudo apt list --upgradable | head -10"
+```
+
+---
+
+## 步骤6：端口暴露检查
+
+### 6.1 列出所有监听端口
+```bash
+ssh rootadmin@124.107.126.226 "sudo ss -tlnp"
+```
+
+### 6.2 检查高危端口
+```bash
+ssh rootadmin@124.107.126.226 "sudo ss -tlnp | grep -E '(22|3001|5173)'"
+```
+
+### 6.3 检查开放端口统计
+```bash
+ssh rootadmin@124.107.126.226 "sudo ss -tlnp | wc -l"
+```
+
+---
+
+## 步骤7：日志监控
+
+### 7.1 检查SSH登录失败
+```bash
+ssh rootadmin@124.107.126.226 "sudo grep 'Failed password' /var/log/auth.log | tail -5 | wc -l"
+```
+
+### 7.2 检查root登录尝试
+```bash
+ssh rootadmin@124.107.126.226 "sudo grep 'Invalid user root' /var/log/auth.log | tail -5 | wc -l"
+```
+
+### 7.3 查看fail2ban状态
+```bash
+ssh rootadmin@124.107.126.226 "sudo fail2ban-client status"
+```
+
+---
+
+## 步骤8：创建安全监控脚本
+
+### 8.1 创建每日安全报告
+```bash
+ssh rootadmin@124.107.126.226 << 'EOF'
+sudo bash -c 'cat > /usr/local/bin/security-daily.sh << SCRIPT
+#!/bin/bash
+echo "=== Daily Security Summary - $(date) ==="
+echo "Open Ports:"
+sudo ss -tlnp | grep LISTEN | awk "{print \$4}" | cut -d: -f2 | sort -u
+echo ""
+echo "Failed SSH Attempts (last 24h):"
+sudo grep "Failed password" /var/log/auth.log | tail -5 | wc -l
+echo ""
+echo "Root Login Attempts (last 24h):"
+sudo grep "Invalid user root" /var/log/auth.log | tail -5 | wc -l
+echo ""
+echo "Active Fail2ban Bans:"
+sudo fail2ban-client status sshd 2>/dev/null | grep "Banned IP" || echo "None"
+SCRIPT
+chmod +x /usr/local/bin/security-daily.sh
+'
+
+# 添加到cron（每天凌晨2点执行）
+ssh rootadmin@124.107.126.226 "sudo bash -c 'echo \"0 2 * * * root /usr/local/bin/security-daily.sh\" >> /etc/cron.d/security-monitor'"
+EOF
+```
+
+### 8.2 手动运行一次
+```bash
+ssh rootadmin@124.107.126.226 "sudo /usr/local/bin/security-daily.sh"
+```
+
+---
+
+## 步骤9：验证加固效果
+
+### 9.1 检查sudo权限
+```bash
+ssh rootadmin@124.107.126.226 "sudo -l"
+```
+
+### 9.2 检查SSH配置
+```bash
+ssh rootadmin@124.107.126.226 "sudo grep -E '(PasswordAuthentication|PubkeyAuthentication|PermitRootLogin)' /etc/ssh/sshd_config"
+```
+
+### 9.3 检查防火墙状态
+```bash
+ssh rootadmin@124.107.126.226 "sudo ufw status"
+```
+
+### 9.4 检查fail2ban状态
+```bash
+ssh rootadmin@124.107.126.226 "sudo fail2ban-client status"
+```
+
+---
+
+## 常见问题排查
+
+### 问题1：SSH heredoc shell语法错误
+
+**症状**：执行复杂命令时出现 `unexpected EOF while looking for matching '``
+
+**原因**：macOS bash heredoc不兼容特殊字符（`[[`、`{`、`}`）
+
+**解决方案**：
+1. 使用 `ssh -t` 强制终端分配
+2. 拆分为多个简单命令
+3. 使用单引号heredoc（避免变量展开）
+4. 分步执行，每步验证
+
+### 问题2：sudo权限缓存清除
+
+**症状**：首次sudo成功，后续sudo失败提示密码错误
+
+**原因**：单个heredoc中连续多次sudo调用，密码缓存被清除
+
+**解决方案**：
+1. 分开执行sudo命令
+2. 或使用 `sudo bash -c 'command'` 包装整个脚本
+
+### 问题3：apt锁定文件错误
+
+**症状**：`Could not open lock file /var/lib/apt/lists/lock`
+
+**原因**：之前的apt进程卡住或未正常退出
+
+**解决方案**：
+```bash
+sudo pkill -9 apt-get 2>/dev/null || true
+sudo pkill -9 dpkg 2>/dev/null || true
+sudo rm -f /var/lib/apt/lists/lock-frontend /var/lib/apt/lists/lock
+sudo apt update
+```
+
+---
+
+## 安全加固检查清单
+
+- [ ] SSH密钥认证已启用，密码认证已禁用
+- [ ] root用户禁止直接登录
+- [ ] rootadmin用户无NOPASSWD sudo权限
+- [ ] fail2ban已安装并配置
+- [ ] UFW防火墙已启用
+- [ ] 必要端口已开放（22、80、443、3001等）
+- [ ] 系统所有安全更新已应用
+- [ ] 日志监控脚本已配置
+- [ ] 定期安全报告已设置
+
+---
+
+## 沟通偏好
+
+- **语言**：与用户沟通时使用中文
+- **风格**：简洁、结构化、可执行
+- **格式**：清晰的标题、列表和代码块
+- **验证**：每个步骤后提供验证命令

@@ -1,0 +1,13 @@
+{
+  "bundle_hash": "sha256:2865097a4f3b1203d5518648b0722703e82598a7d44bb80bae8a7506efc3ce71",
+  "scanner_version": "skills-guard-v6",
+  "source": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+  "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortianalyzer-ops/SKILL.md",
+  "verdict": "safe",
+  "trust_level": "community",
+  "findings": [],
+  "rules": [],
+  "scanned_at": "2026-09-27T14:12:53.747367+00:00",
+  "summary": "fortianalyzer-ops: clean scan, no threats detected",
+  "fresh": true
+}

@@ -1,0 +1,33 @@
+────────────────────────────── Hermes Agent ──────────────────────────────
+               Nous Research · Messenger of the Digital Gods
+ ──────────────────────────────────────────────────────────────────────────
+
+ ╭────────────────────────────────────────────────────────────────────────────
+ │
+ │  Qwen3.5-9B-OptiQ-4bit · Nous Research
+ │  /Users/jessexia
+ │  Session: 389dc325
+ │
+ │
+ │  ▾ Available Tools
+ │  browser: browser_back, browser_click, browser_console, …+7
+ │  clarify: clarify
+│  code_execution: execute_code
+│  computer_use: computer_use
+│  cronjob: cronjob
+│  delegation: delegate_task
+│  file: patch, read_file, search_files, write_file
+│  memory: memory
+│  (and 7 more toolsets…)
+│
+│  ▸ Available Skills (85) in 16 categories
+│
+│  ▸ System Prompt — 24,756 chars
+│  32 tools · 85 skills · /help for commands
+│
+╰────────────────────────────────────────────────────────────────────────────
+
+
+sk-omlx-IEY2YT8Xf1fT3DTIsoFlBZkS
+
+API call failed after 3 retries: HTTP 507: Model 'Qwen3.5-9B-OptiQ-4bit'(6.94GB) does not fit under the memory ceiling (6.65GB). Free systemmemory or lower memory_guard_tier.

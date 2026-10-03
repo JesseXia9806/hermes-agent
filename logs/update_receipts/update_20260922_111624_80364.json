@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-22T03:14:55.083586+00:00",
+  "finished_at": "2026-09-22T03:16:24.654921+00:00",
+  "argv": [
+    "/Users/jessexia/.hermes/hermes-agent/venv/bin/hermes",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 80364,
+  "outcome": "failed",
+  "pre_update": {
+    "sha": "bf1c28b4800c1456c4964e241d175284fd4b9970",
+    "short_sha": "bf1c28b4",
+    "version": "0.21.3",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "439eb0395eed5025139ee917526f31e2d161699e",
+    "short_sha": "439eb039",
+    "version": "0.21.4",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260922-031455-pre-update, it=20260922-031455-pre-update",
+      "at": "2026-09-22T03:14:55.594798+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260922-031455-pre-update",
+      "at": "2026-09-22T03:14:55.594843+00:00"
+    },
+    {
+      "name": "sqlite_runtime_repair",
+      "ok": true,
+      "detail": "safe (sqlite 3.53.1 \u2192 3.53.1)",
+      "at": "2026-09-22T03:15:11.857987+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {
+    "restarted_services": [
+      "ai.hermes.gateway"
+    ],
+    "relaunched_profiles": [],
+    "externally_supervised_profiles": [],
+    "killed_pids": [
+      81564
+    ],
+    "failed_units": [],
+    "incomplete": false,
+    "phase_error": ""
+  },
+  "fleet": [],
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "bf1c28b4800c1456c4964e241d175284fd4b9970",
+    "expected_version": "0.21.3",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 1003,
+        "supervisor": "external",
+        "code_sha": "bf1c28b4800c1456c4964e241d175284fd4b9970",
+        "code_version": "0.21.3",
+        "restart_via": "manual",
+        "detail": {}
+      }
+    ]
+  },
+  "exit_code": 1,
+  "stop_reason": "TypeError: _find_stale_dashboard_pids() got an unexpected keyword argument 'scope_home'"
+}

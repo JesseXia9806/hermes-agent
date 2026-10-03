@@ -1,0 +1,88 @@
+#!/bin/bash
+# macOS Security Triage — Full Scan Script
+# Run: bash full_scan.sh
+# Output: prints a unified report to stdout
+
+set -u
+
+echo "=========================================="
+echo " macOS Security Triage Scan"
+echo " $(date '+%Y-%m-%d %H:%M:%S')"
+echo "=========================================="
+echo ""
+
+# ---------- 1. Process Scan ----------
+echo "--- [1] TOP CPU PROCESSES ---"
+ps -eo pid,pcpu,pmem,user,comm -r | head -25
+echo ""
+echo "--- [1b] ROOT PROCESSES (non-Apple) ---"
+ps -U root -o pid,pcpu,pmem,comm -r | head -15
+echo ""
+
+# ---------- 2. Network ----------
+echo "--- [2] LISTENING PORTS ---"
+lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null
+echo ""
+echo "--- [2b] ESTABLISHED CONNECTIONS (unique) ---"
+lsof -i -P -n 2>/dev/null | awk 'NR==1 || !seen[$1,$9]++' | head -40
+echo ""
+
+# ---------- 3. Startup & Login Items ----------
+echo "--- [3] LOGIN ITEMS ---"
+osascript -e 'tell application "System Events" to get the name of every login item' 2>/dev/null
+echo ""
+echo "--- [3b] USER LAUNCH AGENTS (non-Apple) ---"
+ls ~/Library/LaunchAgents/ 2>/dev/null | grep -v com.apple
+echo ""
+
+# ---------- 4. System Launch Daemons ----------
+echo "--- [4] SYSTEM LAUNCH DAEMONS (non-Apple) ---"
+ls /Library/LaunchDaemons/ 2>/dev/null | grep -v com.apple
+echo ""
+echo "--- [4b] SYSTEM LAUNCH AGENTS (non-Apple) ---"
+ls /Library/LaunchAgents/ 2>/dev/null | grep -v com.apple
+echo ""
+
+# ---------- 5. MDM Profiles ----------
+echo "--- [5] MDM CONFIGURATION PROFILES ---"
+count=$(profiles -C 2>/dev/null | grep -c "^_computerlevel")
+echo "Total profiles: $count"
+profiles -C 2>/dev/null | grep -E "(attribute: name:|attribute: profileIdentifier:|attribute: organization:|attribute: removalDisallowed:)"
+echo ""
+
+# ---------- 6. Kernel Extensions ----------
+echo "--- [6] KERNEL EXTENSIONS (third-party) ---"
+kextstat 2>/dev/null | grep -v com.apple
+echo ""
+
+# ---------- 7. Scheduled Tasks ----------
+echo "--- [7] CRON JOBS ---"
+crontab -l 2>/dev/null || echo "(none)"
+echo ""
+echo "--- [7b] AT JOBS ---"
+atq 2>/dev/null || echo "(none)"
+echo ""
+
+# ---------- 8. Shell & SSH ----------
+echo "--- [8] SHELL PROFILES ---"
+[ -f ~/.zshrc ] && echo "~/.zshrc: EXISTS (see below)" || echo "~/.zshrc: NOT FOUND"
+[ -f ~/.bash_profile ] && echo "~/.bash_profile: EXISTS (see below)" || echo "~/.bash_profile: NOT FOUND"
+echo ""
+echo "--- [8b] SSH KEYS ---"
+ls -la ~/.ssh/ 2>/dev/null || echo "~/.ssh/ not found or empty"
+[ -f ~/.ssh/config ] && echo "--- SSH CONFIG ---" && head -20 ~/.ssh/config
+echo ""
+
+# ---------- 9. Installed Apps ----------
+echo "--- [9] INSTALLED APPLICATIONS ---"
+find /Applications -maxdepth 2 -name '*.app' -type d 2>/dev/null | sort
+echo ""
+
+# ---------- 10. Temp Files (quick) ----------
+echo "--- [10] /tmp/ SUSPICIOUS ITEMS ---"
+ls -la /tmp/ 2>/dev/null | grep -iE '(crypt|miner|backdoor|payload|shell|revshell|reverse|krab|ransom)' | head -10 || echo "(none found)"
+echo ""
+
+echo "=========================================="
+echo " Scan complete."
+echo "=========================================="

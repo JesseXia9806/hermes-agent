@@ -1,0 +1,13 @@
+{
+  "bundle_hash": "sha256:1a7954b6ad92d64eb3249f11449ce4adcd6dce5e62c42d7358cf3c96a2fba388",
+  "scanner_version": "skills-guard-v6",
+  "source": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+  "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/pyats-network/SKILL.md",
+  "verdict": "safe",
+  "trust_level": "community",
+  "findings": [],
+  "rules": [],
+  "scanned_at": "2026-09-27T14:14:03.685219+00:00",
+  "summary": "pyats-network: clean scan, no threats detected",
+  "fresh": true
+}

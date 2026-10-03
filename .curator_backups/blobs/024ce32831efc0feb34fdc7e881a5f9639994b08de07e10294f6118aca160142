@@ -1,0 +1,35 @@
+# Worked Example: Cisco C9300 Fire Replacement
+
+## Scenario
+Fire damage at P2 core network → 4 switches destroyed, emergency replacement.
+
+## Grilling Summary
+
+| Question | Answer |
+|----------|--------|
+| Scenario | Emergency replacement — fire damage |
+| Model | Cisco C9300 24AU-A × 2 + Cisco C9300 48-A × 2 (same-model replacement) |
+| Budget | Annual IT budget, standard procurement |
+| Template | OA/ERP online form (e.g. 泛微, 钉钉, 金蝶, 用友) |
+| Pricing | Vendor quote on hand |
+| Location | P2 core network area (no specific rack #) |
+| Timeline | 30 days |
+| Vendor | 上海惠皓科技有限公司 |
+| Quote # | Pending — need to obtain from vendor |
+
+## Pricing
+
+| Item | Qty | Unit Price | Subtotal |
+|------|:---:|:----------:|:--------:|
+| Cisco C9300-24AU-A | 2 | ¥36,000 | ¥72,000 |
+| Cisco C9300-48-A | 2 | ¥38,000 | ¥76,000 |
+| **Total** | **4** | | **¥148,000** |
+
+## Output Files
+- `~/Desktop/设备请购单_P2核心网络交换机.docx`
+- "填写指引清单" checklist for OA copy-paste
+
+## Key Notes
+- Invoice must be saved for insurance claim reconciliation
+- No network re-engineering needed (same model replacement)
+- Quote # field left blank as "待补充" — flag to user before OA submission

@@ -1,0 +1,93 @@
+Sep 25 12:29:25: %SYS-5-CONFIG_I: Configured from console by admin on vty1 (10.139.15.1)
+Sep 25 12:31:59: %SYS-5-CONFIG_I: Configured from console by admin on vty1 (10.139.15.1)
+Sep 25 12:32:19: %SYS-5-CONFIG_I: Configured from console by admin on vty1 (10.139.15.1)
+Sep 25 12:49:59: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 2 (10.139.15.1)), user admin
+Sep 25 12:49:59: %SYS-6-LOGOUT: User admin has exited tty session 2(10.139.15.1)
+Sep 25 12:55:23: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 12:55:23 Beijing Fri Sep 25 2026
+Sep 25 12:55:23: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 12:55:23 Beijing Fri Sep 25 2026
+Sep 25 12:57:12: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 12:58:26: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 12:59:14: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 13:02:21: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 13:05:04: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 13:19:27: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 13:21:39: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.225.202] [localport: 22] at 13:21:39 Beijing Fri Sep 25 2026
+Sep 25 13:27:54: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 13:38:31: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.15.1)), user admin
+Sep 25 13:38:31: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.15.1)
+Sep 25 13:40:25: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.14.185] [localport: 22] [Reason: Login Authentication Failed] at 13:40:25 Beijing Fri Sep 25 2026
+Sep 25 13:40:25: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.14.185] [localport: 22] at 13:40:25 Beijing Fri Sep 25 2026
+Sep 25 13:45:39: %SYS-6-LOGOUT: User admin has exited tty session 2(10.139.225.202)
+Sep 25 13:47:16: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.14.185)
+Sep 25 14:02:46: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.14.185)), user admin
+Sep 25 14:02:46: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.14.185)
+Sep 25 14:17:52: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 14:17:52 Beijing Fri Sep 25 2026
+Sep 25 14:17:52: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 14:17:52 Beijing Fri Sep 25 2026
+Sep 25 14:28:02: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.15.1)), user admin
+Sep 25 14:28:02: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.15.1)
+Sep 25 14:37:27: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.14.185] [localport: 22] [Reason: Login Authentication Failed] at 14:37:27 Beijing Fri Sep 25 2026
+Sep 25 14:37:27: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.14.185] [localport: 22] at 14:37:27 Beijing Fri Sep 25 2026
+Sep 25 14:47:19: %SW_MATM-4-MACFLAP_NOTIF: Host ae05.59ae.017c in vlan 718 is flapping between port Po1 and port Te1/1/2
+Sep 25 14:47:29: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.14.185)), user admin
+Sep 25 14:47:29: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.14.185)
+Sep 25 14:57:32: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 14:57:32 Beijing Fri Sep 25 2026
+Sep 25 14:57:32: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 14:57:32 Beijing Fri Sep 25 2026
+Sep 25 15:02:04: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 15:08:13: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.33.2] [localport: 22] [Reason: Login Authentication Failed] at 15:08:13 Beijing Fri Sep 25 2026
+Sep 25 15:08:13: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.33.2] [localport: 22] at 15:08:13 Beijing Fri Sep 25 2026
+Sep 25 15:10:18: %SYS-5-CONFIG_I: Configured from console by admin on vty1 (10.139.33.2)
+Sep 25 15:15:54: %SYS-5-CONFIG_I: Configured from console by admin on vty1 (10.139.33.2)
+Sep 25 15:17:07: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.15.1)), user admin
+Sep 25 15:17:07: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.15.1)
+Sep 25 15:17:07: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 15:28:47: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 2 (10.139.33.2)), user admin
+Sep 25 15:28:47: %SYS-6-LOGOUT: User admin has exited tty session 2(10.139.33.2)
+Sep 25 15:32:53: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 15:32:53 Beijing Fri Sep 25 2026
+Sep 25 15:32:53: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 15:32:53 Beijing Fri Sep 25 2026
+Sep 25 15:36:12: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 15:48:33: %SW_MATM-4-MACFLAP_NOTIF: Host 4ed4.ba88.0a95 in vlan 721 is flapping between port Te1/1/1 and port Po1
+Sep 25 16:02:36: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.15.1)), user admin
+Sep 25 16:02:36: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.15.1)
+Sep 25 16:31:49: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 16:31:49 Beijing Fri Sep 25 2026
+Sep 25 16:31:49: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 16:31:49 Beijing Fri Sep 25 2026
+Sep 25 16:33:06: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 16:34:54: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 16:44:11: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 16:47:10: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 16:49:09: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 16:54:02: %SW_MATM-4-MACFLAP_NOTIF: Host deed.aca9.36ce in vlan 721 is flapping between port Te1/1/1 and port Po1
+Sep 25 16:59:41: %SYS-5-CONFIG_I: Configured from console by admin on vty0 (10.139.15.1)
+Sep 25 17:07:19: %LINEPROTO-5-UPDOWN: Line protocol on Interface TenGigabitEthernet1/0/18, changed state to down
+Sep 25 17:07:20: %LINK-3-UPDOWN: Interface TenGigabitEthernet1/0/18, changed state to down
+Sep 25 17:07:28: %LINK-3-UPDOWN: Interface TenGigabitEthernet1/0/18, changed state to up
+Sep 25 17:07:30: %LINEPROTO-5-UPDOWN: Line protocol on Interface TenGigabitEthernet1/0/18, changed state to up
+Sep 25 17:11:27: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.15.1)), user admin
+Sep 25 17:11:27: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.15.1)
+Sep 25 17:29:21: %LINEPROTO-5-UPDOWN: Line protocol on Interface TenGigabitEthernet1/0/18, changed state to down
+Sep 25 17:29:22: %LINK-3-UPDOWN: Interface TenGigabitEthernet1/0/18, changed state to down
+Sep 25 17:34:14: %LINK-3-UPDOWN: Interface TenGigabitEthernet1/0/18, changed state to up
+Sep 25 17:34:16: %LINEPROTO-5-UPDOWN: Line protocol on Interface TenGigabitEthernet1/0/18, changed state to up
+Sep 25 18:19:45: %SW_MATM-4-MACFLAP_NOTIF: Host f672.acba.b66d in vlan 714 is flapping between port Po1 and port Te1/1/1
+Sep 25 18:32:31: %SW_MATM-4-MACFLAP_NOTIF: Host 424d.c989.e681 in vlan 721 is flapping between port Po1 and port Te1/1/1
+Sep 25 18:40:34: %SW_MATM-4-MACFLAP_NOTIF: Host a078.2d0a.9c86 in vlan 721 is flapping between port Te1/1/1 and port Po1
+Sep 26 07:57:18: %SW_MATM-4-MACFLAP_NOTIF: Host 420e.82e3.e0c3 in vlan 725 is flapping between port Te1/1/1 and port Po1
+Sep 26 08:33:30: %SW_MATM-4-MACFLAP_NOTIF: Host eec7.0e6e.c147 in vlan 717 is flapping between port Po1 and port Te1/1/1
+Sep 26 08:58:32: %SW_MATM-4-MACFLAP_NOTIF: Host 14f2.8719.42eb in vlan 725 is flapping between port Te1/1/1 and port Po1
+Sep 26 10:02:31: %SW_MATM-4-MACFLAP_NOTIF: Host f204.d047.5eff in vlan 721 is flapping between port Te1/1/1 and port Po1
+Sep 26 11:05:21: %SW_MATM-4-MACFLAP_NOTIF: Host 365d.59d8.3178 in vlan 721 is flapping between port Te1/1/1 and port Po1
+Sep 26 11:07:35: %SW_MATM-4-MACFLAP_NOTIF: Host 365d.59d8.3178 in vlan 721 is flapping between port Po1 and port Te1/1/1
+Sep 26 17:03:49: %SW_MATM-4-MACFLAP_NOTIF: Host 1e12.0911.024a in vlan 717 is flapping between port Te1/1/1 and port Po1
+Sep 26 18:08:52: %SW_MATM-4-MACFLAP_NOTIF: Host 6625.c244.8ae3 in vlan 714 is flapping between port Te1/1/1 and port Te1/1/2
+Sep 26 18:17:36: %SW_MATM-4-MACFLAP_NOTIF: Host 923f.7d42.d5d6 in vlan 721 is flapping between port Po1 and port Te1/1/1
+Sep 26 22:29:45: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.42.0.92] [localport: 22] [Reason: Login Authentication Failed] at 22:29:45 Beijing Sat Sep 26 2026
+Sep 26 22:29:45: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.42.0.92] [localport: 22] at 22:29:45 Beijing Sat Sep 26 2026
+Sep 26 22:30:09: %SYS-6-LOGOUT: User admin has exited tty session 1(10.42.0.92)
+Sep 28 07:32:30: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.225.147] [localport: 22] at 07:32:30 Beijing Mon Sep 28 2026
+Sep 28 07:38:30: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.225.147)
+Sep 28 07:49:11: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 07:49:11 Beijing Mon Sep 28 2026
+Sep 28 07:49:12: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 07:49:12 Beijing Mon Sep 28 2026
+Sep 28 07:59:21: %SYS-6-TTY_EXPIRE_TIMER: (exec timer expired, tty 1 (10.139.15.1)), user admin
+Sep 28 07:59:21: %SYS-6-LOGOUT: User admin has exited tty session 1(10.139.15.1)
+Sep 28 08:08:00: %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 10.139.15.1] [localport: 22] [Reason: Login Authentication Failed] at 08:08:00 Beijing Mon Sep 28 2026
+Sep 28 08:08:00: %SEC_LOGIN-5-LOGIN_SUCCESS: Login Success [user: admin] [Source: 10.139.15.1] [localport: 22] at 08:08:00 Beijing Mon Sep 28 2026
+SPR-2.254#

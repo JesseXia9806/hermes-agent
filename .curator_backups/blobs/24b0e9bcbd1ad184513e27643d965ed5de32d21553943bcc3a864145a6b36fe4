@@ -1,0 +1,62 @@
+# Intune MDM Configuration Profiles on macOS
+
+## Viewing Installed Profiles
+
+```bash
+# List all profiles with identifiers
+profiles -C
+
+# Verbose mode with full details
+profiles -C -v
+
+# Export to stdout
+profiles -C -o /dev/stdout
+```
+
+## Understanding the Output
+
+| Attribute | Meaning |
+|-----------|---------|
+| `profileIdentifier` | Unique policy ID |
+| `removalDisallowed` | `TRUE` = cannot remove locally, only from MDM console |
+| `installedByMDM` | `TRUE` = pushed by Intune/JAMF |
+| `organization` | The owning org |
+
+## Typical Intune Profile Layout (15 profiles for MDE-managed Mac)
+
+| # | Profile / Purpose | Identifier Pattern |
+|:-:|:------------------|:-------------------|
+| 1 | MDM Enrollment | `Microsoft.Profiles.MDM` |
+| 2 | MDM Agent SCEP Cert | `Microsoft.Profiles.SCEP.MdmAgent` |
+| 3 | MDM Agent PPPC | `www.windowsintune.com.privacypolicies.MdmAgent` |
+| 4 | Defender Core | `.*custompayload.com.microsoft.wdav` |
+| 5 | Defender Mobile | `.*custompayload.com.microsoft.wdav.mobileconfig` |
+| 6 | Defender Background Services | `.*MDE Background Services` |
+| 7 | Defender Full Disk Access | `.*MDE Full Disk Access` |
+| 8 | Defender Network Filter | `.*MDE Network filter` |
+| 9 | Defender Notifications | `.*MDE Notifications` |
+| 10 | Defender Accessibility | `.*MDE Accessibility` |
+| 11 | Defender Bluetooth | `.*MDE Bluetooth` |
+| 12 | Defender AutoUpdate | `.*MDE Microsoft AutoUpdate` |
+| 13 | Global Secure Access VPN | `.*GSA Config` |
+| 14 | System Extension Policy A | `com.apple.system-extension-policy.*` |
+| 15 | System Extension Policy B | `com.apple.system-extension-policy.*` |
+
+## Red Flags
+
+- Profiles from an unknown `organization` (not your company name or Microsoft)
+- `removalDisallowed: TRUE` profiles with unrecognized identifiers
+- Unexpected second MDM enrollment
+
+## Common Payload Types
+
+| Type | Purpose |
+|:-----|:--------|
+| `com.apple.mdm` | MDM enrollment |
+| `com.apple.security.scep` | Certificate enrollment |
+| `com.apple.security.root` | Root CA certificate |
+| `com.apple.TCC.configuration-profile-policy` | Privacy/accessibility permissions (PPPC) |
+| `com.apple.webcontent-filter` | Network content filter |
+| `com.apple.servicemanagement` | Background service permissions |
+| `com.apple.vpn.managed` | VPN / proxy config |
+| `com.microsoft.autoupdate2` | Microsoft AutoUpdate config |

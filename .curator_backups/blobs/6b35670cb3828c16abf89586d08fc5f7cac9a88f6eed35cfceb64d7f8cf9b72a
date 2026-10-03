@@ -1,0 +1,143 @@
+---
+name: macos-security-triage
+description: "MacOS security triage: comprehensive scan for suspicious processes, network connections, startup items, launch agents, MDM profiles, and other compromise indicators. For IT managers auditing Mac endpoints."
+metadata:
+  hermes:
+    tags: [apple, macos, security, triage, incident-response, IT-management]
+    related_skills: []
+---
+
+# macOS Security Triage
+
+## When to Use
+
+User asks any of:
+- "看看有没有可疑程序" / "check for suspicious programs on my Mac"
+- "扫描一下安全" / "run a security scan"
+- "看看哪些东西在开机自启" / "check startup items"
+- "查 MDM 配置" / "check MDM/Intune profiles"
+- "有没有不明进程" / "are there unknown processes?"
+- General compromise or anomaly investigation on a macOS endpoint
+
+## Workflow
+
+Run the following checks in parallel where possible (they are independent):
+
+### 1. Process Scan
+```bash
+# CPU/Memory heavy processes (top consumers)
+ps -eo pid,pcpu,pmem,user,comm -r | head -30
+
+# Processes running as root (filter out known system services)
+ps -U root -o pid,pcpu,pmem,comm -r | head -20
+```
+
+**Red flags**: Unusual process names, crypto miner patterns (`minerd`, `xmrig`, `ccminer`, `ethminer`), randomly-named processes, processes running as `_unknown` user with network connections.
+
+### 2. Network Connections
+```bash
+# All listening ports (identify open services)
+lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null
+
+# All established connections (identify outbound C2)
+lsof -i -P -n | awk 'NR==1 || !seen[$1,$9]++' | head -50
+```
+
+**Red flags**: Unfamiliar listening services on high ports, connections to known malicious IP ranges, unusual outbound traffic to foreign countries not related to user's work.
+
+### 3. Startup Items
+```bash
+# Login items (GUI)
+osascript -e 'tell application "System Events" to get the name of every login item'
+
+# User-level launch agents
+ls -la ~/Library/LaunchAgents/ | grep -v com.apple
+```
+
+**Red flags**: Unknown agents, disguised names (e.g. `com.apple.updater.plist` vs real Apple naming), agents running from non-standard paths like `/tmp/`, `/Users/Shared/`, or the Downloads folder.
+
+### 4. System-Level Launch Daemons
+```bash
+# Non-Apple system daemons
+ls /Library/LaunchDaemons/ 2>/dev/null | grep -v com.apple
+ls /Library/LaunchAgents/ 2>/dev/null | grep -v com.apple
+```
+
+**Red flags**: Third-party daemons that were not intentionally installed. In enterprise settings, Intune MDM, TrendMicro, FortiClient, TeamViewer, and VPN clients are expected. Any unknown daemon is a concern.
+
+### 5. MDM / Configuration Profiles
+```bash
+profiles -C -v 2>/dev/null
+```
+
+Document the total count and list each profile by name and identifier. For Intune environments, 10-20 profiles are typical (MDE, VPN, SCEP certs, PPPC permissions, system extension policies).
+
+**Red flags**: Unknown MDM enrollment (profileIdentifier not matching your company's naming), profiles from unrecognized organizations, profiles marked `removalDisallowed: TRUE` from an unexpected source.
+
+### 6. Kernel Extensions
+```bash
+kextstat | grep -v com.apple
+```
+
+On recent macOS with Apple Silicon, third-party kexts are rare — most are system extensions now. Zero non-Apple kexts is normal on modern macOS.
+
+**Red flags**: Any third-party kexts without clear provenance.
+
+### 7. Scheduled Tasks
+```bash
+crontab -l 2>/dev/null
+atq 2>/dev/null
+```
+
+**Red flags**: Unexpected cron jobs calling out to remote hosts or running from `/tmp/`.
+
+### 8. Shell Profiles & SSH Keys
+```bash
+cat ~/.bash_profile 2>/dev/null
+cat ~/.zshrc 2>/dev/null | head -30
+ls ~/.ssh/ 2>/dev/null
+cat ~/.ssh/config 2>/dev/null
+```
+
+**Red flags**: SSH keys you don't recognise, shell profiles sourcing from unexpected paths, exported API keys visible in plain text (flag as a finding).
+
+### 9. Installed Applications
+```bash
+find /Applications -maxdepth 2 -name '*.app' -type d | sort
+```
+
+Quick scan for software that shouldn't be there: unauthorized remote access tools, outdated software with known vulns, torrent clients on corporate machines.
+
+### 10. Suspicious Temp Files
+```bash
+ls -la /tmp/ 2>/dev/null
+```
+
+## Reporting Format
+
+After each check, summarize findings in a table:
+
+| Check | Status | Finding |
+|:------|:------:|:--------|
+| Processes | ✅/⚠️/❌ | Key findings |
+| Network | ✅/⚠️/❌ | Key findings |
+| ... | ... | ... |
+
+**Status legend**:
+- ✅ Clean — no anomalies found
+- ⚠️ Note — non-security items worth mentioning (e.g. proxy tools, remote desktop)
+- ❌ Alert — genuine finding requiring action
+
+Always include an **Overall Verdict** at the top: "✅ 系统干净" or "⚠️ 需关注以下事项".
+
+## Pitfalls
+
+- **macOS ps syntax** differs from Linux — use `-eo` (no dash prefix the second time) not `--sort=-%cpu`. The macOS equivalent is `ps -eo pid,pcpu,pmem,user,comm -r`.
+- **profiles -C output** may re-index blocks on each call. Parse with `grep` for `attribute: profileIdentifier:` to get stable identifiers.
+- **lsof requires sudo** for full visibility. If run without sudo, process-less connections and system daemon sockets will be hidden. Note this in the report.
+- **Parallel execution** recommended: process scan, network scan, launch agents, and applications can all run simultaneously since they don't depend on each other. Batch in one round of terminal calls.
+- **User context** matters: this scan finds technical indicators, not policy violations. A proxy tool (Clash Verge, Shadowrocket) or remote desktop (TeamViewer, AnyDesk) is common for IT managers but worth a note.
+
+## Script
+
+A bundled `scripts/full_scan.sh` script runs all checks sequentially and outputs a unified report. Use it for quick triage; use the per-check manual commands above for deeper investigation.

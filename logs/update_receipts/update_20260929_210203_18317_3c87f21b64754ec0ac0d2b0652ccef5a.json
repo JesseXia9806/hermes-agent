@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-29T12:55:33.182285+00:00",
+  "finished_at": "2026-09-29T13:02:03.847008+00:00",
+  "argv": [
+    "/Users/jessexia/.hermes/hermes-agent/venv/bin/hermes",
+    "update"
+  ],
+  "pid": 17702,
+  "outcome": "success",
+  "pre_update": {
+    "sha": "a1725000fc15454057ec1980e183e4e2b709eb04",
+    "short_sha": "a1725000",
+    "version": "0.21.5",
+    "source": "git",
+    "commit_date": 1790648979
+  },
+  "post_update": {
+    "sha": "b8a8be185d6e88b35e0a4fa794fea64fb06ed85b",
+    "short_sha": "b8a8be18",
+    "version": "0.21.5",
+    "source": "git",
+    "commit_date": 1790682704
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260929-125533-pre-update, it=20260929-125534-pre-update",
+      "at": "2026-09-29T12:55:34.073088+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260929-125533-pre-update",
+      "at": "2026-09-29T12:55:34.073199+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {
+    "restarted_services": [
+      "ai.hermes.gateway"
+    ],
+    "relaunched_profiles": [],
+    "externally_supervised_profiles": [],
+    "killed_pids": [],
+    "failed_units": [],
+    "incomplete": false,
+    "phase_error": ""
+  },
+  "fleet": [
+    {
+      "profile": "default",
+      "pid": 21303,
+      "code_sha": "b8a8be185d6e88b35e0a4fa794fea64fb06ed85b",
+      "code_version": "0.21.5",
+      "state": "current",
+      "code_root": "/Users/jessexia/.hermes/hermes-agent",
+      "source": "socket"
+    }
+  ],
+  "update_id": "3c87f21b64754ec0ac0d2b0652ccef5a",
+  "correlation_id": null,
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "a1725000fc15454057ec1980e183e4e2b709eb04",
+    "expected_version": "0.21.5",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 1061,
+        "supervisor": "launchd",
+        "code_sha": "8c9fe964009096e46f44292d036c1e0ac33c3026",
+        "code_version": "0.21.5",
+        "restart_via": "launchd",
+        "detail": {}
+      }
+    ]
+  },
+  "stages": [
+    {
+      "name": "plan",
+      "outcome": "success",
+      "at": "2026-09-29T12:55:33.439160+00:00"
+    },
+    {
+      "name": "snapshot",
+      "outcome": "success",
+      "at": "2026-09-29T12:55:34.073247+00:00"
+    },
+    {
+      "name": "apply",
+      "outcome": "success",
+      "at": "2026-09-29T12:58:50.443060+00:00",
+      "mode": "git"
+    },
+    {
+      "name": "deps",
+      "outcome": "success",
+      "at": "2026-09-29T12:58:55.854666+00:00"
+    },
+    {
+      "name": "build",
+      "outcome": "success",
+      "at": "2026-09-29T13:01:53.164861+00:00"
+    },
+    {
+      "name": "restart",
+      "outcome": "success",
+      "at": "2026-09-29T13:01:57.625030+00:00"
+    }
+  ],
+  "runtime_outcomes": [
+    {
+      "kind": "gateway",
+      "profile": "default",
+      "pid": 1061,
+      "mechanism": "launchd",
+      "outcome": "restarted"
+    }
+  ],
+  "pm_venv_rebuild": {
+    "ok": false,
+    "reason": "already in sync"
+  },
+  "pm_feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "pm_steps": [],
+  "pm_exit_code": 0,
+  "pm_sync_outcome": "ok"
+}

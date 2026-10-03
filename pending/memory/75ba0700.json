@@ -1,0 +1,24 @@
+{
+  "id": "75ba0700",
+  "subsystem": "memory",
+  "action": "batch",
+  "summary": "background review consolidation (batch on memory): - replace entry matching 'Zabbix 7.4.9 API at spipzabbix.sercomm.com' -> whole entry becomes: Zabbix 7.4.14 API spipzabbix.sercomm.com: Bearer auth.",
+  "origin": "background_review",
+  "created_at": 1790815712.162154,
+  "payload": {
+    "action": "batch",
+    "target": "memory",
+    "operations": [
+      {
+        "action": "replace",
+        "content": "Zabbix 7.4.14 API spipzabbix.sercomm.com: Bearer auth. Login Admin/zabbix. Skip SSL (verify=False). ~1512 hosts. problem.get API: omit time_from to catch all active alerts. Server 10.140.1.42, CentOS 9. Skills: zabbix-export-devices, zabbix-problem-management.",
+        "old_text": "Zabbix 7.4.9 API at spipzabbix.sercomm.com",
+        "matched_entry": "Zabbix 7.4.9 API at spipzabbix.sercomm.com: auth via Authorization: Bearer header (NOT root-level `auth` param). Login: Admin / zabbix (case-sensitive). Self-signed cert → skip SSL verify. Export script ~/zabbix_export_vms.py, CSV ~/zabbix_vmware_export.csv (213 VMs, 48 hypervisors). Server: spipzabbix=10.140.1.42, CentOS Stream 9, RPM+MySQL, root console access already configured. Skills: zabbix-export-devices (设备导出), zabbix-problem-management (告警关闭), zabbix-server-admin (版本/升级)."
+      },
+      {
+        "action": "add",
+        "content": "Internal Sercomm SMTP: smtptp02.sercomm.com:25 (no auth)."
+      }
+    ]
+  }
+}

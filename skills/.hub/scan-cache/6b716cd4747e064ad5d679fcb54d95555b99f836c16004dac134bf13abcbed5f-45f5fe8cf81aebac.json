@@ -1,0 +1,13 @@
+{
+  "bundle_hash": "sha256:6b716cd4747e064ad5d679fcb54d95555b99f836c16004dac134bf13abcbed5f",
+  "scanner_version": "skills-guard-v8",
+  "source": "official",
+  "source_url": "official/smart-home/openhue",
+  "verdict": "safe",
+  "trust_level": "builtin",
+  "findings": [],
+  "rules": [],
+  "scanned_at": "2026-10-03T01:16:22.911138+00:00",
+  "summary": "openhue: clean scan, no threats detected",
+  "fresh": true
+}

@@ -1,0 +1,27 @@
+{
+  "identity": {
+    "root": "/Users/jessexia/.hermes/hermes-agent",
+    "home": "/Users/jessexia/.hermes",
+    "head": "46904a3b467f62616f5b3ee247adce30b1b277a0",
+    "origin": "https://github.com/NousResearch/hermes-agent.git",
+    "branch": "main",
+    "channel": "main",
+    "embedded": null,
+    "branchOverride": false,
+    "channelProtocol": 1
+  },
+  "ts": 1790989051.0381389,
+  "status": {
+    "supported": true,
+    "hermesRoot": "/Users/jessexia/.hermes/hermes-agent",
+    "behind": 0,
+    "commits": [],
+    "currentSha": "46904a3b467f62616f5b3ee247adce30b1b277a0",
+    "currentBranch": "main",
+    "dirty": false,
+    "branch": "main",
+    "fetchedAt": 1790989051038,
+    "targetSha": "46904a3b467f62616f5b3ee247adce30b1b277a0",
+    "updateAvailable": false
+  }
+}

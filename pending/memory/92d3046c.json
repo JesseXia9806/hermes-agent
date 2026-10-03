@@ -1,0 +1,20 @@
+{
+  "id": "92d3046c",
+  "subsystem": "memory",
+  "action": "batch",
+  "summary": "background review consolidation (batch on user): - replace entry matching 'Team: Ramil, Jayson, Jomar, Dennis, Ray.' -> whole entry becomes: Team: Ramil, Jayson, Jomar, Dennis, Ray. IT Group Email: sp",
+  "origin": "background_review",
+  "created_at": 1790815715.997312,
+  "payload": {
+    "action": "batch",
+    "target": "user",
+    "operations": [
+      {
+        "action": "replace",
+        "content": "Team: Ramil, Jayson, Jomar, Dennis, Ray. IT Group Email: spimd@sercomm.com.",
+        "old_text": "Team: Ramil, Jayson, Jomar, Dennis, Ray.",
+        "matched_entry": "Jesse Xia, IT Manager at Sercomm Corp (Philippines). Bilingual Chinese/English. Style: concise, structured, execution-oriented. Team: Ramil, Jayson, Jomar, Dennis, Ray. Uses PRTG at 10.140.1.85 for network monitoring. iCloud Drive + pplx/ for HR file storage. Organized file classification preference: Employee_Master/Performance_Development/Policy_Governance/Yearly_Ops_Events/人事流程."
+      }
+    ]
+  }
+}

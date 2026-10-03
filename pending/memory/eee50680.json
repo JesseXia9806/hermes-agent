@@ -1,0 +1,29 @@
+{
+  "id": "eee50680",
+  "subsystem": "memory",
+  "action": "batch",
+  "summary": "background review consolidation (batch on memory): - replace entry matching 'Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container & Nginx. Natively hosts PostgreSQL 16' -> whole entry becomes:",
+  "origin": "background_review",
+  "created_at": 1790995147.0450969,
+  "payload": {
+    "action": "batch",
+    "target": "memory",
+    "operations": [
+      {
+        "action": "replace",
+        "content": "Node 10.139.1.5 (logserver, RHEL 9, Hermes container): PostgreSQL 16 bare-metal (port 5432, postgres/Amis#201920261002). DBs: hcp_cache (ODS, 30m cron sync from MS SQL .32), hikvision_attendance (DW star-schema), mes_raw_data (Oracle MES). FDW cross-DB aggregates daily attendance at :10 and :40.",
+        "old_text": "Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container & Nginx. Natively hosts PostgreSQL 16",
+        "matched_entry": "Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container & Nginx. Natively hosts PostgreSQL 16 (port 5432, user: postgres, pw: Amis#201920261002). Contains 'mes_raw_data' (Oracle MES) and 'hikvision_attendance' (MS SQL) for AI Text-to-SQL analytics."
+      },
+      {
+        "action": "remove",
+        "old_text": "Sercomm Hikvision attendance & MES raw data architecture on 10.139.1.5: PostgreSQL 16 bare-metal setup.",
+        "matched_entry": "Sercomm Hikvision attendance & MES raw data architecture on 10.139.1.5: PostgreSQL 16 bare-metal setup. DBs: hcp_cache (ODS layer, incremental cron sync every 30m from MS SQL 10.139.1.32), hikvision_attendance (DW star-schema with dim_employee, dim_attendance_machine, fact_swipe_log, agg_daily_attendance), and mes_raw_data. FDW cross-database engine aggregates daily attendance every 30m (at :10 and :40)."
+      },
+      {
+        "action": "add",
+        "content": "Aruba IAP 10.139.9.1 (AOS 8.10). REST on port 4343; creds at ~/.hermes/secrets/aruba_iap.json. Use skill aruba-iap-inspection."
+      }
+    ]
+  }
+}

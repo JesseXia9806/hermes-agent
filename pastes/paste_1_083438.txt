@@ -1,0 +1,11 @@
+Manager
+1. Jesse Xia
+Section Head
+2. Hiring              负责Server platform & Hardware
+Staff person
+3. (Philippines) Engineer / Regino Carillo    负责 Helpdesk,SOP document, training
+4. (Philippines) Engineer/ Robert Beltran     负责 ISO Security & audit
+5. (Philippines) Engineer/ Regie De Ocampo    负责 Surveillance, Wi-Fi, telephone  System management
+6. (Philippines) Engineer/ Jomar Apellido     负责 Network management
+7. (Philippines) Engineer/ Marc Junielle Maluping   负责 Helpdesk,SOP document, training
+8. (Philippines) Engineer/ Hiring   负责 System management

@@ -1,0 +1,32 @@
+---
+name: aruba-iap-inspection
+description: "Use when inspecting Aruba IAPs via REST API."
+version: 1.0.0
+author: Hermes Curators
+---
+
+# Aruba IAP REST API Inspections
+
+This skill provides the workflow and constraints for securely querying and controlling Aruba Instant Access Points (IAP) via their native REST API, avoiding the fragility of third-party wrappers like `instantpy` that break on CLI formatting changes.
+
+## Procedure
+
+1. **Credentials**: Read IAP IP, username, and password exclusively from `~/.hermes/secrets/aruba_iap.json`. Do not hardcode credentials in scripts or logs.
+2. **Session Authentication (SID)**:
+   - Make a `POST` request to `https://<ip>:4343/rest/login` with JSON body: `{"user": "<username>", "passwd": "<password>"}`.
+   - Extract the `sid` token from the JSON response (`parsed["sid"]`).
+3. **Execute Command**:
+   - Send a `GET` request to `https://<ip>:4343/rest/show-cmd?iap_ip_addr=<ip>&cmd=<URL-encoded-cmd>&sid=<sid>`.
+   - The output is nested inside the `"Command output"` JSON key.
+4. **Logout**:
+   - Make a `POST` request to `https://<ip>:4343/rest/logout?sid=<sid>` to invalidate the session cookie.
+
+## Pitfalls & Rules
+
+* **Require Admin Privileges for `/show-cmd`**: Do NOT use `monitor` or read-only accounts for issuing show commands over REST. Aruba Instant OS rigidly enforces API privileges and will return XML `<error>Invalid opcode for current user</error>` regardless of whether the command is harmless (e.g. `show version`). Only an Admin-level account works.
+* **Avoid Regex for CLI Outputs**: Do NOT rely on regex parsing for unstructured `show-cmd` output. Aruba frequently changes CLI structure between minor releases (e.g., 8.6 to 8.10). Provide the raw text to the LLM context and parse it natively, or use a script that just dumps the text.
+* **Handle SSL Appropriately**: Aruba IAPs use self-signed certificates by default. Disable SSL verification (`verify_mode = ssl.CERT_NONE` / `verify=False`) but suppress insecure request warnings to keep terminal output clean.
+
+## Associated Scripts
+
+* `scripts/rest_query.py`: A native Python script using `urllib` to handle the SID authentication lifecycle and query IAPs without external dependencies (no `requests` needed).

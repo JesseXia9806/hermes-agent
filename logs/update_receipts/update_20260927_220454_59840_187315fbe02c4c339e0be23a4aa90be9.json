@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-27T13:59:59.107545+00:00",
+  "finished_at": "2026-09-27T14:04:54.565000+00:00",
+  "argv": [
+    "/Users/jessexia/.hermes/hermes-agent/venv/bin/hermes",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 59289,
+  "outcome": "success",
+  "pre_update": {
+    "sha": "c0d7294769a38c17ceae51d8f7995e66e1dcae27",
+    "short_sha": "c0d72947",
+    "version": "0.21.4",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "e5050a040a191579eb9fae9e56fba2445aec1cd8",
+    "short_sha": "e5050a04",
+    "version": "0.21.5",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260927-135959-pre-update, it=20260927-135959-pre-update",
+      "at": "2026-09-27T13:59:59.536375+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260927-135959-pre-update",
+      "at": "2026-09-27T13:59:59.536397+00:00"
+    },
+    {
+      "name": "historical_takeover",
+      "ok": true,
+      "detail": "continuing in the selected interpreter",
+      "at": "2026-09-27T14:01:53.168853+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {
+    "restarted_services": [
+      "ai.hermes.gateway"
+    ],
+    "relaunched_profiles": [],
+    "externally_supervised_profiles": [],
+    "killed_pids": [],
+    "failed_units": [],
+    "incomplete": false,
+    "phase_error": ""
+  },
+  "fleet": [
+    {
+      "profile": "default",
+      "pid": 63199,
+      "code_sha": "e5050a040a191579eb9fae9e56fba2445aec1cd8",
+      "code_version": "0.21.5",
+      "state": "current",
+      "code_root": null,
+      "source": "socket"
+    }
+  ],
+  "update_id": "187315fbe02c4c339e0be23a4aa90be9",
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "c0d7294769a38c17ceae51d8f7995e66e1dcae27",
+    "expected_version": "0.21.4",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 1033,
+        "supervisor": "external",
+        "code_sha": "c0d7294769a38c17ceae51d8f7995e66e1dcae27",
+        "code_version": "0.21.4",
+        "restart_via": "manual",
+        "detail": {}
+      }
+    ]
+  },
+  "runtime_outcomes": [
+    {
+      "kind": "gateway",
+      "profile": "default",
+      "pid": 1033,
+      "mechanism": "manual",
+      "outcome": "restarted"
+    }
+  ],
+  "pm_venv_rebuild": {
+    "ok": true,
+    "reason": ""
+  },
+  "pm_feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "pm_steps": [],
+  "pm_exit_code": 0,
+  "pm_sync_outcome": "ok"
+}

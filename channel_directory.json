@@ -1,0 +1,37 @@
+{
+  "updated_at": "2026-10-03T15:20:55.358635",
+  "platforms": {
+    "telegram": [
+      {
+        "id": "8717319320:1650",
+        "name": "Jesse Xia / topic 1650",
+        "type": "dm",
+        "thread_id": "1650"
+      },
+      {
+        "id": "8717319320:1653",
+        "name": "Jesse Xia / topic 1653",
+        "type": "dm",
+        "thread_id": "1653"
+      },
+      {
+        "id": "8717319320:1604",
+        "name": "Jesse Xia / topic 1604",
+        "type": "dm",
+        "thread_id": "1604"
+      },
+      {
+        "id": "8717319320:1588",
+        "name": "Jesse Xia / topic 1588",
+        "type": "dm",
+        "thread_id": "1588"
+      },
+      {
+        "id": "8717319320",
+        "name": "Jesse Xia",
+        "type": "dm",
+        "thread_id": null
+      }
+    ]
+  }
+}

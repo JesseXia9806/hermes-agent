@@ -1,0 +1,101 @@
+Severity	Date and Time	Message ID	Description	Comments
+2026-09-24 20:27:54	SEL9901	OEM software event.	
+2026-09-24 20:26:20	SYS1003	System CPU Resetting.	
+2026-09-24 20:25:58	SYS1000	System is turning on.	
+2026-09-24 14:33:26	JCP037	The (installation or configuration) job JID_902313109831 is successfully completed.	
+2026-09-24 14:33:22	SRV108	The SupportAssist job JID_902316018394 is completed.	
+2026-09-24 14:33:22	SRV088	The SupportAssist Export operation is successfully completed.	
+2026-09-24 14:33:22	SRV097	The SupportAssist Collection is successfully exported to the local path.	
+2026-09-24 14:33:22	SRV002	The SupportAssist Export operation is started.	
+2026-09-24 14:33:21	SRV087	The SupportAssist Collection Job JID_902316018394 is successfully created.	
+2026-09-24 14:33:19	SRV108	The SupportAssist job JID_902313110033 is completed.	
+2026-09-24 14:33:19	SRV089	The SupportAssist Collection operation is partially completed.	
+2026-09-24 14:33:19	SRV096	The SupportAssist Collection TSR20260924013315_B0KLRK4.zip is successfully created.	
+2026-09-24 14:33:15	SRV007	The SupportAssist System information collection operation is successfully completed.	
+2026-09-24 14:33:14	LOG008	The complete Lifecycle Log was successfully created for an export operation.	
+2026-09-24 14:33:14	LOG009	The current Lifecycle Log is successfully created for the view or export operation.	
+2026-09-24 14:33:12	SRV018	Unable to start the Storage Controller Log collection because the server is powered off.	
+2026-09-24 14:28:58	SYS336	An existing hash value is updated because some system configuration items are changed.	
+2026-09-24 14:28:31	SRV006	The SupportAssist System information collection operation is started.	
+2026-09-24 14:28:31	SRV001	The SupportAssist Collection operation is started by REDFISH.	
+2026-09-24 14:28:31	SRV087	The SupportAssist Collection Job JID_902313110033 is successfully created.	
+2026-09-24 14:28:30	JCP027	The (installation or configuration) job JID_902313109831 is successfully created on iDRAC.	
+2026-09-24 14:28:30	USR107	A SupportAssistCollection operation on DCIM_LCService was performed by Plugin.Integrated.1028-dc101.	
+2026-09-24 09:12:58	SYS336	An existing hash value is updated because some system configuration items are changed.	
+2026-09-24 09:12:44	SYS504	The Metric Report Definition DTM-1H1-Metrics-01 is successfully created.	
+2026-09-24 09:12:44	SYS336	An existing hash value is updated because some system configuration items are changed.	
+2026-09-24 09:12:43	SYS504	The Metric Report Definition DTM-15M3-Metrics-01 is successfully created.	
+2026-09-24 09:12:43	SYS504	The Metric Report Definition DTM-15M2-Metrics-01 is successfully created.	
+2026-09-24 09:12:39	SYS504	The Metric Report Definition DTM-15M1-Metrics-01 is successfully created.	
+2026-09-24 09:12:38	SYS504	The Metric Report Definition DTM-5M1-Metrics-01 is successfully created.	
+2026-09-24 09:12:38	SYS498	The Telemetry feature is successfully enabled.	
+2026-09-24 09:12:37	SRV074	The SupportAssist End User License Agreement (EULA) is accepted by iDRAC user Plugin.Integrated.1028-dc101 via iDRAC interface REDFISH.	
+2026-09-24 09:12:37	USR107	A SupportAssistAcceptEULA operation on DCIM_LCService was performed by Plugin.Integrated.1028-dc101.	
+2026-09-24 09:12:37	USR107	A SupportAssistGetEULAStatus operation on DCIM_LCService was performed by Plugin.Integrated.1028-dc101.	
+2026-09-24 09:07:01	SDK0003	The iDRAC SDK plugin 1028-dc100 was successfully removed.	
+2026-09-24 09:01:44	SYS555	The Secure-Feature-Token is successfully used on the iDRAC.	
+2026-09-24 09:01:27	SDK0004	The iDRAC SDK plugin 1028-dc101 was successfully started.	
+2026-09-24 09:01:18	JCP037	The (installation or configuration) job JID_902116659307 is successfully completed.	
+2026-09-24 09:01:13	SDK0001	The iDRAC SDK plugin 1028-dc101 was successfully installed.	
+2026-09-24 09:01:08	SUP1905	Firmware update programming flash.	
+2026-09-24 09:01:08	SUP1903	Firmware update verify image headers.	
+2026-09-24 09:01:08	SUP1904	Firmware update checksumming image.	
+2026-09-24 09:01:07	SUP1911	Firmware update initialization complete.	
+2026-09-24 09:01:07	SUP1901	Firmware update initializing.	
+2026-09-24 09:01:07	RED054	An update job JID_902116659307 was created.	
+2026-09-24 09:01:06	RED110	Downloading the Non-SDL-Software-and-Peripherals_Application_Y63NY_WN64_200.5.0_A00.EXE update package.	
+2026-09-24 09:01:05	RED052	Processing of update packages is starting.	
+2026-09-24 09:01:05	JCP027	The (installation or configuration) job JID_902116659307 is successfully created on iDRAC.	
+2026-09-24 09:01:05	RED002	Package successfully downloaded.	
+2026-09-24 08:05:36	SDK0003	The iDRAC SDK plugin 1028-dc101 was successfully removed.	
+2026-09-24 07:55:12	SDK0004	The iDRAC SDK plugin 1028-dc101 was successfully started.	
+2026-09-24 07:55:03	JCP037	The (installation or configuration) job JID_902076902093 is successfully completed.	
+2026-09-24 07:54:57	SDK0001	The iDRAC SDK plugin 1028-dc101 was successfully installed.	
+2026-09-24 07:54:53	SUP1905	Firmware update programming flash.	
+2026-09-24 07:54:52	SUP1903	Firmware update verify image headers.	
+2026-09-24 07:54:52	SUP1904	Firmware update checksumming image.	
+2026-09-24 07:54:52	SUP1911	Firmware update initialization complete.	
+2026-09-24 07:54:52	SUP1901	Firmware update initializing.	
+2026-09-24 07:54:51	RED054	An update job JID_902076902093 was created.	
+2026-09-24 07:54:50	RED110	Downloading the Non-SDL-Software-and-Peripherals_Application_Y63NY_WN64_200.5.0_A00.EXE update package.	
+2026-09-24 07:54:50	RED052	Processing of update packages is starting.	
+2026-09-24 07:54:50	JCP027	The (installation or configuration) job JID_902076902093 is successfully created on iDRAC.	
+2026-09-24 07:54:49	RED002	Package successfully downloaded.	
+2026-09-24 06:24:39	SYS1001	System is turning off.	
+2026-09-24 06:24:39	SYS1003	System CPU Resetting.	
+2026-09-24 06:24:39	SYS1005	The server power action is initiated because the host device initiated a power-down operation.	
+2026-09-24 06:06:11	PWR2287	A USB device is removed from the slot Rear Port 0.	
+2026-09-24 06:06:10	PWR2287	A USB device is removed from the slot Rear Port 1.	
+2026-09-24 05:52:34	IPA0100	The iDRAC IP Address changed from 0.0.0.0 to 10.139.1.73.	
+2026-09-24 05:51:51	IPA0100	The iDRAC IP Address changed from 10.139.1.73 to 0.0.0.0.	
+2026-09-24 05:27:22	SWC0403	The TPM IAK certificate is successfully downloaded from iDRAC.	
+2026-09-24 05:27:20	SWC0403	The TPM IDEVID certificate is successfully downloaded from iDRAC.	
+2026-09-24 05:26:58	SWC0403	The TPM IAK certificate is successfully downloaded from iDRAC.	
+2026-09-24 05:26:56	SWC0403	The TPM IDEVID certificate is successfully downloaded from iDRAC.	
+2026-09-24 05:24:29	SYS336	An existing hash value is updated because some system configuration items are changed.	
+2026-09-24 05:24:28	SEL9901	OEM software event.	
+2026-09-24 05:24:27	OSE1002	C: boot completed.	
+2026-09-24 05:24:20	SEL9901	OEM software event.	
+2026-09-24 05:24:19	SEL9901	OEM software event.	
+2026-09-24 05:23:21	CTL129	The boot media of the Controller RAID Controller in SL 5 is Disk.Virtual.239:RAID.SL.5-1.	
+2026-09-24 05:21:37	SYS1005	The server power action is initiated because the host device initiated a warm-reset operation.	
+2026-09-24 05:21:21	SYS1003	System CPU Resetting.	
+2026-09-24 05:08:17	NIC100	The Integrated NIC 1 Port 1 network link is down.	
+2026-09-24 05:08:17	NIC101	The Embedded NIC 1 Port 1 network link is started.	
+2026-09-24 04:43:19	PWR2288	A USB device is installed in the slot Rear Port 1.	
+2026-09-24 04:42:15	PWR2288	A USB device is installed in the slot Rear Port 0.	
+2026-09-24 04:27:58	SWC0403	The TPM IAK certificate is successfully downloaded from iDRAC.	
+2026-09-24 04:27:56	SWC0403	The TPM IDEVID certificate is successfully downloaded from iDRAC.	
+2026-09-24 04:27:36	SWC0403	The TPM IAK certificate is successfully downloaded from iDRAC.	
+2026-09-24 04:27:34	SWC0403	The TPM IDEVID certificate is successfully downloaded from iDRAC.	
+2026-09-24 04:24:17	CTL129	The boot media of the Controller RAID Controller in SL 5 is Disk.Virtual.239:RAID.SL.5-1.	
+2026-09-24 04:24:14	SYS336	An existing hash value is updated because some system configuration items are changed.	
+2026-09-24 04:24:08	SEL9901	OEM software event.	
+2026-09-24 04:24:07	OSE1002	C: boot completed.	
+2026-09-24 04:24:02	SEL9901	OEM software event.	
+2026-09-24 04:23:59	SEL9901	OEM software event.	
+2026-09-24 04:22:24	IPA0100	The iDRAC IP Address changed from 0.0.0.0 to 10.139.1.73.	
+2026-09-24 04:22:23	SYS1003	System CPU Resetting.	
+2026-09-24 04:22:13	SYS1000	System is turning on.	
+2026-09-23 23:35:06	SDK0019	The App Extension Dell Connectivity Client has reported the following message for informational purpose only: DCM100, Unable to connect.	
+2026-09-23 23:34:50	SDK0004	The iDRAC SDK plugin 1028-dc100 was successfully started.

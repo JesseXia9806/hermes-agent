@@ -1,0 +1,79 @@
+# SSH 配置强化模板
+# 复制到 /etc/ssh/sshd_config 或作为参考配置
+
+# 基础安全配置
+Protocol 2
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# 认证配置
+PasswordAuthentication no
+PermitRootLogin no
+PermitEmptyPasswords no
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+
+# 连接限制
+MaxAuthTries 3
+MaxSessions 10
+MaxStartups 10:30:100
+ClientAliveInterval 300
+ClientAliveCountMax 2
+
+# 安全算法
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+# 功能限制
+X11Forwarding no
+X11DisplayOffset 10
+X11UseLocalhost yes
+PrintMotd no
+PrintLastLog yes
+UsePAM yes
+UseDNS no
+
+# 端口配置
+Port 22
+# Port 3001  # 根据业务需要启用，注释掉则不启用
+
+# 用户访问控制
+AllowUsers <service-user>
+DenyUsers root
+
+# 日志配置
+LogLevel VERBOSE
+SyslogFacility AUTHPRIV
+LogLevel VERBOSE
+
+# 子系统配置
+Subsystem sftp internal-sftp
+
+# 安全限制
+PermitUserEnvironment no
+IgnoreRhosts yes
+RhostsAuthentication no
+HostbasedAuthentication no
+PermitTunnel no
+AllowTcpForwarding no
+GatewayPorts no
+
+# 禁用不安全的协议
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+HostKeyAlgorithms ssh-ed25519,ecdsa-sha2-nistp256
+PubkeyAcceptedKeyTypes ssh-ed25519,ecdsa-sha2-nistp256
+
+# 服务器配置
+Banner /etc/issue.net
+TCPKeepAlive no
+Compression no
+
+# 安全审计
+LoginGraceTime 60
+StrictModes yes
+
+# 根据环境调整以下配置
+# 如果需要允许特定用户，在 AllowUsers 中添加
+# 如果需要允许特定端口，在 Port 中添加

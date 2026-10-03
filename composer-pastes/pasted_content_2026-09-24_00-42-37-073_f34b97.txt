@@ -1,0 +1,85 @@
+2026-09-24 21:35:50	SEL9901	OEM software event.	
+2026-09-24 21:35:48	OSE1002	C: boot completed.	
+2026-09-24 21:35:46	CTL129	The boot media of the Controller RAID Controller in SL 5 is Disk.Virtual.239:RAID.SL.5-1.	
+2026-09-24 21:35:41	SEL9901	OEM software event.	
+2026-09-24 21:35:39	SEL9901	OEM software event.	
+2026-09-24 21:34:18	JCP037	The (installation or configuration) job JID_902568453526 is successfully completed.	
+2026-09-24 21:34:18	RED036	Firmware updates are available : Integrated Dell Remote Access Controller.	
+2026-09-24 21:34:18	RED036	Firmware updates are available : Broadcom Adv. Dual 10GBASE-T Ethernet - 6C:83:75:DD:6B:80.	
+2026-09-24 21:34:18	RED036	Firmware updates are available : BIOS.	
+2026-09-24 21:34:18	RED036	Firmware updates are available : PERC H755 Front.	
+2026-09-24 21:34:06	RED002	Package successfully downloaded.	
+2026-09-24 21:34:06	RED111	Successfully downloaded the update package details 1.50049 MB in 0.695049 secs at 2.15882 MBps (17.2706 Mbps) [Catalog.xml.gz].	
+2026-09-24 21:34:06	SYS1003	System CPU Resetting.	
+2026-09-24 21:34:05	RED110	Downloading the Catalog.xml update package.	
+2026-09-24 21:34:05	JCP027	The (installation or configuration) job JID_902568453526 is successfully created on iDRAC.	
+2026-09-24 21:33:46	SYS1000	System is turning on.	
+2026-09-24 21:30:54	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:30:22	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:30:16	USR107	A GetRepoBasedUpdateList operation on DCIM_SoftwareInstallationService was performed by root.	
+2026-09-24 21:30:08	USR0032	The session for root from 10.139.220.80 using GUI is logged off.	
+2026-09-24 21:30:08	USR0030	Successfully logged in using root, from 10.139.220.80 and GUI.	
+2026-09-24 21:29:49	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:29:41	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:29:26	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:29:23	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:29:19	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:28:56	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:28:54	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:28:51	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:28:48	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:28:46	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:28:39	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:28:34	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:28:31	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:28:16	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:28:12	SYS1001	System is turning off.	
+2026-09-24 21:28:12	SYS1003	System CPU Resetting.	
+2026-09-24 21:28:12	SYS1005	The server power action is initiated because the host device initiated a power-down operation.	
+2026-09-24 21:28:09	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:28:01	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:27:57	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:27:31	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:27:28	USR0032	The session for root from 10.139.220.80 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:27:19	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:25:43	USR107	A GetRepoBasedUpdateList operation on DCIM_SoftwareInstallationService was performed by root.	
+2026-09-24 21:25:37	USR0032	The session for root from 10.139.220.80 using GUI is logged off.	
+2026-09-24 21:25:37	USR0030	Successfully logged in using root, from 10.139.220.80 and GUI.	
+2026-09-24 21:25:01	USR0032	The session for root from 10.139.15.1 using eHTML5 Virtual Console is logged off.	
+2026-09-24 21:24:30	USR0030	Successfully logged in using root, from 10.139.15.1 and eHTML5 Virtual Console.	
+2026-09-24 21:24:28	USR0030	Successfully logged in using root, from 10.139.220.80 and eHTML5 Virtual Console.	
+2026-09-24 21:24:26	USR107	A GetRepoBasedUpdateList operation on DCIM_SoftwareInstallationService was performed by root.	
+2026-09-24 21:24:19	USR0030	Successfully logged in using root, from 10.139.15.1 and GUI.	
+2026-09-24 21:22:02	JCP036	The job JID_902561054557 is successfully deleted.	
+2026-09-24 21:22:02	USR107	A DeleteJobQueue operation on DCIM_JobService was performed by root.	
+2026-09-24 21:22:01	USR107	A GetRepoBasedUpdateList operation on DCIM_SoftwareInstallationService was performed by root.	
+2026-09-24 21:21:59	JCP037	The (installation or configuration) job JID_902561054557 is successfully completed.	
+2026-09-24 21:21:59	RED036	Firmware updates are available : Integrated Dell Remote Access Controller.	
+2026-09-24 21:21:59	RED036	Firmware updates are available : Broadcom Adv. Dual 10GBASE-T Ethernet - 6C:83:75:DD:6B:80.	
+2026-09-24 21:21:59	RED036	Firmware updates are available : BIOS.	
+2026-09-24 21:21:59	RED036	Firmware updates are available : PERC H755 Front.	
+2026-09-24 21:21:51	RED002	Package successfully downloaded.	
+2026-09-24 21:21:51	RED111	Successfully downloaded the update package details 1.50049 MB in 0.363169 secs at 4.13165 MBps (33.0532 Mbps) [Catalog.xml.gz].	
+2026-09-24 21:21:50	RED110	Downloading the Catalog.xml update package.	
+2026-09-24 21:21:45	JCP027	The (installation or configuration) job JID_902561054557 is successfully created on iDRAC.	
+2026-09-24 21:21:45	USR107	A InstallFromRepository operation on DCIM_SoftwareInstallationService was performed by root.	
+2026-09-24 21:21:44	SYS336	An existing hash value is updated because some system configuration items are changed.	
+2026-09-24 21:21:44	USR107	A TestNetworkShare operation on DCIM_LCService was performed by root.	
+2026-09-24 21:21:43	USR107	A GetRepoBasedUpdateList operation on DCIM_SoftwareInstallationService was performed by root.	
+2026-09-24 21:21:36	RAC1195	User root via IP 10.139.220.80 requested state / configuration change to Local Users_2 using GUI.	
+2026-09-24 21:21:35	SWC1911	User ID 2 User Password has been changed.	
+2026-09-24 21:20:53	USR0030	Successfully logged in using root, from 10.139.220.80 and GUI.	
+2026-09-24 21:20:53	LOG007	The previous log entry was repeated 1 times.	
+2026-09-24 21:18:09	USR0031	Unable to log in for root from 10.139.15.1 using GUI.	
+2026-09-24 21:17:39	USR0034	Login attempt alert for root from 10.139.220.80 using GUI, IP will be blocked for 60 seconds.	
+2026-09-24 21:17:39	LOG007	The previous log entry was repeated 5 times.	
+2026-09-24 20:33:57	USR0031	Unable to log in for root from 10.139.220.80 using GUI.	
+2026-09-24 20:32:56	USR0031	Unable to log in for Administrator from 10.139.220.80 using GUI.	
+2026-09-24 20:31:23	SWC0403	The TPM IAK certificate is successfully downloaded from iDRAC.	
+2026-09-24 20:31:21	SWC0403	The TPM IDEVID certificate is successfully downloaded from iDRAC.	
+2026-09-24 20:28:04	SEL9901	OEM software event.	
+2026-09-24 20:28:02	OSE1002	C: boot completed.	
+2026-09-24 20:28:01	CTL129	The boot media of the Controller RAID Controller in SL 5 is Disk.Virtual.239:RAID.SL.5-1.	
+2026-09-24 20:27:55	SEL9901	OEM software event.	
+2026-09-24 20:27:54	SEL9901	OEM software event.	
+2026-09-24 20:26:20	SYS1003	System CPU Resetting.

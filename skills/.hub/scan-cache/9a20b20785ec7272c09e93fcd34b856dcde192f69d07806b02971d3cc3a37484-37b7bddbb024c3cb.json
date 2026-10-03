@@ -1,0 +1,13 @@
+{
+  "bundle_hash": "sha256:9a20b20785ec7272c09e93fcd34b856dcde192f69d07806b02971d3cc3a37484",
+  "scanner_version": "skills-guard-v6",
+  "source": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+  "source_url": "https://raw.githubusercontent.com/automateyournetwork/netclaw/main/workspace/skills/fortigate-ops/SKILL.md",
+  "verdict": "safe",
+  "trust_level": "community",
+  "findings": [],
+  "rules": [],
+  "scanned_at": "2026-09-27T14:13:33.418913+00:00",
+  "summary": "fortigate-ops: clean scan, no threats detected",
+  "fresh": true
+}

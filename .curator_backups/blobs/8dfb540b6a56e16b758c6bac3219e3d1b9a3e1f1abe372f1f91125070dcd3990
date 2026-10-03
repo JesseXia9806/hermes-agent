@@ -1,0 +1,184 @@
+---
+name: zabbix-network-monitoring
+description: ���� �� 从Zabbix获取VMware虚拟机的网络流量和丢包数据
+---
+
+# Zabbix �� 网络监控技能
+
+从 Zabbix 7.4 API �� 获取VMware虚拟机的网络流量和丢包数据。
+
+## 环境信息
+
+| 项目 | ��� � � 值 |
+|------|------|
+| Zabbix URL | `https://spipzabbix.sercomm.com` |
+| API 端点 | `https://spipzabbix.sercomm.com/api_jsonrpc.php` |
+| 认证方式 | Bearer Token (Header) |
+
+## 使用方法
+
+```bash
+# ���� �� �� 获取虚拟机网络流量数据
+NETWORK_DATA=$(zabbix-network-monitoring --vm-name Q_MESDB_65.1)
+
+# ���� �� �� 获取所有虚拟机的网络流量数据
+ALL_NETWORK_DATA=$(zabbix-network-monitoring --all)
+
+# ���� �� �� 以JSON格式输出
+zabbix-network-monitoring --format json
+```
+
+## ���� �核心工作流
+
+### ���� �� �� 获取虚拟机列表
+```bash
+# 获取所有VMware虚拟机
+vms=$(curl -sk -X POST https://spipzabbix.sercomm.com/api_jsonrpc.php \
+  -H "Content-Type: application/json-rpc" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"jsonrpc":"2.0","method":"host.get","params":{"groupids":["32","71","84","26","78"],"output":["hostid","name"],"sortfield":"name"},"id":1}')
+```
+
+### ���� �� �� 查询网络监控项
+```bash
+# 查询网络接口流量监控项
+network_items=$(curl -sk -X POST https://spipzabbix.sercomm.com/api_jsonrpc.php \
+  -H "Content-Type: application/json-rpc" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"jsonrpc":"2.0","method":"item.get","params":{"hostids":["'$VM_ID'"],"output":["itemid","name","key_","lastvalue","units"],"search":{"name":"network"},"limit":10},"id":1}')
+```
+
+### ���� �� �� 计算流量数据
+```python
+# 计算总流量
+for item in network_items:
+    if "bytes received" in item["name"]:
+        total_in += float(item["lastvalue"])
+    elif "bytes transmitted" in item["name"]:
+        total_out += float(item["lastvalue"])
+```
+
+## ��� � 参数说明
+
+| 参数 | 说明 | � 默认值 |
+|------|------|--------|
+| `--vm-name` | 指定虚拟机名称 | 所有虚拟机 |
+| `--all` | 获取所有虚拟机的网络数据 | false |
+| `--format` | 输出格式 (text/json) | text |
+| `--help` | 显示帮助信息 | - |
+
+## ��� � � 输出格式
+
+### ���� �� 文本格式（默认）
+CSV格式，包含以下字段：
+```
+name,total_in,total_out,total_traffic
+```
+
+### ���� �� JSON格式
+```json
+{
+  "vms": [
+    {
+      "name": "Q_MESDB_65.1",
+      "total_in": 130048,
+      "total_out": 224256,
+      "total_traffic": 354304
+    },
+    {
+      "name": "Q_MESAP_66.13",
+      "total_in": 171008,
+      "total_out": 136192,
+      "total_traffic": 307200
+    }
+  ]
+}
+```
+
+## �� 监控项说明
+
+### ���� �� 网络流量监控项
+
+| 监控项名称 | Key | 单位 | 说明 |
+|------------|-----|------|------|
+| Number of bytes received on interface [VLAN_565]/[Network adapter 1] | vmware.vm.net.if.in[{$VMWARE.URL},{$VMWARE.VM.UUID},4000,bps] | Bps | 入站流量 |
+| Number of packets received on interface [VLAN_565]/[Network adapter 1] | vmware.vm.net.if.in[{$VMWARE.URL},{$VMWARE.VM.UUID},4000,pps] | pps | 入站包数 |
+| Number of bytes transmitted on interface [VLAN_565]/[Network adapter 1] | vmware.vm.net.if.out[{$VMWARE.URL},{$VMWARE.VM.UUID},4000,bps] | Bps | 出站流量 |
+| Number of packets transmitted on interface [VLAN_565]/[Network adapter 1] | vmware.vm.net.if.out[{$VMWARE.URL},{$VMWARE.VM.UUID},4000,pps] | pps | 出站包数 |
+| Network utilization on interface [VLAN_565]/[Network adapter 1] | vmware.vm.net.if.usage[{$VMWARE.URL},{$VMWARE.VM.UUID},4000] | Bps | 网络利用率 |
+
+## ��� �� � 错误处理
+
+- 认证失败：返回退出码 1
+- API错误：返回退出码 2 并输出错误�详情
+- 网�络超时：返回退出码 3
+
+## 相关技能
+
+- `zabbix-auth` - ���� �� �� 获取认证 token
+- `zabbix-get-vmware-devices` - ���� �� �� 获取VMware设备信息
+- `zabbix-get-problems` - ���� �� �� 获取问题数据
+
+## �� 重要提示
+
+1. **搜索条件**：使用 `"name":"network"` 而不是 `"key_":"vmware.vm.net.if"` 来查找网络监控项，因为后者可能不匹配所有网络相关的监控项。
+2. **数据转换**：确保将监控项的 `lastvalue` 转换为浮点数以进行计算。
+3. **监控项验证**：在查询前先验证监控项是否存在，避免因监控项不存在而导致的错误。
+4. **性能优化**：对于大量虚拟机，建议分批次查询以避免超时。
+5. **数据单位**：所有流量数据均以 Bps（字节每秒）为单位。
+
+## �� 示例输出
+
+```
+Q_MESDB_65.1,130048,224256,354304
+Q_MESAP_66.13,171008,136192,307200
+Q_MESDG1_65.10,57344,38912,96256
+Q_MESTGS_66.21,5120,14336,19456
+Q_Jesse_Zabbix_1.42,1024,1024,2048
+Q_MESTGS_66.22,0,1024,1024
+```
+
+## �� 示例JSON输出
+
+```json
+{
+  "vms": [
+    {
+      "name": "Q_MESDB_65.1",
+      "total_in": 130048,
+      "total_out": 224256,
+      "total_traffic": 354304
+    },
+    {
+      "name": "Q_MESAP_66.13",
+      "total_in": 171008,
+      "total_out": 136192,
+      "total_traffic": 307200
+    },
+    {
+      "name": "Q_MESDG1_65.10",
+      "total_in": 57344,
+      "total_out": 38912,
+      "total_traffic": 96256
+    },
+    {
+      "name": "Q_MESTGS_66.21",
+      "total_in": 5120,
+      "total_out": 14336,
+      "total_traffic": 19456
+    },
+    {
+      "name": "Q_Jesse_Zabbix_1.42",
+      "total_in": 1024,
+      "total_out": 1024,
+      "total_traffic": 2048
+    },
+    {
+      "name": "Q_MESTGS_66.22",
+      "total_in": 0,
+      "total_out": 1024,
+      "total_traffic": 1024
+    }
+  ]
+}
+```

@@ -1,0 +1,6 @@
+  帮我在Zabbix上做一次针对VMWare的全局巡检：
+•	覆盖范围：VMWare服务器（VMware vCenter、VMware Esxi server、VMware虚拟服务器), 以及 Zabbix 自身。
+•	时间范围：过去 24 小时。
+•	每个平台给一句总体健康结论，列出 3–5 个主要风险点。
+•	给出简单可执行的建议，不要长篇理论。
+•	最后建议哪些巡检流程可以写成 Hermes 的技能。

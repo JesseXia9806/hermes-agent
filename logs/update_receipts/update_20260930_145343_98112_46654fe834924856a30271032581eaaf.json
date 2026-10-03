@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-30T06:51:23.399282+00:00",
+  "finished_at": "2026-09-30T06:53:41.507249+00:00",
+  "argv": [
+    "-c",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 98112,
+  "outcome": "failed",
+  "pre_update": {
+    "sha": "5eb1381f3965fd96454d1c32f6bbefcd99cda347",
+    "short_sha": "5eb1381f",
+    "version": "0.21.5",
+    "source": "git",
+    "commit_date": 1790690369
+  },
+  "post_update": {
+    "sha": "f42f579cf8bac4918ac9599bece71618afadd846",
+    "short_sha": "f42f579c",
+    "version": "0.21.5",
+    "source": "git",
+    "commit_date": 1790744354
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "english=20260930-065124-pre-update, it=20260930-065124-pre-update",
+      "at": "2026-09-30T06:51:24.259139+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260930-065123-pre-update",
+      "at": "2026-09-30T06:51:24.259214+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {},
+  "fleet": [],
+  "update_id": "46654fe834924856a30271032581eaaf",
+  "correlation_id": null,
+  "initiator": "desktop",
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "5eb1381f3965fd96454d1c32f6bbefcd99cda347",
+    "expected_version": "0.21.5",
+    "profiles": [
+      "default",
+      "english",
+      "it"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 35697,
+        "supervisor": "launchd",
+        "code_sha": "5eb1381f3965fd96454d1c32f6bbefcd99cda347",
+        "code_version": "0.21.5",
+        "restart_via": "launchd",
+        "detail": {}
+      }
+    ]
+  },
+  "stages": [
+    {
+      "name": "plan",
+      "outcome": "success",
+      "at": "2026-09-30T06:51:23.636491+00:00"
+    },
+    {
+      "name": "snapshot",
+      "outcome": "success",
+      "at": "2026-09-30T06:51:24.259252+00:00"
+    },
+    {
+      "name": "apply",
+      "outcome": "success",
+      "at": "2026-09-30T06:53:25.455020+00:00",
+      "mode": "git"
+    }
+  ],
+  "exit_code": 1,
+  "stop_reason": "sys.exit(1)",
+  "pm_feature_list": [
+    "acp",
+    "all",
+    "bedrock",
+    "computer-use",
+    "doc-extract",
+    "edge-tts",
+    "google",
+    "telegram",
+    "vertex",
+    "vision",
+    "web",
+    "wecom",
+    "youtube"
+  ],
+  "pm_steps": [
+    {
+      "name": "dependency-sync",
+      "ok": false,
+      "detail": "InstallError: venv: uv sync exited 1:    `https://files.pythonhosted.org/packages/2b/72/d789ca7867b3c2e1cd243f6bd7b1ee7fd14165ab0eac95d21cd630602817/nemo_relay-0.9.3-cp311-abi3-macosx_11_0_arm64.whl`\n  \u251c\u2500\u25b6 error sending request for url\n  \u2502   (https://files.pythonhosted.org/packages/2b/72/d789ca7867b3c2e1cd243f6bd7b1ee7fd14165ab0eac95d21cd630602817/nemo_relay-0.9.3-cp311-abi3-macosx_11_0_arm64.whl)\n  \u251c\u2500\u25b6 client error (Connect)\n  \u251c\u2500\u25b6 dns error\n  \u2570\u2500\u25b6 failed to lookup address information: nodename nor servname provided, or\n      not known\n\nhint: `nemo-relay` (v0.9.3) was included because `hermes-agent` (v0.0.0) depends on `nemo-relay` \u2014 retry, or run `hermes pm doctor`",
+      "at": "2026-09-30T06:53:41.412191+00:00"
+    }
+  ],
+  "pm_exit_code": 1,
+  "pm_sync_outcome": "failed"
+}

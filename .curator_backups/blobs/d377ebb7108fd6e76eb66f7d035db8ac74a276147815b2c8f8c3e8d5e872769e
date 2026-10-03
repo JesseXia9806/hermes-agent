@@ -1,0 +1,162 @@
+---
+name: llm-provider-integration
+description: "Wire & verify LLM providers/API gateways end-to-end."
+version: 1.0.0
+author: Jesse IT Manager Copilot
+license: MIT
+metadata:
+  hermes:
+    tags: [llm, provider, api-gateway, openai-compatible, credentials, configuration, verification]
+    related_skills: [hermes-agent, equipment-procurement]
+---
+
+# LLM Provider Integration & Verification
+
+## Overview
+
+Wiring an LLM provider (official API or self-hosted OpenAI-compatible gateway) into Hermes or a script follows the same shape every time: **locate the existing config → confirm or rotate the credential → prove the full path works end-to-end → record the security posture.**
+
+The failure mode this skill exists to prevent is the reflexive rewrite: a user pastes a base URL and API key, and the agent immediately overwrites `.env` and `config.yaml`. If the provider was already configured with a byte-identical key — a common case, because the user is often just re-sending their own values — that rewrite is pure risk: a typo or truncation silently breaks a working integration, and the user has no way to tell.
+
+**Default posture: verify-before-write.** Compare the supplied credential against the stored one before changing anything, and say plainly when nothing needed to change.
+
+## When to Use
+
+- User pastes a `BASE_URL` / `API_KEY` pair and asks you to "configure this in Hermes"
+- Adding, rotating, or removing a custom provider in `custom_providers`
+- Verifying an existing gateway still works after a change upstream
+- Debugging "my provider returns nothing / is slow / routes to the wrong model"
+- Registering a credential for script use (not just Hermes)
+
+**Don't use for:** writing application code against a provider SDK, or model *selection* strategy (benchmarking which model to use — that's a different decision).
+
+## Environment Facts (Jesse's setup)
+
+| Item | Value |
+|---|---|
+| Credential store | `~/.hermes/secrets/<system>.txt`, one file per system, `chmod 600` |
+| Hermes secrets | `~/.hermes/.env` — API keys and secrets ONLY |
+| Hermes settings | `~/.hermes/config.yaml` — never secrets |
+| Custom provider block | `config.yaml` → `custom_providers:` (list of `{name, base_url, key_env, model, models[]}`) |
+
+`key_env` indirection is the pattern: `config.yaml` names an env var, the value lives in `.env`. Never put the key literal in `config.yaml`.
+
+## Workflow
+
+### 1. Inspect before writing — locate any existing config
+
+```bash
+grep -n -i -A12 "<gateway-host-or-name>" ~/.hermes/config.yaml
+```
+
+This yields the `custom_providers` entry: registered `name`, `base_url`, and which `key_env` it points at. Note the registered provider name — you need it verbatim for the verification step.
+
+### 2. Compare the credential; do not assume it needs replacing
+
+```bash
+cd ~/.hermes
+CUR=$(grep "^<KEY_ENV_NAME>=" .env | cut -d= -f2-)
+NEW="<key from user>"
+[ "$CUR" = "$NEW" ] && echo "IDENTICAL — no write needed" || echo "DIFFERS"
+```
+
+Never echo the full key to the terminal. Print a truncated prefix plus length when they differ — that is enough to confirm a real difference without leaking the secret.
+
+**Completion criterion:** you can state definitively whether the stored credential matches, is absent, or differs.
+
+### 3. Verify the endpoint — the 3-layer ladder
+
+Run these in order. **Stopping early is the classic mistake** — only layer 3 proves Hermes' own config path resolves.
+
+| Layer | Command | What it proves |
+|---|---|---|
+| 1. Reachability | `curl -s -o /dev/null -w "HTTP %{http_code}\n" -m 20 <base_url>/models -H "Authorization: Bearer <key>"` | Host up, TLS/port OK, key accepted |
+| 2. Direct inference | `POST <base_url>/chat/completions` with `{"model":"auto","max_tokens":20}` | Upstream routing actually produces completions |
+| 3. **Through Hermes** | `hermes chat -q "Reply with exactly: PROVIDER-OK" --provider <NAME> --model <model>` | Provider name, `key_env`, and `base_url` all resolve in Hermes |
+
+Layer 3 is the acceptance test. Layer 1 returning HTTP 200 while layer 3 fails means the problem is in `config.yaml` (wrong `name`, typo'd `base_url`, `key_env` mismatch), not the network.
+
+- `scripts/verify_provider.sh <base_url> <api_key> [model]` — runs layers 1–2, prints the endpoint's model inventory and the **actual routed upstream**, then echoes the layer-3 command to run next.
+- `references/verification-example.md` — worked transcript of a real run, including a `_routed_via` response showing an `auto` alias silently resolving to a different model.
+
+### 4. Register the credential for script use
+
+Per Jesse's convention, mirror the working credential into `~/.hermes/secrets/<system>.txt` with `chmod 600`, including the base URL and a note on which env var Hermes uses. This keeps one readable source of truth outside the Hermes runtime.
+
+### 5. Report the security posture explicitly
+
+Always state the transport risk in the summary. A plain-HTTP or bare-IP endpoint is a real finding, not a footnote:
+
+- **Plain HTTP** → API key crosses the network in cleartext. Acceptable on a trusted internal network or tunnel; unacceptable if the gateway is internet-facing. Recommend a TLS reverse proxy (Nginx + Let's Encrypt) in that case.
+- **Bare IP, no DNS name** → no certificate pinning possible, and the endpoint can't be validated by name.
+- **Shared/self-hosted gateway** → the gateway operator can see every prompt; flag if prompts contain enterprise data.
+
+Do not silently accept these. State them and offer the remediation as an option.
+
+## Model-Specific Verification
+
+`model: auto` style routers (a gateway that picks an upstream on your behalf) need special handling:
+
+- **A successful call does not mean you got the model you asked for.** Inspect the response `model` field and any `_routed_via`-style metadata to see what actually served the request. Report the actual upstream, not the requested alias.
+- **`auto` can mask upstream failure.** When a router silently skips a failing upstream, symptoms are slow responses or model drift rather than hard errors. For anything important, name the model explicitly rather than relying on `auto`.
+- **Enumerate what exists before offering choices:**
+  ```bash
+  curl -s -o /tmp/models.json <base_url>/models -H "Authorization: Bearer <key>"
+  python3 -c "import json;print('\n'.join(m['id'] for m in json.load(open('/tmp/models.json')).get('data',[])))"
+  ```
+  Treat this list as live ground truth. A hardcoded model list in `config.yaml` drifts out of date — reconcile it against the endpoint when it matters.
+
+## Common Pitfalls
+
+1. **Rewriting config without comparing first.** The most expensive mistake here. A user re-sending their own key is not a change request. Compare, then report "no change needed" when that is the truth — and show the evidence (byte-identical) so the user trusts it.
+
+2. **Declaring success after layer 1.** HTTP 200 from `/models` proves nothing about Hermes. Always run layer 3.
+
+3. **Case sensitivity in `base_url` paths.** `/v1` vs `/V1` — many gateways normalize it, but do not assume every gateway does. Test the exact casing that is registered in `config.yaml`, not a hand-typed variant, or you will verify a path you aren't actually using.
+
+4. **`hermes models` is not a command — it's `hermes model`** (singular). A misspelled subcommand prints the full valid-command list; read that list rather than guessing again. Run `hermes model --help` before using it.
+
+5. **Leaking the secret during comparison.** `echo $CUR` prints the key into the terminal, the transcript, and any log. Truncate (`${CUR:0:18}...` plus length) for comparison output.
+
+6. **Writing a secret into memory.** Hermes' memory guard rejects entries containing an env-var assignment or a long token-shaped string (pattern `hermes_env`). Store only the *pointer* — "key lives in `~/.hermes/secrets/<system>.txt`" — never the key or a `KEY=value` line. If a memory write is refused, that guard is why; remove the credential-shaped text rather than retrying it verbatim.
+
+7. **Hand-editing `config.yaml` with `sed`/`awk`.** Never. A stray indent corrupts the file and can break a live gateway. Use `hermes config set <key> <val>` for settings.
+
+8. **Piping `curl` into `python3 -m json.tool`/`json.load`.** The security scanner flags pipes from downloaded content into an interpreter, and it's a genuine habit to avoid with untrusted endpoints. Prefer writing to a temp file and reading it back (`curl -o "$TMP"` then parse `"$TMP"`).
+
+9. **`timeout` is not present on a stock macOS.** Don't wrap commands in `timeout` there; use the terminal tool's own `timeout` parameter, and drop the `-m` curl cap accordingly. (This is a host quirk, not a provider problem — don't misdiagnose it as the gateway hanging.)
+
+10. **Attributes on a write are not the same as a verified write.** `hermes config set` returning success, or a `custom_providers` entry looking correct, is not evidence the provider works. Only a layer-3 completion is.
+
+11. **Internal profile-scoping bug workaround.** When Hermes reports it cannot read a profile-scoped API key (e.g., `HERMES_CUSTOM_*_API_KEY`) and explicitly states it's "an internal profile-scoping bug on the multiplexed gateway, not your configuration," run `hermes gateway restart` before investigating credentials or configuration.
+
+## Verification Checklist
+
+- [ ] Existing `custom_providers` entry located (or confirmed absent) before any write
+- [ ] Stored credential compared against the supplied one; outcome stated explicitly
+- [ ] If a write was needed: value written to `.env`, **not** `config.yaml`; `config.yaml` references it via `key_env`
+- [ ] Layer 1 (reachability) returns HTTP 200
+- [ ] Layer 2 (direct inference) returns a real completion
+- [ ] Layer 3 (`hermes chat -q --provider <NAME>`) returns the expected text — **this is the acceptance test**
+- [ ] Actual upstream model reported when the alias was `auto`
+- [ ] Transport security posture (HTTP / bare IP / shared gateway) stated with a remediation option
+- [ ] Credential mirrored to `~/.hermes/secrets/<system>.txt` at `chmod 600`
+- [ ] Summary separates "what I changed" from "what was already correct"
+
+## One-Shot Recipe: "configure this BASE_URL/API_KEY in Hermes"
+
+```bash
+# 1. Does it already exist?
+grep -n -i -A12 "<host>" ~/.hermes/config.yaml
+
+# 2. Does the key match the stored one?  (truncate, never echo in full)
+CUR=$(grep "^<KEY_ENV>=" ~/.hermes/.env | cut -d= -f2-); echo "${CUR:0:18}... len=${#CUR}"
+
+# 3. Endpoint reachable?
+curl -s -o /dev/null -w "HTTP %{http_code}\n" -m 20 <base_url>/models -H "Authorization: Bearer <key>"
+
+# 4. Does Hermes resolve the provider?
+hermes chat -q "Reply with exactly: PROVIDER-OK" --provider <NAME> --model auto
+```
+
+Then report: did anything change? + the transport posture + the actual upstream model observed.

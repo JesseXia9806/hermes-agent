@@ -1,0 +1,17 @@
+    全部安装完成！以下是从 mattpocock/skills 仓库的 productivity 类别安装的 5 个技能及其文件：
+    
+    已安装技能：
+    
+    | 技能                 | 描述                                                         | 类型       |
+    |----------------------|--------------------------------------------------------------|------------|
+    | grill-me             | 对计划/设计进行持续追问 — 触发 grilling 会话的快捷方式       | 用户调用型 |
+    | grilling             | 对计划/设计进行彻底的压力测试，逐一拆解决策树的每个分支      | 模型调用型 |
+    | handoff              | 将当前对话压缩成交接文档，供其他 Agent 接续工作              | 用户调用型 |
+    | teach                | 在当前工作目录中创建有状态的教学环境，含课程、学习记录和资源 | 用户调用型 |
+    | writing-great-skills | 编写和编辑优秀技能的参考指南 — 词汇、原则和常见失败模式      | 用户调用型 |
+    
+    附带参考文件：
+    - teach → references/MISSION-FORMAT.md, LEARNING-RECORD-FORMAT.md, RESOURCES-FORMAT.md
+    - writing-great-skills → references/GLOSSARY.md
+    
+    所有技能均安装在 ~/.hermes/skills/productivity/ 目录下，与现有的 Hermes 技能并存，随时可以使用。

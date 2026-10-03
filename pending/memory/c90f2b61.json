@@ -1,0 +1,20 @@
+{
+  "id": "c90f2b61",
+  "subsystem": "memory",
+  "action": "batch",
+  "summary": "background review consolidation (batch on memory): - replace entry matching 'Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container & Nginx. Natively hosts PostgreSQL 16 (port 5432, user: postgre",
+  "origin": "background_review",
+  "created_at": 1790927548.279638,
+  "payload": {
+    "action": "batch",
+    "target": "memory",
+    "operations": [
+      {
+        "action": "replace",
+        "content": "Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container, Nginx & native PostgreSQL 16 (port 5432, postgres/Amis#201920261002). Databases: 'mes_raw_data', 'hikvision_attendance' (DW), 'hcp_cache' (ODS). Hikvision ETL sync runs via crontab (30m) at /opt/scripts/hcp_sync/, pulling from MSSQL (10.139.1.32 HCP, monitor/Amis#20261002).",
+        "old_text": "Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container & Nginx. Natively hosts PostgreSQL 16 (port 5432, user: postgres, pw: Amis#201920261002). Contains 'mes_raw_data' (Oracle MES) and 'hikvision_attendance' (MS SQL) for AI Text-to-SQL analytics.",
+        "matched_entry": "Node 10.139.1.5 (logserver, RHEL 9): Hosts Hermes container & Nginx. Natively hosts PostgreSQL 16 (port 5432, user: postgres, pw: Amis#201920261002). Contains 'mes_raw_data' (Oracle MES) and 'hikvision_attendance' (MS SQL) for AI Text-to-SQL analytics."
+      }
+    ]
+  }
+}

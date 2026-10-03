@@ -1,0 +1,11 @@
+Section Head (Server platform & Hardware)：
+- 最低经验年限 8年
+- 关键技能 服务器架构设计,服务器平台管理
+- 管理经验 有团队管理经验2年
+- 认证要求 优化考虑
+
+Staff Person (System management)：
+- 经验年限 5年
+- 技术栈 Windows Server、Linux、Active Directory and Cisco
+- 工具技能 监控工具、自动化工具
+- 问题解决能力要求 负责与主动沟通

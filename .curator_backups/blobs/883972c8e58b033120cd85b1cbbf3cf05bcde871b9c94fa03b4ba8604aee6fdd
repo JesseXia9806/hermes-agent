@@ -1,0 +1,328 @@
+---
+name: fortigate-security-audit
+description: "FortiGate 防火墙只读安全审计 + ISO 27001 合规检查（FortiOS 7.x）"
+metadata:
+  hermes:
+    tags: [security, audit, fortigate, firewall, network, iso27001]
+---
+
+# FortiGate 防火墙安全审计工作流
+
+## 适用场景
+- 对 FortiGate 防火墙执行常规效能检查和安全审计
+- 按 ISO 27001 控制项映射审计结果
+- 仅限 **只读查询**（get / show / diagnose），**严禁执行任何修改**
+
+## ⚠️ 安全红线（生产环境）
+
+> 这是生产环境防火墙。**只查不改** 是铁律。
+> 
+> 如果需要修改配置，必须：
+> 1. 明确告知 **改什么**
+> 2. 说明 **为什么改**
+> 3. 得到用户 **明确核准** 后才能执行
+
+---
+
+## 前置条件
+
+- SSH 密钥认证已配置（`~/.ssh/config` 中配置 Host 别名）
+- 建议使用只读账户（如 `super_admin_readonly` 权限配置）
+- FortiOS 7.x 版本
+
+## ⚠️ SSH 连接诊断（必做）
+
+在执行任何命令前，先验证 SSH 连接是否正常：
+
+```bash
+ssh -v <host-alias> "echo test"
+```
+
+**常见问题及解决方案**：
+
+| 问题 | 原因 | 解决方案 |
+|:-----|:-----|:---------|
+| `Connection reset by peer` | IP 不在 TrustHost 列表 | 检查 `show full system admin` 中的 `trusthost1-10` 设置 |
+| `Permission denied (publickey)` | 密钥未配置或权限错误 | 确认 `~/.ssh/config` 中的 `IdentityFile` 路径正确，且私钥权限为 `600` |
+| `Too many authentication failures` | 多次尝试触发临时封禁 | 等待 5-10 分钟后重试，或使用 `-o IdentitiesOnly=yes` 限制密钥尝试 |
+| `Host key verification failed` | 主机密钥变更 | 删除 `~/.ssh/known_hosts` 中的旧记录或使用 `-o StrictHostKeyChecking=no`（不推荐生产） |
+
+> **注意**：如果连接诊断失败，切换到备用主机或联系网络管理员确认 TrustHost 配置。
+
+### SSH 配置示例
+
+```
+Host <host-alias>
+  HostName <ip-address>
+  User <username>
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+---
+
+## 审计命令清单（全部只读）
+
+### 1. 系统信息
+
+```bash
+# 系统状态（固件版本、序列号、运行时间、特征库版本）
+ssh <host> "get system status"
+
+# 全局配置（安全策略、加密设置、管理接口）
+ssh <host> "show full system global"
+
+# HA 状态
+ssh <host> "get system ha status"
+```
+
+### 2. 性能容量
+
+```bash
+# CPU / 内存 / 吞吐 / 会话 / NPU 卸载
+ssh <host> "get system performance status"
+
+# 当前会话数
+ssh <host> "get system session status"
+```
+
+### 3. 接口与网络
+
+```bash
+# 所有物理接口状态、IP、速度
+ssh <host> "get system interface physical"
+
+# 完整接口配置（含 VLAN、子接口）
+ssh <host> "get system interface"
+
+# 路由表
+ssh <host> "get router info routing-table all"
+```
+
+### 4. 防火墙策略
+
+```bash
+# 策略数量
+ssh <host> "get firewall policy count"
+
+# 策略列表（如只读账户受限则无法查看详情）
+ssh <host> "get firewall policy"
+```
+
+### 5. VPN
+
+```bash
+# IPSec VPN 隧道状态
+ssh <host> "diagnose vpn tunnel list"
+
+# SSL VPN 配置
+ssh <host> "show vpn ssl settings"
+```
+
+### 6. 访问控制
+
+```bash
+# 管理员列表
+ssh <host> "get system admin"
+
+# 管理员完整配置（含 TrustHost、2FA、SSH 密钥）
+ssh <host> "show full system admin"
+
+# 权限配置
+ssh <host> "show system accprofile"
+```
+
+### 7. 日志与监控
+
+```bash
+# 日志设置
+ssh <host> "show log setting"
+
+# Syslog 配置
+ssh <host> "show log syslogd setting"
+
+# 系统日志事件
+ssh <host> "show log eventfilter"
+```
+
+### 8. 时间同步
+
+```bash
+# NTP 状态
+ssh <host> "diagnose sys ntp status"
+
+# NTP 配置
+ssh <host> "show system ntp"
+```
+
+### 9. DNS / SNMP
+
+```bash
+# DNS 配置
+ssh <host> "show system dns"
+
+# SNMP 配置
+ssh <host> "show system snmp"
+```
+
+### 10. ACL / 管理安全
+
+```bash
+# 管理员 TrustHost 限制（关键安全检查）
+# 在 show full system admin 输出中检查 trusthost1~10
+
+# Admin 会话锁定设置
+# 在 show full system global 中检查 admin-lockout-threshold
+```
+
+---
+
+## FortiOS 7.x CLI 注意事项
+
+| 问题 | 说明 |
+|:-----|:-----|
+| **Pager（--More--）** | SSH 批量命令会被 Pager 截断。用 `head -N` 或 `grep -c ''` 获取行数 |
+| **grep 不支持 -E** | FortiGate 内建 grep 仅支持 `-invfcABC`，不含 `-E`。使用基本正则匹配 |
+| **只读账户限制** | 无法执行 `execute`、`config`、`diagnose debug` 等命令；`get firewall policy` 可能超时 |
+| **show vs get** | `show` 输出配置（类似 running-config），`get` 输出运行时状态 |
+| **show full vs show** | `show full` 显示所有默认值配置项，`show` 仅显示非默认 |
+| **配置文件保护** | 输出中包含加密密码字段（`set password ENC ...`），勿泄露 |
+
+---
+
+## ISO 27001 控制项映射
+
+| ISO 27001 控制 | 对应检查项 | 检查命令 |
+|:---------------|:-----------|:---------|
+| **A.8.2** 访问权限 | 管理员数量与角色 | `get system admin` |
+| **A.8.3** 特殊权限 | TrustHost IP 限制 | `show full system admin` → trusthost1-10 |
+| **A.8.4** 安全认证 | 会话超时、锁定阈值 | `show full system global` → admin-lockout, admintimeout |
+| **A.8.5** 特权管理 | 2FA、SSH 密钥 | `show full system admin` → two-factor, ssh-public-key |
+| **A.8.6** 容量管理 | CPU/内存/会话/吞吐 | `get system performance status` |
+| **A.8.7** 系统加固 | Telnet、HTTP、TLS版本 | `show full system global` → admin-telnet, admin-https |
+| **A.8.8** 漏洞管理 | 固件版本、特征库日期 | `get system status` → Version, Virus-DB, IPS-DB |
+| **A.8.15** 日志记录 | Syslog、CLI 审计日志 | `show log syslogd setting`, `show full system global` → cli-audit-log |
+| **A.8.20** 网络安全 | 防火墙策略、VPN | `get firewall policy`, `diagnose vpn tunnel list` |
+| **A.8.23** 时间同步 | NTP 状态 | `diagnose sys ntp status` |
+| **A.8.24** 加密控制 | TLS 版本、强加密 | `show full system global` → strong-crypto, ssl-min-proto-version |
+
+---
+
+## 关键安全风险检查表
+
+| # | 检查项 | 风险说明 |
+|:-:|:-------|:---------|
+| 1 | TrustHost ALL 0.0.0.0/0 | 🔴 任何 IP 均可登录管理 |
+| 2 | 双因素认证未启用 | 🔴 无 2FA |
+| 3 | 远程 Syslog 未配置 | 🔴 日志无集中存储 |
+| 4 | CLI 审计日志关闭 | 🟠 管理操作不可追溯 |
+| 5 | Telnet/HTTP 管理端口开启 | 🟠 明文协议 |
+| 6 | SSH 密码认证开启 | 🟠 建议仅密钥 |
+| 7 | IPS-ETDB 未订阅（0.00000） | 🟠 缺少威胁情报 |
+| 8 | Console 超时 = 0 | 🟠 物理安全风险 |
+| 9 | 无 SNMP/API 监控 | 🟠 无法主动告警 |
+| 10 | SHA1 加密算法（IPSec） | 🟡 逐步淘汰中 |
+
+---
+
+## 审计报告模板
+
+```
+## 🔍 FortiGate <model> — ISO 27001 合规巡检报告
+
+**设备**: <hostname> | **IP**: <mgmt-ip>
+**型号**: <model> | **固件**: FortiOS v<x.x.x>
+**安全等级**: <level> | **模式**: <standalone/HA>
+
+### 1️⃣ 容量与性能（A.8.6）
+| 指标 | 当前 | 峰值 | 上限 | 评估 |
+
+### 2️⃣ 访问控制（A.8.2–A.8.5）
+| 检查项 | 状态 | 评估 |
+
+### 3️⃣ 网络安全（A.8.20）
+| 接口 | IP | 状态 |
+
+### 4️⃣ 日志与监控（A.8.15）
+| 检查项 | 状态 |
+
+### 5️⃣ 时间同步（A.8.23）
+
+### 6️⃣ 系统加固（A.8.7–A.8.8）
+
+### ✅ 通过项
+
+### ⚠️ 关注项（按严重度排序）
+| # | 严重度 | 问题 | ISO 控制 | 建议 |
+```
+
+---
+
+## 现场诊断技巧
+
+### Web GUI 不可用的排查步骤
+
+当用户反馈 Web GUI 无法访问时，按以下步骤排查：
+
+1. **检查接口 allowaccess**
+   ```bash
+   ssh <host> "show system interface <接口名>"
+   ```
+   在输出中查找 `set allowaccess` — 确认包含 `https`。
+
+2. **检查 HTTPS 服务端口可达性（从本机测试）**
+   ```bash
+   nc -zv -w5 <ip> 443
+   curl -sk -o /dev/null -w '%{http_code}' https://<ip>/
+   ```
+   返回 `200` 表示 Web GUI 正常运行。
+
+3. **排查用户端常见原因**
+   - 浏览器输入了 `http://` 而非 `https://`
+   - 自签名证书被浏览器拦截（点「高级→继续前往」）
+   - 用户不在 TrustHost 允许的 IP 段
+   - 管理端口非标准（检查 `admin-sport` 是否 443）
+
+### 从路由表重建拓扑
+
+从 `get router info routing-table all` 输出可推导连接拓扑：
+
+- 默认路由条数 → SD-WAN 链路数
+- 静态路由下一跳 → 对端设备 IP / 接口类型（物理口/隧道口）
+- IPSec 隧道接口 → VPN 连接
+- 连接子网 → 各接口的 LAN/专线分段
+
+### 管理员账户安全检测要点
+
+从 `show full system admin` 提取以下风险特征：
+
+| 特征 | 风险 |
+|:-----|:-----|
+| `trusthost1 0.0.0.0 0.0.0.0` | 🔴 无 IP 限制，任意来源可登录 |
+| `two-factor disable` | 🔴 无双因素认证 |
+| `ssh-public-key1` 缺失 | 🟠 仅密码认证，无密钥 |
+| `force-password-change disable` | 🟡 初始密码未强制更换 |
+
+---
+
+## 参考文件
+
+本 skill 包含以下可加载的参考文件：
+
+| 文件 | 内容 |
+|:-----|:-----|
+| `references/cli-cheatsheet.md` | FortiGate CLI 命令速查表（FortiOS 7.x） |
+| `references/iso27001-mapping.md` | ISO 27001:2022 Annex A 完整映射表 + 严重度分级 |
+
+加载方式：`skill_view(name='fortigate-security-audit', file_path='references/<filename>')`
+
+---
+
+## 常见陷阱
+
+1. **SSH 输出被 Pager 截断** — 使用 `get system status | grep -c ''` 先看行数；或分步用 `| head -N` / `| tail -N` 截取关键段
+2. **`show` vs `show full`** — `show full system admin` 才能看到 TrustHost 设置（默认值字段不显示在普通 `show` 中）
+3. **只读账户执行超时** — `get firewall policy` 可能超时，先试 `get firewall policy count`；`get system interface` 可能被 pager 阻断，用 `show system interface <接口名>` 逐个查
+4. **密码字段泄露风险** — 输出中包含 `set password ENC ...`，报告中应脱敏
+5. **FortiGate 的 grep 不支持 `-E`** — 使用基本正则而非扩展正则
+6. **SSH 长命令** — 分步执行多个短命令而非一个长串接，避免超时
+7. **`show full system admin` 被 pager 阻断** — 多个 admin 账户的输出行数多，用 `| tail -N` 获取未被截断的部分，确认完整获取后再下结论

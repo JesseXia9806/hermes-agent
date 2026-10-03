@@ -1,0 +1,17 @@
+[
+  {
+    "pid": 43970,
+    "create_time": 1791001464.779212,
+    "purpose": "serve",
+    "install": "82ab5c9a3c89",
+    "spawner_pid": 43914,
+    "spawner_create": null,
+    "registered_at": 1791001466.5108008,
+    "argv": "-c serve --host 127.0.0.1 --port 0",
+    "host": "127.0.0.1",
+    "port": 64214,
+    "profile": "",
+    "hermes_home": "/Users/jessexia/.hermes",
+    "isolated": false
+  }
+]

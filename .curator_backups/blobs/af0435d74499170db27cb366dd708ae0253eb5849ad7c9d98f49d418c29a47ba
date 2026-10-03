@@ -1,0 +1,308 @@
+#!/bin/bash
+# Linux 安全强化自动化脚本
+# 使用方法: bash hardening-runner.sh [dry-run|execute|validate]
+
+LOG_FILE="/var/log/hardening-runner-$(date +%Y%m%d_%H%M%S).log"
+BACKUP_DIR="/tmp/hardening_backup_$(date +%Y%m%d_%H%M%S)"
+
+# 日志函数
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [$1] $2" | tee -a "$LOG_FILE"
+}
+
+# 检查根权限
+check_root() {
+    if [ "$EUID" -ne 0 ]; then
+        log "ERROR" "请以 root 用户运行此脚本"
+        exit 1
+    fi
+}
+
+# 备份系统
+backup_system() {
+    log "INFO" "创建系统备份到 $BACKUP_DIR"
+    mkdir -p "$BACKUP_DIR"
+    cp -r /etc "$BACKUP_DIR/etc"
+    cp -r /var "$BACKUP_DIR/var" 2>/dev/null || true
+    cp -r /etc/ssh "$BACKUP_DIR/etc/ssh" 2>/dev/null || true
+    cp -r /etc/sudoers.d "$BACKUP_DIR/etc/sudoers.d" 2>/dev/null || true
+    log "INFO" "备份完成"
+}
+
+# 检查系统更新状态
+check_updates() {
+    log "INFO" "检查系统更新状态"
+    if command -v apt >/dev/null 2>&1; then
+        local updates=$(apt list --upgradable 2>/dev/null | grep -c "upgradable")
+        log "INFO" "待更新包数量: $updates"
+        if [ "$updates" -gt 0 ]; then
+            return 1  # 需要更新
+        fi
+    elif command -v dnf >/dev/null 2>&1; then
+        local updates=$(dnf check-update 2>/dev/null | grep -c "^\s*[0-9]")
+        log "INFO" "待更新包数量: $updates"
+        if [ "$updates" -gt 0 ]; then
+            return 1  # 需要更新
+        fi
+    fi
+    return 0
+}
+
+# 强化 SSH 配置
+prepare_ssh_hardening() {
+    log "INFO" "准备 SSH 配置强化"
+    local ssh_config="/etc/ssh/sshd_config"
+    if [ -f "$ssh_config" ]; then
+        cp "$ssh_config" "$ssh_config.backup"
+        log "INFO" "已备份原始 SSH 配置"
+        
+        # 检查关键设置
+        local needs_changes=0
+        
+        if grep -q "PasswordAuthentication yes" "$ssh_config"; then
+            log "WARNING" "发现 PasswordAuthentication yes，需要更改"
+            needs_changes=1
+        fi
+        
+        if grep -q "PermitRootLogin yes" "$ssh_config"; then
+            log "WARNING" "发现 PermitRootLogin yes，需要更改"
+            needs_changes=1
+        fi
+        
+        if grep -q "MaxAuthTries 6" "$ssh_config" || ! grep -q "MaxAuthTries" "$ssh_config"; then
+            log "WARNING" "MaxAuthTries 设置不安全，需要更改"
+            needs_changes=1
+        fi
+        
+        if [ "$needs_changes" -eq 1 ]; then
+            return 1  # 需要强化
+        fi
+    fi
+    return 0
+}
+
+# 强化用户安全
+prepare_user_security() {
+    log "INFO" "检查用户安全配置"
+    local needs_changes=0
+    
+    # 检查 NOPASSWD sudo
+    for sudo_file in /etc/sudoers.d/*; do
+        if [ -f "$sudo_file" ] && grep -q "NOPASSWD" "$sudo_file"; then
+            log "WARNING" "发现 NOPASSWD sudo 配置: $sudo_file"
+            needs_changes=1
+        fi
+    done
+    
+    # 检查不活跃账户
+    for user in $(cut -d: -f1 /etc/passwd); do
+        if ! last -n 30 "$user" | grep -q "still logged in"; then
+            log "INFO" "发现不活跃账户: $user"
+            needs_changes=1
+        fi
+    done
+    
+    if [ "$needs_changes" -eq 1 ]; then
+        return 1  # 需要处理
+    fi
+    return 0
+}
+
+# 强化防火墙
+prepare_firewall_security() {
+    log "INFO" "检查防火墙配置"
+    if command -v ufw >/dev/null 2>&1; then
+        local status=$(ufw status 2>/dev/null | head -1)
+        if [[ "$status" != *"Status: active"* ]]; then
+            log "WARNING" "UFW 防火墙未启用"
+            return 1
+        fi
+        
+        # 检查端口暴露
+        local ssh_allowed=$(ufw status 2>/dev/null | grep "22/tcp" || echo "not found")
+        local http_allowed=$(ufw status 2>/dev/null | grep "80/tcp" || echo "not found")
+        local https_allowed=$(ufw status 2>/dev/null | grep "443/tcp" || echo "not found")
+        
+        if [[ "$ssh_allowed" == "not found" ]]; then
+            log "WARNING" "SSH 端口未开放"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+# 执行系统更新
+execute_updates() {
+    log "INFO" "执行系统更新"
+    if command -v apt >/dev/null 2>&1; then
+        log "INFO" "更新 APT 包"
+        apt update -y 2>&1 | tee -a "$LOG_FILE"
+        log "INFO" "升级安全补丁"
+        apt upgrade -y 2>&1 | tee -a "$LOG_FILE"
+    elif command -v dnf >/dev/null 2>&1; then
+        log "INFO" "更新 DNF 包"
+        dnf update -y 2>&1 | tee -a "$LOG_FILE"
+    fi
+}
+
+# 执行 SSH 配置强化
+execute_ssh_hardening() {
+    log "INFO" "强化 SSH 配置"
+    local ssh_config="/etc/ssh/sshd_config"
+    
+    # 创建强化配置文件
+    cat > /tmp/sshd_hardening.conf << 'EOF'
+# SSH 配置强化
+ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr
+macs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+Subsystem sftp internal-sftp
+PasswordAuthentication no
+PermitRootLogin no
+PermitEmptyPasswords no
+MaxAuthTries 3
+ClientAliveInterval 300
+ClientAliveCountMax 2
+UsePAM yes
+UseDNS no
+ChallengeResponseAuthentication no
+X11Forwarding no
+PrintMotd no
+Banner /etc/issue.net
+DenyUsers root
+Protocol 2
+MaxSessions 10
+MaxStartups 10:30:100
+LogLevel VERBOSE
+EOF
+    
+    # 应用强化配置
+    cat /tmp/sshd_hardening.conf >> "$ssh_config"
+    log "INFO" "SSH 配置强化完成"
+}
+
+# 执行用户安全强化
+execute_user_security() {
+    log "INFO" "执行用户安全强化"
+    
+    # 锁定不活跃账户
+    for user in $(cut -d: -f1 /etc/passwd); do
+        if ! last -n 30 "$user" | grep -q "still logged in"; then
+            log "INFO" "锁定不活跃账户: $user"
+            usermod -L "$user"
+        fi
+    done
+    
+    # 警告 NOPASSWD 配置
+    for sudo_file in /etc/sudoers.d/*; do
+        if [ -f "$sudo_file" ] && grep -q "NOPASSWD" "$sudo_file"; then
+            log "WARNING" "发现 NOPASSWD sudo 配置: $sudo_file，请手动审查"
+        fi
+    done
+}
+
+# 执行防火墙强化
+execute_firewall_security() {
+    log "INFO" "强化防火墙配置"
+    if command -v ufw >/dev/null 2>&1; then
+        log "INFO" "配置 UFW 防火墙"
+        ufw --force reset
+        ufw default deny incoming
+        ufw default allow outgoing
+        ufw allow ssh
+        ufw allow 3001/tcp
+        ufw allow 80/tcp
+        ufw allow 443/tcp
+        ufw --force enable
+        log "INFO" "防火墙强化完成"
+    fi
+}
+
+# 执行验证
+execute_validate() {
+    log "INFO" "执行安全验证"
+    echo "=== Linux 安全强化验证 ===" | tee -a "$LOG_FILE"
+    
+    # 检查系统更新
+    echo "1. 系统更新状态:" | tee -a "$LOG_FILE"
+    if command -v apt >/dev/null 2>&1; then
+        apt list --upgradable 2>/dev/null | grep -c "upgradable" | xargs echo "   待更新包: " | tee -a "$LOG_FILE"
+    fi
+    
+    # 检查 SSH 配置
+    echo "2. SSH 配置检查:" | tee -a "$LOG_FILE"
+    if [ -f /etc/ssh/sshd_config ]; then
+        if grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config; then
+            echo "   ❌ PasswordAuthentication 设置不安全" | tee -a "$LOG_FILE"
+        else
+            echo "   ✅ PasswordAuthentication 设置安全" | tee -a "$LOG_FILE"
+        fi
+        if grep -q "PermitRootLogin yes" /etc/ssh/sshd_config; then
+            echo "   ❌ PermitRootLogin 设置不安全" | tee -a "$LOG_FILE"
+        else
+            echo "   ✅ PermitRootLogin 设置安全" | tee -a "$LOG_FILE"
+        fi
+    fi
+    
+    # 检查网络服务
+    echo "3. 网络服务检查:" | tee -a "$LOG_FILE"
+    ss -tlnp 2>/dev/null | grep -E "(:22|:80|:3001|:443)" && echo "   📡 关键端口已配置" | tee -a "$LOG_FILE" || echo "   ⚠️  端口配置可能不足" | tee -a "$LOG_FILE"
+    
+    # 检查 sudo 配置
+    echo "4. sudo 配置检查:" | tee -a "$LOG_FILE"
+    local sudo_issues=0
+    for sudo_file in /etc/sudoers.d/*; do
+        if [ -f "$sudo_file" ] && grep -q "NOPASSWD" "$sudo_file"; then
+            echo "   ❌ $sudo_file 中包含 NOPASSWD" | tee -a "$LOG_FILE"
+            sudo_issues=$((sudo_issues + 1))
+        fi
+    done
+    if [ "$sudo_issues" -eq 0 ]; then
+        echo "   ✅ 未发现 NOPASSWD 配置" | tee -a "$LOG_FILE"
+    fi
+    
+    echo "5. 备份信息:" | tee -a "$LOG_FILE"
+    echo "   备份目录: $BACKUP_DIR" | tee -a "$LOG_FILE"
+    echo "=== 验证完成 ===" | tee -a "$LOG_FILE"
+}
+
+# 主函数
+main() {
+    check_root
+    
+    case "$1" in
+        "dry-run")
+            log "INFO" "=== 干运行模式 ==="
+            prepare_ssh_hardening
+            prepare_user_security
+            prepare_firewall_security
+            check_updates
+            log "INFO" "=== 干运行完成 ==="
+            echo "需要强化的项目:" | tee -a "$LOG_FILE"
+            [ $? -ne 0 ] && echo "- SSH 配置" | tee -a "$LOG_FILE"
+            [ $? -ne 0 ] && echo "- 用户安全" | tee -a "$LOG_FILE"
+            [ $? -ne 0 ] && echo "- 防火墙配置" | tee -a "$LOG_FILE"
+            [ $? -ne 0 ] && echo "- 系统更新" | tee -a "$LOG_FILE"
+            ;;
+        "execute")
+            log "INFO" "=== 执行安全强化 ==="
+            backup_system
+            prepare_ssh_hardening && execute_ssh_hardening
+            prepare_user_security && execute_user_security
+            prepare_firewall_security && execute_firewall_security
+            check_updates && execute_updates
+            log "INFO" "=== 强化完成 ==="
+            ;;
+        "validate")
+            execute_validate
+            ;;
+        *)
+            echo "用法: $0 [dry-run|execute|validate]"
+            echo "  dry-run  - 检查需要强化的项目（不执行任何操作）"
+            echo "  execute  - 执行完整的强化流程"
+            echo "  validate - 验证安全状态"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

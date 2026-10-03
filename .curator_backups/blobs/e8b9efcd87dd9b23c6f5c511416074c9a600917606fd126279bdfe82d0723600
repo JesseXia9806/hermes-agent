@@ -1,0 +1,64 @@
+# FortiGate-100F 实测命令速查
+
+以下命令在 **FortiOS v7.6.7** 上使用**只读账户**实测通过。
+
+---
+
+## 核心命令
+
+| 命令 | 输出内容 | 实测结果 |
+|:-----|:---------|:---------|
+| `get system status` | 固件版本、特征库版本、安全级别 | ✅ 通过 |
+| `get system performance status` | CPU逐核、内存、会话、吞吐、NPU | ✅ 通过 |
+| `get system session status` | 当前 IPv4 会话数 | ✅ 通过 |
+| `get system interface` | 所有接口 IP/状态/模式 | ✅ 通过（分页） |
+| `get system interface physical` | 物理接口详细状态（含FEC） | ✅ 通过（分页） |
+| `get system ha status` | HA 模式、健康状态 | ✅ 通过 |
+| `get router info routing-table all` | 完整路由表 | ✅ 通过 |
+
+## 受限命令
+
+| 命令 | 结果 | 原因 |
+|:-----|:-----|:------|
+| `diagnose sys top 1 5` | ❌ `Unknown action 0` | 只读账户无 diagnostic 权限 |
+| `diagnose netlink interface list` | ❌ `Unknown action 0` | 同上 |
+| `diagnose sys top-stats` | ❌ `Unknown action 0` | 同上 |
+| `execute shell pager disable` | ❌ `command parse error` | 禁用 shell 执行 |
+| `config system console set pager disable` | ❌ 权限不足 | 只读账户不可执行 config |
+| `get system uptime` | ❌ `command parse error` | 命令名不合法，改用 `get system status` |
+| `get hardware status` | ❌ 超时 | 只读账户部分硬件命令无响应 |
+
+---
+
+## 绕过分页的技巧
+
+FortiGate v7.x 默认启用 `--More--` 分页，只读账户无法禁用。
+
+**可行方法：**
+```bash
+# 使用 head/tail 截取关键段（分页会卡在 --More--，但 SSH 超时后继续）
+ssh 10.x.x.x "get system performance status" 2>&1
+
+# 逐命令提取，不用 grep 管道（grep 本身通过）
+ssh 10.x.x.x "get system status | grep -c ''"  # 返回行数
+```
+
+**注意事项：**
+- 分页只影响`get system status`和`get system interface`等长输出命令
+- `get system performance status` 输出较短，不分页
+- `get system session status` 输出1行，不分页
+
+---
+
+## 性能数据解读参考（FortiGate-100F 规格）
+
+| 指标 | 规格值 | 会话实测 4.5万时的表现 |
+|:-----|:-------|:----------------------|
+| 最大并发会话 | 2,000,000 | 2.25% — ✅ 极低负载 |
+| 新建速率（pps） | 30,000 | 538/s — ✅ 极低负载 |
+| 防火墙吞吐 | 20 Gbps | ~500 Mbps (2.5%) — ✅ 充裕 |
+| IPS 吞吐 | 4 Gbps | 未测试 |
+| NGFW 吞吐 | 3 Gbps | 未测试 |
+| VPN 吞吐 | 2 Gbps | 未测试 |
+| 内存 | 8 GB | 4.0 GB (51.7%) — ✅ 正常 |
+| CPU | 8 核 | 57% idle — ✅ 健康 |

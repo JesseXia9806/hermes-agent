@@ -1,0 +1,382 @@
+P2-serverroom_9.10# show ap bss-table
+
+Aruba AP BSS Table
+------------------
+bss                ess                              port  ip           band/ht-mode/bandwidth  ch/EIRP/max-EIRP  type  cur-cl  ap name             in-t(s)  tot-t       flags
+---                ---                              ----  --           ----------------------  ----------------  ----  ------  -------             -------  -----       -----
+94:ff:06:07:ac:85  _owetm_Sercomm_Guest3975559890   ?/?   10.120.9.10  2.4GHz/HE/20MHz         1/6.0/27.0        ap    0       P2-serverroom_9.10  0        6h:39m:54s  OTW
+94:ff:06:07:ac:90  Sercomm_Employee                 ?/?   10.120.9.10  5GHz/HE/80MHz           124E/18.0/30.0    ap    1       P2-serverroom_9.10  0        6h:39m:59s  KT
+94:ff:06:07:ac:91  Sercomm_Customer                 ?/?   10.120.9.10  5GHz/HE/80MHz           124E/18.0/30.0    ap    0       P2-serverroom_9.10  0        6h:39m:58s  KoT
+94:ff:06:07:ac:92  _owetm_Sercomm_Custom2097765521  ?/?   10.120.9.10  5GHz/HE/80MHz           124E/18.0/30.0    ap    0       P2-serverroom_9.10  0        6h:39m:57s  KOTW
+94:ff:06:07:ac:93  Ebin                             ?/?   10.120.9.10  5GHz/HE/80MHz           124E/18.0/30.0    ap    0       P2-serverroom_9.10  0        6h:39m:56s  T
+94:ff:06:07:ac:94  Sercomm_Guest                    ?/?   10.120.9.10  5GHz/HE/80MHz           124E/18.0/30.0    ap    0       P2-serverroom_9.10  0        6h:39m:55s  oT
+94:ff:06:07:ac:95  _owetm_Sercomm_Guest3975559890   ?/?   10.120.9.10  5GHz/HE/80MHz           124E/18.0/30.0    ap    0       P2-serverroom_9.10  0        6h:39m:54s  OTW
+94:ff:06:07:ac:80  Sercomm_Employee                 ?/?   10.120.9.10  2.4GHz/HE/20MHz         1/6.0/27.0        ap    0       P2-serverroom_9.10  0        6h:39m:58s  KT
+94:ff:06:07:ac:81  Sercomm_Customer                 ?/?   10.120.9.10  2.4GHz/HE/20MHz         1/6.0/27.0        ap    0       P2-serverroom_9.10  0        6h:39m:57s  KoT
+94:ff:06:07:ac:82  _owetm_Sercomm_Custom2097765521  ?/?   10.120.9.10  2.4GHz/HE/20MHz         1/6.0/27.0        ap    0       P2-serverroom_9.10  0        6h:39m:57s  KOTW
+94:ff:06:07:ac:83  Ebin                             ?/?   10.120.9.10  2.4GHz/HE/20MHz         1/6.0/27.0        ap    0       P2-serverroom_9.10  0        6h:39m:56s  T
+94:ff:06:07:ac:84  Sercomm_Guest                    ?/?   10.120.9.10  2.4GHz/HE/20MHz         1/6.0/27.0        ap    0       P2-serverroom_9.10  0        6h:39m:55s  oT
+
+Channel followed by "*" indicates channel selected due to unsupported configured channel.
+"Spectrum" followed by "^" indicates Local Spectrum Override in effect.
+
+Num APs:12
+Num Associations:1
+
+Flags:       c = MBO Cellular Data Capable BSS; d = Deferred Delete Pending; D = VLAN Discovered; E = Enhanced-open BSS without transition mode; I = Imminent VAP Down; K = 802.11K Enabled; m = Agile Multiband (MBO) BSS; M = WPA3-SAE mixed mode BSS; o = Enhanced-open transition mode open BSS; O = Enhanced-open BSS with transition mode; r = 802.11r Enabled; t = Broadcast TWT Enabled; T = Individual TWT Enabled; W = 802.11W Enabled; x = MBSSID Tx BSS; z = WPA3-AES-CCM128 BSS; Z = WPA3-AES-CCM128 BSS with transition mode; 3 = WPA3 BSS;
+P2-serverroom_9.10#
+P2-serverroom_9.10#
+P2-serverroom_9.10# show running-config
+version 8.13.0.0-8.13.0
+syslocation "P2-server room"
+virtual-controller-country US
+virtual-controller-key 06686044016036442b9f3f2b12c1ecc1851789937b598136da
+name P2-ArubaAC
+virtual-controller-ip 10.120.9.1
+terminal-access
+ntp-server 10.140.1.9
+clock timezone Beijing 08 00
+rf-band all
+
+allow-new-aps
+
+allowed-ap 94:ff:06:c8:7a:c4
+allowed-ap 94:ff:06:c8:7b:46
+allowed-ap 94:ff:06:c8:7b:44
+allowed-ap 94:ff:06:c8:7b:3a
+allowed-ap 94:ff:06:c8:7b:58
+allowed-ap 94:ff:06:c8:7b:10
+allowed-ap 94:ff:06:c8:7a:d6
+allowed-ap 94:ff:06:c8:7b:22
+allowed-ap 94:ff:06:c8:7b:00
+allowed-ap 94:ff:06:c8:7a:c0
+allowed-ap 94:ff:06:c8:7b:34
+allowed-ap 94:ff:06:c8:7b:56
+allowed-ap 94:ff:06:c8:7a:e0
+allowed-ap 94:ff:06:c8:7b:2c
+allowed-ap 94:ff:06:c8:7a:b4
+allowed-ap 94:ff:06:c8:7a:f0
+allowed-ap 94:ff:06:c8:7a:ba
+allowed-ap 94:ff:06:c8:7a:e6
+allowed-ap 94:ff:06:c8:7b:08
+allowed-ap 94:ff:06:c8:7a:dc
+allowed-ap 94:ff:06:c8:7b:2a
+allowed-ap 94:ff:06:c8:7b:0e
+allowed-ap 94:ff:06:c8:7b:06
+allowed-ap 94:ff:06:c8:7b:4c
+allowed-ap 94:ff:06:c8:7a:f2
+allowed-ap 94:ff:06:c8:7a:d8
+allowed-ap 94:ff:06:c8:7a:ce
+allowed-ap 94:ff:06:c8:7a:ee
+allowed-ap 94:ff:06:c8:7a:c8
+allowed-ap 94:ff:06:c8:7a:b0
+allowed-ap 94:ff:06:c8:7b:4a
+allowed-ap 94:ff:06:c8:7b:16
+allowed-ap 94:ff:06:c8:7a:ea
+allowed-ap 94:ff:06:c8:7b:04
+allowed-ap 94:ff:06:c8:7a:ca
+allowed-ap 94:ff:06:c8:7b:0a
+allowed-ap 94:ff:06:c8:7a:d0
+allowed-ap 94:ff:06:c8:7a:d2
+allowed-ap 94:ff:06:c8:7b:1a
+allowed-ap 94:ff:06:c8:7b:26
+allowed-ap 94:ff:06:c8:7b:14
+allowed-ap 94:ff:06:c8:7a:b6
+allowed-ap 94:ff:06:c8:7a:d4
+allowed-ap 94:ff:06:c8:7b:28
+allowed-ap 94:ff:06:c8:7b:40
+allowed-ap 94:ff:06:c8:7a:c6
+allowed-ap 94:ff:06:c8:7a:cc
+allowed-ap 94:ff:06:c8:7b:4e
+allowed-ap 94:ff:06:c8:7b:52
+allowed-ap 94:ff:06:c8:7a:fe
+allowed-ap 94:ff:06:c8:7a:e4
+allowed-ap 94:ff:06:c8:7a:f6
+allowed-ap 94:ff:06:c8:7b:1c
+allowed-ap 94:ff:06:c8:7a:c2
+allowed-ap 94:ff:06:c8:7b:32
+allowed-ap 94:ff:06:c8:7a:fa
+allowed-ap 94:ff:06:c8:7b:24
+allowed-ap 94:ff:06:c8:7b:3c
+allowed-ap 94:ff:06:c8:7b:48
+allowed-ap 94:ff:06:c8:7a:e8
+allowed-ap 94:ff:06:c8:7b:12
+allowed-ap 94:ff:06:c8:7a:bc
+allowed-ap 94:ff:06:c8:7b:36
+allowed-ap 94:ff:06:c8:7a:fc
+allowed-ap 94:ff:06:c8:7b:0c
+allowed-ap 94:ff:06:c8:7a:da
+allowed-ap 94:ff:06:c8:7b:42
+allowed-ap 94:ff:06:c8:7a:b2
+allowed-ap 94:ff:06:c8:7a:f4
+
+
+
+arm
+ wide-bands 24ghz,5ghz
+ 80mhz-support
+ min-tx-power 15
+ max-tx-power 127
+ band-steering-mode prefer-higher-band
+ air-time-fairness-mode default-access
+ channel-quality-aware-arm-disable
+ client-aware
+ scanning
+ client-match
+
+rf dot11g-radio-profile
+ max-distance 0
+ max-tx-power 9
+ min-tx-power 6
+ disable-arm-wids-functions off
+ free-channel-index 40
+
+rf dot11a-radio-profile
+ max-distance 0
+ max-tx-power 18
+ min-tx-power 12
+ disable-arm-wids-functions off
+
+mbssid-group-profile _MBSSID1_
+
+
+syslog-level warn ap-debug
+syslog-level warn network
+syslog-level warn security
+syslog-level warn system
+syslog-level warn user
+syslog-level warn user-debug
+syslog-level warn wireless
+
+
+
+extended-ssid
+mesh-security-enhancement
+web-server
+ ssl-protocol tlsv1_2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+hash-mgmt-password
+hash-mgmt-user admin password hash 265e913502ea8ce081ec5ebb8a83ae04ff2be9693e4f86b6ef2e13a7b0feee7e88f49b31d5
+
+
+wlan access-rule default_wired_port_profile
+ index 0
+ rule any any match any any any permit
+
+wlan access-rule wired-SetMeUp
+ index 1
+ rule masterip 0.0.0.0 match tcp 80 80 permit
+ rule masterip 0.0.0.0 match tcp 4343 4343 permit
+ rule any any match udp 67 68 permit
+ rule any any match udp 53 53 permit
+
+wlan access-rule Sercomm_Employee
+ index 2
+ rule any any match any any any permit
+
+wlan access-rule Sercomm_Customer
+ index 3
+ rule any any match any any any permit
+
+wlan access-rule Ebin
+ index 4
+ rule any any match any any any permit
+
+wlan access-rule Sercomm_Guest
+ index 5
+ rule any any match any any any permit
+
+wlan ssid-profile Sercomm_Employee
+ enable
+ index 0
+ type employee
+ essid Sercomm_Employee
+ opmode wpa2-aes
+ max-authentication-failures 0
+ vlan 112
+ auth-server spiad04
+ auth-survivability
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter all
+ enforce-dhcp
+ radius-reauth-interval 720
+ g-min-tx-rate 6
+ a-min-tx-rate 12
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+ dot11k
+ dot11v
+ download-role
+
+wlan ssid-profile Sercomm_Customer
+ enable
+ index 1
+ type guest
+ essid Sercomm_Customer
+ opmode enhanced-open
+ max-authentication-failures 0
+ vlan 114
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter all
+ enforce-dhcp
+ g-min-tx-rate 6
+ a-min-tx-rate 12
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+ dot11k
+ dot11v
+
+wlan ssid-profile Ebin
+ enable
+ index 2
+ type employee
+ essid Ebin
+ wpa-passphrase 50ccba99b644cffc0293680ba6ddb794eec70b51f19444ed
+ opmode wpa2-psk-aes
+ max-authentication-failures 0
+ vlan 113
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter arp
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+
+wlan ssid-profile Sercomm_Guest
+ enable
+ index 3
+ type employee
+ essid Sercomm_Guest
+ opmode enhanced-open
+ max-authentication-failures 0
+ vlan 117
+ rf-band all
+ captive-portal disable
+ dtim-period 1
+ broadcast-filter arp
+ dmo-channel-utilization-threshold 90
+ local-probe-req-thresh 0
+ max-clients-threshold 64
+
+auth-survivability cache-time-out 24
+
+
+
+
+
+
+wlan auth-server spiad04
+ ip 10.139.1.9
+ port 1812
+ acctport 1813
+ key 77f884f241e3c141e96be4e6c79e397593d41129e1837f27
+
+wlan external-captive-portal
+ server localhost
+ port 80
+ url "/"
+ auth-text "Authenticated"
+ auto-whitelist-disable
+ https
+
+
+blacklist-time 3600
+auth-failure-blacklist-time 3600
+
+
+ids
+ wireless-containment none
+ infrastructure-detection-level high
+ client-detection-level high
+ infrastructure-protection-level high
+ client-protection-level high
+
+
+
+wired-port-profile wired-SetMeUp
+ switchport-mode access
+ allowed-vlan all
+ native-vlan guest
+ no shutdown
+ access-rule-name wired-SetMeUp
+ speed auto
+ duplex auto
+ no poe
+ type guest
+ captive-portal disable
+ no dot1x
+
+wired-port-profile default_wired_port_profile
+ switchport-mode trunk
+ allowed-vlan all
+ native-vlan 1
+ shutdown
+ access-rule-name default_wired_port_profile
+ speed auto
+ duplex full
+ no poe
+ type employee
+ captive-portal disable
+ no dot1x
+
+
+enet0-port-profile default_wired_port_profile
+
+uplink
+ preemption
+ enforce none
+ failover-internet-pkt-lost-cnt 10
+ failover-internet-pkt-send-freq 30
+ failover-vpn-timeout 180
+
+
+
+airgroup
+ disable
+
+airgroupservice airplay
+ disable
+
+airgroupservice airprint
+ disable
+
+ipm
+ enable
+itm
+
+
+attack
+ drop-bad-arp-enable
+ fix-dhcp-enable
+ poison-check-enable
+
+
+
+
+
+
+
+P2-serverroom_9.10#

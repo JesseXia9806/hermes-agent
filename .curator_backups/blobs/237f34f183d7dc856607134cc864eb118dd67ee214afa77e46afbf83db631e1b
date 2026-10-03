@@ -1,0 +1,82 @@
+import json
+import urllib.request
+import urllib.error
+import urllib.parse
+import ssl
+import sys
+
+def get_creds(file_path):
+    with open(file_path, "r") as f:
+        return json.load(f)
+
+def run_aruba_cmd(cmd):
+    creds_path = "/Users/jessexia/.hermes/secrets/aruba_iap.json"
+    try:
+        creds = get_creds(creds_path)
+    except Exception as e:
+        print(f"Error loading credentials: {e}")
+        return
+    
+    ip = creds.get("ip")
+    username = creds.get("username")
+    password = creds.get("password")
+    port = creds.get("port", 4343)
+    
+    base_url = f"https://{ip}:{port}/rest"
+    
+    # Disable SSL verification
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    # 1. Login to get SID
+    login_url = f"{base_url}/login"
+    login_data = json.dumps({"user": username, "passwd": password}).encode('utf-8')
+    req = urllib.request.Request(login_url, data=login_data, headers={'Content-Type': 'application/json'})
+    
+    try:
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as response:
+            resp_body = response.read().decode('utf-8')
+            parsed = json.loads(resp_body)
+            if parsed.get("Status") != "Success":
+                print(f"Login failed: {parsed}")
+                return
+            sid = parsed.get("sid")
+    except Exception as e:
+        print(f"Connection or login error: {e}")
+        return
+
+    # 2. Run show command
+    show_url = f"{base_url}/show-cmd?iap_ip_addr={ip}&cmd={urllib.parse.quote(cmd)}&sid={sid}"
+    req_show = urllib.request.Request(show_url)
+    try:
+        with urllib.request.urlopen(req_show, context=ctx, timeout=10) as response:
+            resp_body = response.read().decode('utf-8')
+            # DEBUG
+            # print("DEBUG RAW:", resp_body)
+            if resp_body.strip().startswith("<"):
+                print("Received XML instead of JSON. The user might not have permissions for this API.")
+                return
+            data = json.loads(resp_body)
+            command_output = data.get("Command output", "")
+            print(f"--- Output for '{cmd}' ---")
+            print(command_output)
+    except Exception as e:
+        print(f"Error executing command: {e}")
+    finally:
+        # 3. Logout
+        try:
+            logout_url = f"{base_url}/logout?sid={sid}"
+            req_logout = urllib.request.Request(logout_url, data=b"{}", headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req_logout, context=ctx, timeout=5) as r:
+                pass
+        except:
+            pass
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        cmd = " ".join(sys.argv[1:])
+    else:
+        cmd = "show version"
+    
+    run_aruba_cmd(cmd)

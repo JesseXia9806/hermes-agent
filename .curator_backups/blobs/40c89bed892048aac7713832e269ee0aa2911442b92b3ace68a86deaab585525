@@ -1,0 +1,206 @@
+"""
+Equipment Procurement Purchase Requisition — DOCX Generator Template
+
+Usage:
+  1. Copy this file and modify the CONFIG section.
+  2. Run: python3 pr_docx_generator.py
+  3. Output saved to ~/Desktop/<output_filename>.
+
+Requires: python-docx (pip install python-docx or uv pip install --system python-docx)
+"""
+
+from docx import Document
+from docx.shared import Pt, Cm, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from datetime import date
+import os
+
+# ──────────────────── CONFIG ────────────────────
+CONFIG = {
+    "title": "设备请购单",
+    "applicant": "Jesse Xia",
+    "department": "信息技术部（IT）",
+    "cost_center": "IT 年度预算",
+    "expense_type": "固定资产采购 — 设备补充",
+    "procurement_type": "紧急补购（火灾损毁恢复）",
+    "vendor": "上海惠皓科技有限公司",
+    "lead_time": "自审批通过起 30 日内",
+    "location": "P2 核心网络区域",
+    "reason": "火灾导致 P2 核心网络交换机损毁，需同型号替换恢复网络架构",
+    "items": [
+        ("交换机 Cisco Catalyst 9300 24AU-A", "Cisco", 2, 36000.00),
+        ("交换机 Cisco Catalyst 9300 48-A",   "Cisco", 2, 38000.00),
+    ],
+    "notes": [
+        "本批设备为火灾损毁紧急补购，已获 IT 部门预算批准。",
+        "设备型号与原部署一致，无需额外网络规划变更。",
+        "报价单由供应商提供（待补录报价单编号）。",
+        "建议同步启动保险理赔流程，本采购发票留存备查。",
+        "到货后由 IT 团队负责上架、配置、验收。",
+    ],
+    "output_filename": "设备请购单_P2核心网络交换机.docx",
+}
+
+# ──────────────────── GENERATOR ────────────────────
+def build_requisition(cfg):
+    doc = Document()
+
+    for section in doc.sections:
+        section.top_margin = Cm(2.5)
+        section.bottom_margin = Cm(2.5)
+        section.left_margin = Cm(2.5)
+        section.right_margin = Cm(2.5)
+
+    style = doc.styles['Normal']
+    style.font.name = 'Arial'
+    style.font.size = Pt(11)
+
+    # Title
+    title = doc.add_paragraph()
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = title.add_run(cfg["title"])
+    run.bold = True
+    run.font.size = Pt(18)
+
+    # Date
+    sub = doc.add_paragraph()
+    sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = sub.add_run(f'申请日期：{date.today().strftime("%Y 年 %m 月 %d 日")}')
+    run.font.size = Pt(11)
+    run.font.color.rgb = RGBColor(100, 100, 100)
+
+    doc.add_paragraph('')
+
+    # Info table
+    info = [
+        ("申请人", cfg["applicant"]),
+        ("所属部门", cfg["department"]),
+        ("成本中心", cfg["cost_center"]),
+        ("费用类型", cfg["expense_type"]),
+        ("采购性质", cfg["procurement_type"]),
+        ("推荐供应商", cfg["vendor"]),
+        ("期望到货", cfg["lead_time"]),
+        ("使用位置", cfg["location"]),
+        ("采购原因", cfg["reason"]),
+    ]
+    t = doc.add_table(rows=len(info), cols=2)
+    t.style = 'Table Grid'
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    for i, (k, v) in enumerate(info):
+        t.rows[i].cells[0].text = k
+        t.rows[i].cells[1].text = v
+        for p in t.rows[i].cells[0].paragraphs:
+            p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            for r in p.runs:
+                r.bold = True
+                r.font.size = Pt(11)
+        for p in t.rows[i].cells[1].paragraphs:
+            for r in p.runs:
+                r.font.size = Pt(11)
+        t.rows[i].cells[0].width = Cm(3.5)
+        t.rows[i].cells[1].width = Cm(12)
+
+    doc.add_paragraph('')
+
+    # Items heading
+    h = doc.add_paragraph()
+    run = h.add_run("请购明细")
+    run.bold = True
+    run.font.size = Pt(14)
+
+    # Item rows
+    n = len(cfg["items"])
+    t2 = doc.add_table(rows=n + 2, cols=6)  # header + items + total
+    t2.style = 'Table Grid'
+    t2.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+    headers = ["序号", "设备名称/型号", "品牌", "数量", "含税单价 (¥)", "小计 (¥)"]
+    for j, hdr in enumerate(headers):
+        t2.rows[0].cells[j].text = hdr
+        for p in t2.rows[0].cells[j].paragraphs:
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            for r in p.runs:
+                r.bold = True
+                r.font.size = Pt(10)
+
+    total = 0.0
+    for ri, (name, brand, qty, price) in enumerate(cfg["items"]):
+        subtotal = qty * price
+        total += subtotal
+        vals = [str(ri + 1), name, brand, str(qty), f"{price:,.2f}", f"{subtotal:,.2f}"]
+        for j, val in enumerate(vals):
+            t2.rows[ri + 1].cells[j].text = val
+            for p in t2.rows[ri + 1].cells[j].paragraphs:
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER if j != 1 else WD_ALIGN_PARAGRAPH.LEFT
+                for r in p.runs:
+                    r.font.size = Pt(10)
+
+    # Total row
+    tr = t2.rows[n + 1]
+    tr.cells[0].merge(tr.cells[4])
+    tr.cells[0].text = "合  计"
+    for p in tr.cells[0].paragraphs:
+        p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        for r in p.runs:
+            r.bold = True
+            r.font.size = Pt(11)
+    tr.cells[5].text = f"{total:,.2f}"
+    for p in tr.cells[5].paragraphs:
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        for r in p.runs:
+            r.bold = True
+            r.font.size = Pt(11)
+
+    doc.add_paragraph('')
+
+    # Notes
+    nh = doc.add_paragraph()
+    run = nh.add_run("备注说明：")
+    run.bold = True
+    run.font.size = Pt(11)
+    for n in cfg["notes"]:
+        p = doc.add_paragraph(n)
+        p.paragraph_format.space_before = Pt(2)
+        p.paragraph_format.space_after = Pt(2)
+        for r in p.runs:
+            r.font.size = Pt(10)
+
+    doc.add_paragraph('')
+
+    # Approval table
+    ah = doc.add_paragraph()
+    run = ah.add_run("审批流程")
+    run.bold = True
+    run.font.size = Pt(14)
+
+    approval_steps = ["IT 主管审核", "财务审核", "分管领导审批", "采购执行"]
+    at = doc.add_table(rows=len(approval_steps) + 1, cols=3)
+    at.style = 'Table Grid'
+    at.alignment = WD_TABLE_ALIGNMENT.CENTER
+    for j, hdr in enumerate(["审批节点", "审批人", "审批意见 / 日期"]):
+        at.rows[0].cells[j].text = hdr
+        for p in at.rows[0].cells[j].paragraphs:
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            for r in p.runs:
+                r.bold = True
+                r.font.size = Pt(10)
+    for i, s in enumerate(approval_steps):
+        at.rows[i + 1].cells[0].text = s
+        for p in at.rows[i + 1].cells[0].paragraphs:
+            for r in p.runs:
+                r.font.size = Pt(10)
+
+    doc.add_paragraph('')
+    ft = doc.add_paragraph()
+    ft.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = ft.add_run("— 本文件为 IT 部门设备请购草稿，供 OA 填写参考 —")
+    run.font.size = Pt(9)
+    run.font.color.rgb = RGBColor(150, 150, 150)
+
+    out_path = os.path.expanduser(f"~/{cfg['output_filename']}")
+    doc.save(out_path)
+    print(f"OK -> {out_path}")
+
+if __name__ == "__main__":
+    build_requisition(CONFIG)

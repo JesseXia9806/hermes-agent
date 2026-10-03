@@ -1,0 +1,30 @@
+[root@spiqzabbix ~]# journalctl -u named.service -n 100 | grep -i "rpz"
+[root@spiqzabbix ~]# journalctl -u named.service -n 100
+Sep 23 17:36:44 spiqzabbix named[332852]: timed out resolving 'pull-hs-spe-f5.douyincdn.com.c.bvfcdn.com/A/IN': 8.8.8.8#53
+Sep 23 17:36:46 spiqzabbix named[332852]: REFUSED unexpected RCODE resolving 'pull-e5.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.8.8#53
+Sep 23 17:37:01 spiqzabbix named[332852]: timed out resolving 'officeclient.microsoft.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:07 spiqzabbix named[332852]: REFUSED unexpected RCODE resolving 'pull-x4-f5.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:15 spiqzabbix named[332852]: timed out resolving 'pull-rtmp-l6-cny.douyincdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:17 spiqzabbix named[332852]: timed out resolving 'pull-hls-spe-l6.douyincdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:20 spiqzabbix named[332852]: timed out resolving 'pull-x2.wxlivecdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:27 spiqzabbix named[332852]: timed out resolving 'pull-flv-h26.douyincdn.com.cdnhwczba04.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:28 spiqzabbix named[332852]: timed out resolving 'pull-flv-h26.douyincdn.com.cdnhwczba04.com/A/IN': 8.8.8.8#53
+Sep 23 17:37:37 spiqzabbix named[332852]: timed out resolving 'push-rtmp-l26.douyincdn.com.c.cdnhwc3.com/A/IN': 8.8.4.4#53
+Sep 23 17:37:39 spiqzabbix named[332852]: timed out resolving 'pull-tsl-q5.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.4.4#53
+Sep 23 17:38:10 spiqzabbix named[332852]: timed out resolving 'pull-flv-spe-l26.douyincdn.com.c.cdnhwc3.com/A/IN': 8.8.4.4#53
+Sep 23 17:38:27 spiqzabbix named[332852]: timed out resolving 's6110-flv-ml.gslb.ksyuncdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:38:41 spiqzabbix named[332852]: timed out resolving 'pull-tsl-q26.douyincdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:38:45 spiqzabbix named[332852]: timed out resolving 'pull-lls-f26.douyincdn.com.c.cdnhwc3.com/A/IN': 8.8.4.4#53
+Sep 23 17:38:49 spiqzabbix named[332852]: timed out resolving 'pull-lls-q5.douyincdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:38:56 spiqzabbix named[332852]: timed out resolving 'pull-flv-f26.douyinliving.com.cdnhwczba04.com/A/IN': 8.8.4.4#53
+Sep 23 17:39:00 spiqzabbix named[332852]: REFUSED unexpected RCODE resolving 'pull-flv-x1-f5.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.4.4#53
+Sep 23 17:39:03 spiqzabbix named[332852]: REFUSED unexpected RCODE resolving 'pull-x0-q5-lls.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.4.4#53
+Sep 23 17:39:05 spiqzabbix named[332852]: timed out resolving 'pull-base5.s.volcfcdndvs1.com/A/IN': 8.8.4.4#53
+Sep 23 17:39:12 spiqzabbix named[332852]: timed out resolving 'pull-x3-f5-lls.douyincdn.com/A/IN': 8.8.4.4#53
+Sep 23 17:39:22 spiqzabbix named[332852]: REFUSED unexpected RCODE resolving 'pull-x0-t5-tsl.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.8.8#53
+Sep 23 17:39:24 spiqzabbix named[332852]: timed out resolving 'pull-flv-gravity-l13.douyincdn.com.a.bcelive.com/A/IN': 8.8.8.8#53
+Sep 23 17:39:26 spiqzabbix named[332852]: REFUSED unexpected RCODE resolving 'pull-x3-h5-hls.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.4.4#53
+Sep 23 17:39:27 spiqzabbix named[332852]: timed out resolving 'pull-x3-h5-hls.douyincdn.com.c.volcfcdndvs.com/A/IN': 8.8.8.8#53
+Sep 23 17:39:30 spiqzabbix named[332852]: timed out resolving 'a1588.t.akamai.net/A/IN': 8.8.8.8#53
+Sep 23 17:39:32 spiqzabbix named[332852]: timed out resolving 'www-www.bing.com.trafficmanager.net/A/IN': 8.8.8.8#53
+Sep 23 17:39:34 spiqzabbix named[332852]: timed out resolving 'push-rtmp-f5-enc.douyincdn.com/A/IN': 8.8.4.4#53

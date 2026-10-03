@@ -1,0 +1,198 @@
+# Ubuntu服务器安全加固配置模板
+
+## fail2ban配置模板 (jail.local)
+
+```ini
+[DEFAULT]
+# 全局设置
+bantime = 1h
+findtime = 10m
+maxretry = 5
+ignoreip = 127.0.0.1/8
+
+# SSH防护
+[sshd]
+enabled = true
+port = ssh
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 600
+findtime = 600
+filter = sshd
+
+# HTTP服务防护 (端口3001)
+[http-server]
+enabled = true
+port = 3001
+logpath = /var/log/daemon.log
+maxretry = 5
+bantime = 300
+findtime = 300
+filter = http-dos
+
+# 防止暴力破解
+[ssh-ddos]
+enabled = true
+port = ssh
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 600
+findtime = 300
+```
+
+## UFW防火墙配置模板
+
+```bash
+# 重置防火墙
+sudo ufw --force reset
+
+# 设置默认策略
+sudo ufw default deny incoming
+sudo ufw default deny outgoing
+
+# 允许必要端口
+sudo ufw allow 22/tcp comment "SSH"
+sudo ufw allow 80/tcp comment "HTTP"
+sudo ufw allow 443/tcp comment "HTTPS"
+sudo ufw allow 3001/tcp comment "Custom Service"
+sudo ufw allow 5173/tcp comment "Dev Server"
+
+# 允许本地网络
+sudo ufw allow from 192.168.1.0/24 to any comment "Local Network"
+
+# 允许回环接口
+sudo ufw allow comment "Allow all on loopback"
+
+# 启用防火墙
+sudo ufw --force enable
+
+# 查看状态
+sudo ufw status verbose
+```
+
+## SSH配置模板 (sshd_config)
+
+```bash
+# 禁用root直接登录
+PermitRootLogin prohibit-password
+
+# 启用密钥认证
+PubkeyAuthentication yes
+
+# 禁用密码认证
+PasswordAuthentication no
+
+# 限制SSH访问
+AllowUsers rootadmin
+DenyUsers root
+
+# SSH端口（可选修改）
+Port 22
+
+# SSH会话超时
+ClientAliveInterval 300
+ClientAliveCountMax 3
+
+# 禁用X11转发
+X11Forwarding no
+
+# 禁用空密码登录
+PermitEmptyPasswords no
+
+# 限制最大会话数
+MaxSessions 10
+MaxAuthTries 3
+
+# 限制子进程
+MaxStartups 10:30:100
+```
+
+## sudoers配置模板 (rootadmin)
+
+```
+# 安全的sudo配置
+rootadmin ALL=(ALL) ALL
+
+# 禁止NOPASSWD
+rootadmin ALL=(ALL) !NOPASSWD: ALL
+
+# 可选：限制特定命令
+rootadmin ALL=(ALL) /usr/bin/apt, /usr/bin/systemctl, /usr/bin/ufw
+```
+
+## 安全监控cron模板
+
+```bash
+# 每日凌晨2点执行安全检查
+0 2 * * * /usr/local/bin/security-daily.sh
+
+# 每周日凌晨3点更新系统
+0 3 * * 0 apt update && apt upgrade -y
+
+# 每小时检查fail2ban状态
+0 * * * * fail2ban-client status | mail -s "Fail2ban Status" admin@example.com
+```
+
+## 安全审计脚本模板
+
+```bash
+#!/bin/bash
+# 安全审计脚本
+DATE=$(date +%Y%m%d_%H%M%S)
+LOG="/var/log/security-audit-$DATE.log"
+
+echo "=== 安全审计报告 - $(date) ===" > $LOG
+
+# 检查开放端口
+echo "=== 开放端口 ===" >> $LOG
+ss -tlnp | grep LISTEN >> $LOG
+
+# 检查登录失败
+echo "=== SSH登录失败 ===" >> $LOG
+grep "Failed password" /var/log/auth.log | tail -10 >> $LOG
+
+# 检查sudo使用
+echo "=== sudo使用记录 ===" >> $LOG
+grep "sudo:" /var/log/auth.log | tail -10 >> $LOG
+
+# 检查系统更新
+echo "=== 系统更新 ===" >> $LOG
+apt list --upgradable >> $LOG
+
+# 检查磁盘空间
+echo "=== 磁盘空间 ===" >> $LOG
+df -h >> $LOG
+
+# 检查内存使用
+echo "=== 内存使用 ===" >> $LOG
+free -h >> $LOG
+
+# 发送报告
+mail -s "Security Audit Report - $(date)" admin@example.com < $LOG
+```
+
+## 使用方法
+
+1. **复制模板**：将相应模板复制到目标服务器
+2. **修改配置**：根据实际需求调整参数
+3. **应用配置**：重启服务使配置生效
+4. **验证配置**：检查服务状态和日志
+
+```bash
+# 重启SSH服务
+sudo systemctl restart sshd
+
+# 重启fail2ban
+sudo systemctl restart fail2ban
+
+# 重启UFW
+sudo ufw reload
+```
+
+## 注意事项
+
+1. **备份原配置**：修改前先备份原配置文件
+2. **测试环境**：先在测试环境验证配置
+3. **逐步应用**：分步骤应用配置，每步验证
+4. **监控日志**：配置后监控相关日志
+5. **权限管理**：确保配置文件权限正确
